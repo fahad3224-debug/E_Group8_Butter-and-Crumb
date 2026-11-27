@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Explore today's menu at Butter and Crumb: laminated viennoiserie, wild-fermented sourdough loaves, seasonal cakes and tarts, plus custom pastry box orders."
+  />
+  <title>Daily Menu — Butter and Crumb Artisan Bakery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="../css/menu.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../index.html" aria-label="Butter and Crumb Home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="18" r="16.5" stroke="currentColor" stroke-width="1.5" />
+            <path
+              d="M9.5 22.5C11.5 16 14.5 13 18 13C21.5 13 24.5 16 26.5 22.5C23.5 24 20.8 24.6 18 24.6C15.2 24.6 12.5 24 9.5 22.5Z"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linejoin="round"
+            />
+            <path d="M14.5 14.2L15.8 18.8M18 13.2V18.5M21.5 14.2L20.2 18.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">Butter &amp; Crumb</span>
+          <span class="brand-tagline">Artisan Bakery</span>
+        </span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-navigation" aria-label="Primary">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="../index.html">Home</a></li>
+          <li><a class="nav-link is-active" href="menu.html" aria-current="page">Menu</a></li>
+          <li><a class="nav-link" href="about.html">About</a></li>
+        </ul>
+        <a class="nav-cta" href="#custom-orders">Custom Orders</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="menu-hero" aria-labelledby="menu-heading">
+      <div class="container menu-hero-inner">
+        <div class="menu-hero-copy">
+          <p class="section-kicker">Baked Fresh from 5:00 AM · Tue–Sun</p>
+          <h1 id="menu-heading">Daily Menu &amp; Hearth Schedule</h1>
+          <p class="menu-hero-subtitle">
+            Everything on our counter is mixed with stone-milled regional grain, wild levain, and
+            84% cultured butter. Browse by category below to inspect ingredients and dietary notes.
+          </p>
+        </div>
+
+        <aside class="bake-notes" aria-label="Daily oven schedule">
+          <h2 class="bake-notes-title">Oven Release Times</h2>
+          <ul>
+            <li><span>Morning Viennoiserie</span><span>7:00 AM</span></li>
+            <li><span>Second Croissant Tray</span><span>10:30 AM</span></li>
+            <li><span>Country Sourdough Loaves</span><span>11:00 AM</span></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="menu-catalog" id="menu-catalog" aria-labelledby="catalog-heading">
+      <div class="container">
+        <div class="catalog-toolbar">
+          <div>
+            <h2 id="catalog-heading" class="visually-hidden">Pastry and Bread Catalog</h2>
+            <div class="filter-tabs" role="tablist" aria-label="Filter menu by category">
+              <button class="filter-tab is-active" type="button" role="tab" aria-selected="true" data-filter="all">
+                All
+              </button>
+              <button class="filter-tab" type="button" role="tab" aria-selected="false" data-filter="viennoiserie">
+                Viennoiserie
+              </button>
+              <button class="filter-tab" type="button" role="tab" aria-selected="false" data-filter="sourdough">
+                Sourdough &amp; Loaves
+              </button>
+              <button class="filter-tab" type="button" role="tab" aria-selected="false" data-filter="cakes-tarts">
+                Cakes &amp; Tarts
+              </button>
+              <button class="filter-tab" type="button" role="tab" aria-selected="false" data-filter="seasonal">
+                Seasonal Specials
+              </button>
+            </div>
+          </div>
+          <p class="menu-count" id="menu-count" aria-live="polite">Showing 8 bakes</p>
+        </div>
+
+        <div class="menu-grid" id="menu-grid">
+          <article class="menu-card" data-category="viennoiserie">
+            <div class="menu-media">
+              <img
+                src="../images/pastry-croissant.jpg"
+                alt="Flaky golden-brown cultured butter croissant on a handmade speckled ceramic plate"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <span class="menu-badge">Viennoiserie</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title-row">
+                <h3>Cultured Butter Croissant</h3>
+                <span class="menu-price">$5.25</span>
+              </div>
+              <p class="menu-desc">
+                Three-day cold-fermented dough rolled into crisp, shattering layers with an open honeycomb center.
+              </p>
+              <p class="menu-ingredients">
+                <strong>Ingredients:</strong> Unbleached pastry flour, 84% Normandy-style cultured butter, whole milk, wild levain, raw cane sugar, sea salt.
+              </p>
+              <ul class="dietary-tags" aria-label="Dietary tags">
+                <li class="tag">Vegetarian</li>
+                <li class="tag tag-allergen">Wheat &amp; Dairy</li>
+              </ul>
+              <p class="menu-meta">Batch times: 7:00 AM &amp; 10:30 AM</p>
+            </div>
+          </article>
+
+          <article class="menu-card" data-category="viennoiserie">
+            <div class="menu-media">
+              <img
+                src="../images/pastry-cardamom.jpg"
+                alt="Two braided Swedish cardamom knot buns glazed with syrup and pearl sugar"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <span class="menu-badge">Viennoiserie</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title-row">
+                <h3>Swedish Cardamom Knot</h3>
+                <span class="menu-price">$5.50</span>
+              </div>
+              <p class="menu-desc">
+                Hand-twisted brioche filled with brown butter and freshly ground green cardamom, brushed with citrus syrup.
+              </p>
+              <p class="menu-ingredients">
+                <strong>Ingredients:</strong> Bread flour, cultured brown butter, pasture-raised eggs, green cardamom pods, orange blossom syrup, Swedish pearl sugar.
+              </p>
+              <ul class="dietary-tags" aria-label="Dietary tags">
+                <li class="tag">Vegetarian</li>
+                <li class="tag tag-allergen">Wheat, Dairy &amp; Egg</li>
+              </ul>
+              <p class="menu-meta">Out of the oven: 7:00 AM daily</p>
+            </div>
+          </article>
+
+          <article class="menu-card" data-category="viennoiserie">
+            <div class="menu-media">
+              <img
+                src="../images/pastry-kouign.jpg"
+                alt="Caramelized brown-butter kouign-amann pastry with crisp amber sugar crust"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <span class="menu-badge">Viennoiserie</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title-row">
+                <h3>Salted Brown-Butter Kouign-Amann</h3>
+                <span class="menu-price">$5.75</span>
+              </div>
+              <p class="menu-desc">
+                Breton laminated pastry folded with salted butter and organic cane sugar until blistered into golden toffee.
+              </p>
+              <p class="menu-ingredients">
+                <strong>Ingredients:</strong> Pastry flour, cultured salted butter, organic demerara sugar, toasted milk solids, Maldon sea salt.
+              </p>
+              <ul class="dietary-tags" aria-label="Dietary tags">
+                <li class="tag">Vegetarian</li>
+                <li class="tag tag-allergen">Wheat &amp; Dairy</li>
+              </ul>
+              <p class="menu-meta">Best enjoyed warm before noon</p>
+            </div>
+          </article>
+
+          <article class="menu-card" data-category="sourdough">
+            <div class="menu-media">
+              <img
+                src="../images/loaf-sourdough.jpg"
+                alt="Sliced crusty artisan country sourdough boule showing open crumb on oak board"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <span class="menu-badge">Sourdough &amp; Loaves</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title-row">
+                <h3>Country Heritage Levain</h3>
+                <span class="menu-price">$10.50</span>
+              </div>
+              <p class="menu-desc">
+                Our flagship 900g hearth boule with a deeply caramelized blistered crust, gentle tang, and custard-soft crumb.
+              </p>
+              <p class="menu-ingredients">
+                <strong>Ingredients:</strong> Stone-milled red fife wheat, high-extraction bread flour, whole dark rye, filtered water, wild starter, sea salt.
+              </p>
+              <ul class="dietary-tags" aria-label="Dietary tags">
+                <li class="tag tag-accent">Vegan</li>
+                <li class="tag">Naturally Leavened</li>
+                <li class="tag tag-allergen">Wheat</li>
+              </ul>
+              <p class="menu-meta">Available from 11:00 AM · Whole or half loaf</p>
+            </div>
+          </article>
+
+          <article class="menu-card" data-category="sourdough">
+            <div class="menu-media">
+              <img
+                src="../images/loaf-hearth-boule.jpg"
+                alt="Sliced dark rye and spelt sourdough boule on an oak board"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <span class="menu-badge">Sourdough &amp; Loaves</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title-row">
+                <h3>Dark Rye &amp; Spelt Hearth Boule</h3>
+                <span class="menu-price">$11.25</span>
+              </div>
+              <p class="menu-desc">
+                Nutty whole spelt and dark rye loaf scored deep and baked on hot hearth stones for a crisp, smoky crust.
+              </p>
+              <p class="menu-ingredients">
+                <strong>Ingredients:</strong> Stone-milled spelt flour, whole dark rye, unbleached bread flour, wild levain, sea salt.
+              </p>
+              <ul class="dietary-tags" aria-label="Dietary tags">
+                <li class="tag tag-accent">Vegan</li>
+                <li class="tag">Naturally Leavened</li>
+                <li class="tag tag-allergen">Wheat &amp; Rye</li>
+              </ul>
+              <p class="menu-meta">Baked Tue, Thu, Sat &amp; Sun at 11:00 AM</p>
+            </div>
+          </article>
+
+          <article class="menu-card" data-category="cakes-tarts">
+            <div class="menu-media">
+              <img
+                src="../images/pastry-galette.jpg"
+                alt="Honey fig and roasted almond frangipane galette on crumpled parchment"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <span class="menu-badge">Cakes &amp; Tarts</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title-row">
+                <h3>Honey Fig &amp; Almond Galette</h3>
+                <span class="menu-price">$6.25</span>
+              </div>
+              <p class="menu-desc">
+                Free-form spelt butter crust layered with toasted almond frangipane, black mission figs, thyme, and honey.
+              </p>
+              <p class="menu-ingredients">
+                <strong>Ingredients:</strong> Whole spelt flour, cultured butter, blanched almond meal, black mission figs, wildflower honey, fresh lemon thyme.
+              </p>
+              <ul class="dietary-tags" aria-label="Dietary tags">
+                <li class="tag">Vegetarian</li>
+                <li class="tag tag-allergen">Tree Nuts, Dairy &amp; Wheat</li>
+              </ul>
+              <p class="menu-meta">Sliced single tarts or whole 9&quot; tart ($42)</p>
+            </div>
+          </article>
+
+          <article class="menu-card" data-category="seasonal">
+            <div class="menu-media">
+              <img
+                src="../images/pastry-chocolat-brioche.jpg"
+                alt="Dark chocolate pain au chocolat and golden pull-apart brioche loaf on linen"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <span class="menu-badge">Seasonal Specials</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title-row">
+                <h3>Single-Origin Pain au Chocolat</h3>
+                <span class="menu-price">$5.95</span>
+              </div>
+              <p class="menu-desc">
+                Twenty-seven flaky butter layers wrapped around twin batons of 70% dark chocolate with a pinch of espresso sea salt.
+              </p>
+              <p class="menu-ingredients">
+                <strong>Ingredients:</strong> Laminated croissant dough, 70% single-origin dark chocolate, 84% cultured butter, whole milk, flaky sea salt.
+              </p>
+              <ul class="dietary-tags" aria-label="Dietary tags">
+                <li class="tag">Vegetarian</li>
+                <li class="tag">Autumn Batch</li>
+                <li class="tag tag-allergen">Wheat &amp; Dairy</li>
+              </ul>
+              <p class="menu-meta">Limited morning batch · 7:30 AM</p>
+            </div>
+          </article>
+
+          <article class="menu-card" data-category="seasonal">
+            <div class="menu-media">
+              <img
+                src="../images/hero-bakery.jpg"
+                alt="Artisan croissants, brioche, and country sourdough loaves arranged on an oak counter"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <span class="menu-badge">Seasonal Specials</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title-row">
+                <h3>Baker’s Morning Tasting Box</h3>
+                <span class="menu-price">$32.00</span>
+              </div>
+              <p class="menu-desc">
+                A curated six-piece morning box featuring two butter croissants, two cardamom knots, one kouign-amann, and a fig galette.
+              </p>
+              <p class="menu-ingredients">
+                <strong>Ingredients:</strong> Assorted laminated viennoiserie, cultured butter, stone-milled grains, cardamom, roasted almonds, seasonal figs.
+              </p>
+              <ul class="dietary-tags" aria-label="Dietary tags">
+                <li class="tag">Vegetarian</li>
+                <li class="tag">Sharing Box (6 pc)</li>
+                <li class="tag tag-allergen">Wheat, Dairy, Egg &amp; Nuts</li>
+              </ul>
+              <p class="menu-meta">Available daily from 7:30 AM</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="custom-orders" id="custom-orders" aria-labelledby="custom-orders-heading">
+      <div class="container">
+        <div class="callout-card">
+          <div class="callout-copy">
+            <p class="section-kicker">Pre-Orders &amp; Gatherings</p>
+            <h2 id="custom-orders-heading">Custom Cakes &amp; Morning Pastry Boxes</h2>
+            <p>
+              Hosting a weekend brunch, studio meeting, or milestone dinner? Reserve whole seasonal
+              tarts, celebration tortes, or assorted pastry boxes of 12, 24, or 48 pieces baked to order
+              for morning pickup.
+            </p>
+            <ul class="callout-details">
+              <li><strong>Lead Time:</strong> 48 hours for pastry boxes · 5 days for celebration cakes</li>
+              <li><strong>Dietary Options:</strong> Whole 9&quot; fruit galettes &amp; vegan heritage loaves available</li>
+              <li><strong>Morning Boxes:</strong> Starting at $58 for a baker’s dozen</li>
+            </ul>
+          </div>
+
+          <div class="callout-actions">
+            <a
+              class="btn btn-primary"
+              href="mailto:hello@butterandcrumb.com?subject=Custom%20Order%20Inquiry"
+            >
+              Request a Custom Order
+            </a>
+            <a class="btn btn-secondary" href="about.html">Meet Our Bakers</a>
+            <p class="callout-phone">Or call the counter Tue–Sun: <a href="tel:+15035550148">(503) 555-0148</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand brand-footer" href="../index.html">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="16.5" stroke="currentColor" stroke-width="1.5" />
+              <path
+                d="M9.5 22.5C11.5 16 14.5 13 18 13C21.5 13 24.5 16 26.5 22.5C23.5 24 20.8 24.6 18 24.6C15.2 24.6 12.5 24 9.5 22.5Z"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linejoin="round"
+              />
+              <path d="M14.5 14.2L15.8 18.8M18 13.2V18.5M21.5 14.2L20.2 18.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="brand-text">
+            <span class="brand-name">Butter &amp; Crumb</span>
+            <span class="brand-tagline">Artisan Bakery</span>
+          </span>
+        </a>
+        <p class="footer-about">
+          Small-batch viennoiserie, seasonal fruit galettes, and naturally leavened loaves baked warm
+          every morning in the heart of Hearthstone District.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h3>Explore</h3>
+        <ul>
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="menu.html">Daily Menu</a></li>
+          <li><a href="about.html">About &amp; Craft</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Hours</h3>
+        <ul class="footer-hours">
+          <li><span>Tue – Fri</span><span>7:00 AM – 3:00 PM</span></li>
+          <li><span>Sat – Sun</span><span>7:30 AM – 4:00 PM</span></li>
+          <li><span>Monday</span><span>Resting the Starter</span></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Visit Us</h3>
+        <address class="footer-address">
+          418 Hearthstone Lane<br />
+          Portland, OR 97209<br />
+          <a href="mailto:hello@butterandcrumb.com">hello@butterandcrumb.com</a><br />
+          <a href="tel:+15035550148">(503) 555-0148</a>
+        </address>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>&copy; 2026 Butter and Crumb Bakery. Baked fresh daily.</p>
+        <p class="footer-note">Walk-ins welcome · Pre-orders via our daily menu</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const toggle = document.querySelector(".nav-toggle");
+      const nav = document.querySelector("#primary-navigation");
+      if (toggle && nav) {
+        toggle.addEventListener("click", function () {
+          const expanded = toggle.getAttribute("aria-expanded") === "true";
+          toggle.setAttribute("aria-expanded", String(!expanded));
+          nav.classList.toggle("is-open", !expanded);
+        });
+
+        nav.querySelectorAll("a").forEach(function (link) {
+          link.addEventListener("click", function () {
+            toggle.setAttribute("aria-expanded", "false");
+            nav.classList.remove("is-open");
+          });
+        });
+      }
+
+      const tabs = document.querySelectorAll(".filter-tab");
+      const cards = document.querySelectorAll(".menu-card");
+      const countEl = document.querySelector("#menu-count");
+      if (!tabs.length || !cards.length) return;
+
+      function applyFilter(category) {
+        let visibleCount = 0;
+        cards.forEach(function (card) {
+          const matches = category === "all" || card.dataset.category === category;
+          card.hidden = !matches;
+          if (matches) visibleCount += 1;
+        });
+
+        tabs.forEach(function (tab) {
+          const active = tab.dataset.filter === category;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", String(active));
+        });
+
+        if (countEl) {
+          countEl.textContent = "Showing " + visibleCount + (visibleCount === 1 ? " bake" : " bakes");
+        }
+      }
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          applyFilter(tab.dataset.filter);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
