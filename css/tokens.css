@@ -1,0 +1,47 @@
+/* ==========================================================================
+   Crumbery Design System Tokens
+   ========================================================================== */
+
+:root {
+  /* Core Brand Palette */
+  --choco: #3B2314;
+  --choco-stripe: #4A2C1A;
+  --choco-muted: #6A4936;
+  --cream: #FCEBD8;
+  --tan: #F3D9BF;
+  --tan-hover: #ECD0B2;
+  --terracotta: #C9503A;
+  --terracotta-stripe: #BF4834;
+  --butter: #F8E08E;
+  --butter-deep: #EFCF69;
+  --plum: #5B2A4A;
+  --plum-stripe: #683355;
+
+  /* Semantic Aliases */
+  --bg-page: var(--cream);
+  --bg-card: var(--tan);
+  --text-primary: var(--choco);
+  --text-inverse: var(--cream);
+  --accent-primary: var(--terracotta);
+  --accent-highlight: var(--butter);
+  --border-subtle: rgba(59, 35, 20, 0.14);
+  --focus-ring: 0 0 0 3px var(--butter), 0 0 0 5px var(--choco);
+
+  /* Typography */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-logo: 'Bagel Fat One', cursive;
+  --font-sticker: 'Gluten', cursive;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+  /* Radii */
+  --radius-card: 20px;
+  --radius-section: 32px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-soft: 0 10px 24px rgba(59, 35, 20, 0.08);
+  --shadow-lift: 0 14px 28px rgba(59, 35, 20, 0.16);
+
+  /* Transitions */
+  --ease-snappy: cubic-bezier(0.22, 1, 0.36, 1);
+}
