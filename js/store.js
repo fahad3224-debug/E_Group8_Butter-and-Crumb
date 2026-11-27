@@ -172,3 +172,15 @@ export function deleteSavedDesign(id) {
   writeJSON(KEYS.DESIGNS, list);
   return list;
 }
+
+/* ---------- Cake Studio Draft (survives reloads) ---------- */
+
+const DRAFT_KEY = 'crumbery_cake_draft';
+
+export function getCakeDraft() {
+  return readJSON(DRAFT_KEY, null);
+}
+
+export function saveCakeDraft(state) {
+  writeJSON(DRAFT_KEY, state);
+}

@@ -101,42 +101,73 @@ export const REWARDS = {
   ],
 };
 
-export const CAKE_PRICING = {
-  sizes: {
-    '6': { label: '6" (Serves 6–8)', basePrice: 2800, radiusScale: 0.85 },
-    '8': { label: '8" (Serves 10–14)', basePrice: 4200, radiusScale: 1.0 },
-    '10': { label: '10" (Serves 18–24)', basePrice: 6000, radiusScale: 1.2 },
-  },
-  tiers: {
-    1: { label: '1 Tier', multiplier: 1.0, surcharge: 0 },
-    2: { label: '2 Tiers', multiplier: 1.55, surcharge: 1800 },
-    3: { label: '3 Tiers', multiplier: 2.15, surcharge: 3800 },
-  },
-  shapes: {
-    round: { label: 'Round', surcharge: 0 },
-    square: { label: 'Square', surcharge: 300 },
-    heart: { label: 'Heart', surcharge: 550 },
-  },
-  fillings: {
-    'vanilla-bean': { label: 'Vanilla Bean', surcharge: 0 },
-    'strawberry-jam': { label: 'Strawberry Compote', surcharge: 450 },
-    'salted-caramel': { label: 'Salted Caramel', surcharge: 550 },
-    'pistachio-praline': { label: 'Pistachio Praline', surcharge: 750 },
-    'dark-ganache': { label: 'Dark Chocolate Ganache', surcharge: 650 },
-  },
-  finishes: {
-    smooth: { label: 'Smooth Buttercream', surcharge: 0 },
-    'semi-naked': { label: 'Semi-Naked', surcharge: 200 },
-    rustic: { label: 'Rustic Swirl', surcharge: 300 },
-    drip: { label: 'Glossy Ganache Drip', surcharge: 750 },
-    fondant: { label: 'Velvet Fondant', surcharge: 950 },
-  },
-  toppings: {
-    strawberries: { label: 'Fresh Strawberries', price: 650 },
-    macarons: { label: 'French Macarons', price: 850 },
-    'gold-leaf': { label: '24k Edible Gold Leaf', price: 1100 },
-    sprinkles: { label: 'Artisan Sprinkles', price: 350 },
-    candles: { label: 'Beeswax Candles', price: 250 },
-  },
-  plaquePrice: 300,
+/**
+ * Cake Studio options. Every option the customer can pick lives here,
+ * with its price (PKR) and the colours the 3D cake uses to draw it.
+ * `r` is the radius of the 3D model in CSS pixels.
+ */
+export const CAKE = {
+  shapes: [
+    { id: 'round', label: 'Round', price: 0 },
+    { id: 'square', label: 'Square', price: 300 },
+  ],
+  sizes: [
+    { id: '6', label: '1 kg', sub: '6″ · serves 6–8', price: 2800, r: 92 },
+    { id: '8', label: '2 kg', sub: '8″ · serves 10–14', price: 4200, r: 112 },
+    { id: '10', label: '3 kg', sub: '10″ · serves 18–24', price: 6000, r: 132 },
+  ],
+  layers: [2, 3, 4],
+  extraLayerRate: 0.18, // each layer above 2 adds 18% of the base price
+  sponges: [
+    { id: 'vanilla', label: 'Vanilla', price: 0, color: '#F1DDAE' },
+    { id: 'chocolate', label: 'Chocolate', price: 300, color: '#5A3A2A' },
+    { id: 'red-velvet', label: 'Red velvet', price: 450, color: '#9E2F35' },
+    { id: 'coffee', label: 'Coffee', price: 350, color: '#A8794F' },
+    { id: 'pistachio', label: 'Pistachio', price: 700, color: '#B9C48A' },
+    { id: 'biscoff', label: 'Lotus Biscoff', price: 500, color: '#C98F55' },
+  ],
+  fillings: [
+    { id: 'vanilla-cream', label: 'Vanilla cream', price: 0, color: '#FBF3E2' },
+    { id: 'raspberry-jam', label: 'Raspberry jam', price: 450, color: '#9C2338' },
+    { id: 'ganache', label: 'Chocolate ganache', price: 650, color: '#3E261B' },
+    { id: 'salted-caramel', label: 'Salted caramel', price: 550, color: '#C98B3E' },
+    { id: 'nutella', label: 'Nutella', price: 600, color: '#5C3A24' },
+    { id: 'biscoff-spread', label: 'Biscoff spread', price: 500, color: '#B57A41' },
+  ],
+  finishes: [
+    { id: 'buttercream', label: 'Buttercream', price: 0 },
+    { id: 'fondant', label: 'Fondant', price: 950 },
+    { id: 'semi-naked', label: 'Semi-naked', price: 200 },
+    { id: 'naked', label: 'Naked', price: 0 },
+    { id: 'drip', label: 'Chocolate drip', price: 750 },
+  ],
+  frostings: [
+    { label: 'Warm cream', color: '#FBEBD6' },
+    { label: 'Butter', color: '#F6DC86' },
+    { label: 'Blush', color: '#E8A598' },
+    { label: 'Pistachio', color: '#BFC99A' },
+    { label: 'Terracotta', color: '#C9503A' },
+    { label: 'Plum', color: '#5B2A4A' },
+    { label: 'Cocoa', color: '#6A4936' },
+  ],
+  toppings: [
+    { id: 'berries', label: 'Fresh berries', price: 650 },
+    { id: 'macarons', label: 'Macarons', price: 850 },
+    { id: 'shards', label: 'Chocolate shards', price: 450 },
+    { id: 'sprinkles', label: 'Sprinkles', price: 350 },
+    { id: 'gold-leaf', label: 'Gold leaf', price: 1100 },
+    { id: 'flowers', label: 'Sugar flowers', price: 900 },
+    { id: 'candles', label: 'Candles', price: 250 },
+    { id: 'piped-border', label: 'Piped border', price: 400 },
+  ],
+  messagePrice: 300,
+  messageMax: 24,
+  dietary: [
+    { id: 'eggless', label: 'Eggless', price: 400 },
+    { id: 'sugar-free', label: 'Sugar-free', price: 500 },
+    { id: 'nut-free', label: 'Nut-free', price: 0 },
+  ],
+  leadHours: { standard: 24, special: 48 }, // special = 4 layers or any dietary option
+  prepMinutes: 90, // assembly time used by the delivery estimator
+  roundTo: 50,
 };
