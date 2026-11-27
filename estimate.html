@@ -192,6 +192,11 @@
               <input id="scheduleTimeInput" type="time" class="form-control est-input" value="16:00">
             </div>
           </div>
+
+          <div class="est-time-notice mt-3" id="timeNotice" role="status" aria-live="polite" hidden>
+            <span data-notice-text></span>
+            <button type="button" class="pill-btn pill-btn--sm" data-use-earliest hidden>Use earliest time</button>
+          </div>
         </section>
 
         <div class="est-divider" aria-hidden="true"></div>
@@ -221,6 +226,7 @@
               <span class="eta-timeline__step-time text-terracotta" id="etaTotalRange">40–50 min</span>
             </div>
           </div>
+          <p class="est-arrival fw-bold mb-4" id="etaArrivalText" aria-live="polite"></p>
           <div class="d-flex flex-wrap gap-2">
             <button type="button" class="pill-btn" id="copyEstimateBtn">Copy estimate</button>
             <button type="button" class="pill-btn pill-btn--outline" id="clearEstimateBtn">Clear all</button>

@@ -566,36 +566,121 @@ function getDeliveryFee(distanceKm, subtotal, est, tier) {
   return DELIVERY.bands[DELIVERY.bands.length - 1].fee;
 }
 
-function isPeakHour(est) {
-  let hour = new Date().getHours();
-  if (est.timeMode === 'scheduled' && est.scheduleTime) {
-    hour = Number(est.scheduleTime.split(':')[0]);
-  }
+function isPeakHour(date) {
+  const hour = date.getHours();
   return DELIVERY.peakHours.some(([start, end]) => hour >= start && hour <= end);
+}
+
+/* ---------- Earliest delivery (opening hours, same-day cut-off, cake notice) ---------- */
+
+const MINUTE = 60 * 1000;
+const HOUR = 60 * MINUTE;
+
+/** Longest notice any custom cake in the estimate needs, in hours (0 if none). */
+function cakeLeadHours(est) {
+  return est.items.reduce((max, item) => {
+    if (!item.isCustomCake) return max;
+    // Cakes added before leadHours was stored carry it in their description
+    const fromMeta = Number((item.meta || '').match(/needs (\d+)h notice/)?.[1]);
+    return Math.max(max, item.leadHours || fromMeta || 24);
+  }, 0);
+}
+
+function openingOn(date, addDays = 0) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + addDays);
+  d.setHours(BAKERY.openHour, 0, 0, 0);
+  return d;
+}
+
+/** Move a start time into opening hours, leaving time to bake and deliver before closing. */
+function nextOpenStart(date, workMinutes) {
+  if (date.getHours() < BAKERY.openHour) return openingOn(date);
+  const latestStart = new Date(date);
+  latestStart.setHours(BAKERY.closeHour, 0, 0, 0);
+  latestStart.setTime(latestStart.getTime() - workMinutes * MINUTE);
+  return date > latestStart ? openingOn(date, 1) : date;
+}
+
+function getScheduledDate(est) {
+  if (est.timeMode !== 'scheduled' || !est.scheduleDate || !est.scheduleTime) return null;
+  const d = new Date(`${est.scheduleDate}T${est.scheduleTime}`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** "today, 4:30 PM" · "tomorrow, 9:40 AM" · "Sun 29 Nov, 9:40 AM" */
+function formatWhen(date, withTime = true) {
+  const today = new Date();
+  const days = Math.round((openingOn(date) - openingOn(today)) / (24 * HOUR));
+  const day = days === 0 ? 'today' : days === 1 ? 'tomorrow' : date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  return withTime ? `${day}, ${formatTime12h(date.getHours(), date.getMinutes())}` : day;
 }
 
 function computeEta(est, distanceKm) {
   const prepMinutes = est.items.length
     ? Math.max(...est.items.map((item) => item.prepMinutes || BAKERY.defaultPrepMinutes))
     : BAKERY.defaultPrepMinutes;
+  const pickup = est.fulfillmentMode === 'pickup';
+  const now = new Date();
+  const lead = cakeLeadHours(est);
 
-  if (est.fulfillmentMode === 'pickup') {
-    return {
-      prepText: `${prepMinutes} min`,
-      travelText: '0 min (Pickup)',
-      totalText: `${prepMinutes}–${prepMinutes + 5} min`,
-    };
+  // Earliest the bakery can start: now, or tomorrow morning after the same-day cut-off,
+  // pushed back by any custom cake's notice, then fitted into opening hours.
+  let start = now;
+  const cutoff = new Date(now);
+  cutoff.setHours(BAKERY.sameDayCutoffHour, 0, 0, 0);
+  if (now >= cutoff) start = openingOn(now, 1);
+  if (lead) start = new Date(Math.max(start.getTime(), now.getTime() + lead * HOUR));
+
+  const travelFor = (when) => {
+    if (pickup) return { min: 0, max: 5, peak: false };
+    const raw = (distanceKm / DELIVERY.avgCitySpeedKmh) * 60 + DELIVERY.baseDispatchMinutes;
+    const peak = isPeakHour(when);
+    const min = Math.max(10, Math.round(raw * (peak ? DELIVERY.peakMultiplier : 1)));
+    return { min, max: min + 8, peak };
+  };
+
+  start = nextOpenStart(start, prepMinutes + travelFor(start).max);
+  const travel = travelFor(start);
+  const earliestArrival = new Date(start.getTime() + (prepMinutes + travel.min) * MINUTE);
+
+  // A scheduled time is when the customer wants it delivered
+  const scheduled = getScheduledDate(est);
+  let notice = '';
+  let noticeIsError = false;
+  let arrival = earliestArrival;
+  let arrivalEnd = new Date(start.getTime() + (prepMinutes + travel.max) * MINUTE);
+
+  if (scheduled) {
+    const outsideHours =
+      scheduled.getHours() < BAKERY.openHour || scheduled.getHours() > BAKERY.closeHour || (scheduled.getHours() === BAKERY.closeHour && scheduled.getMinutes() > 0);
+    if (outsideHours) {
+      notice = `We deliver between ${formatTime12h(BAKERY.openHour)} and ${formatTime12h(BAKERY.closeHour)}. The earliest we can deliver is ${formatWhen(earliestArrival)}.`;
+      noticeIsError = true;
+    } else if (scheduled < earliestArrival) {
+      notice = lead
+        ? `Your custom cake needs ${lead} hours’ notice, so the earliest we can deliver is ${formatWhen(earliestArrival)}.`
+        : `That’s too soon. The earliest we can deliver is ${formatWhen(earliestArrival)}.`;
+      noticeIsError = true;
+    } else {
+      arrival = scheduled;
+      arrivalEnd = new Date(scheduled.getTime() + (travel.max - travel.min) * MINUTE);
+    }
+  } else if (lead) {
+    notice = `Your custom cake needs ${lead} hours’ notice, so the earliest ${pickup ? 'pickup' : 'delivery'} is ${formatWhen(earliestArrival)}.`;
   }
 
-  const rawTravel = (distanceKm / DELIVERY.avgCitySpeedKmh) * 60 + DELIVERY.baseDispatchMinutes;
-  const peakMult = isPeakHour(est) ? DELIVERY.peakMultiplier : 1.0;
-  const travelMin = Math.max(10, Math.round(rawTravel * peakMult));
-  const travelMax = travelMin + 8;
+  const sameDayAsap = !scheduled && start === now;
+  const windowText = `${formatTime12h(arrival.getHours(), arrival.getMinutes())} and ${formatTime12h(arrivalEnd.getHours(), arrivalEnd.getMinutes())}`;
 
   return {
-    prepText: `${prepMinutes} min`,
-    travelText: `${travelMin}–${travelMax} min${peakMult > 1 ? ' (peak)' : ''}`,
-    totalText: `${prepMinutes + travelMin}–${prepMinutes + travelMax} min`,
+    prepText: lead ? `${lead}h notice` : `${prepMinutes} min`,
+    travelText: pickup ? '0 min (Pickup)' : `${travel.min}–${travel.max} min${travel.peak ? ' (peak)' : ''}`,
+    totalText: sameDayAsap ? `${prepMinutes + travel.min}–${prepMinutes + travel.max} min` : formatWhen(arrival, false),
+    arrivalText: `${pickup ? 'Ready for pickup' : 'Arrives'} ${formatWhen(arrival, false)} between ${windowText}`,
+    notice,
+    noticeIsError,
+    earliestArrival,
   };
 }
 
@@ -668,6 +753,34 @@ function renderReceiptAndEta() {
   if (prepEl) prepEl.textContent = eta.prepText;
   if (travelEl) travelEl.textContent = eta.travelText;
   if (totalEtaEl) totalEtaEl.textContent = eta.totalText;
+
+  const arrivalEl = document.getElementById('etaArrivalText');
+  if (arrivalEl) arrivalEl.textContent = est.items.length ? eta.arrivalText : '';
+
+  // Notice about the earliest possible time (custom cake notice, too-early or out-of-hours schedule)
+  const noticeEl = document.getElementById('timeNotice');
+  if (noticeEl) {
+    noticeEl.hidden = !eta.notice;
+    noticeEl.classList.toggle('est-time-notice--error', eta.noticeIsError);
+    noticeEl.querySelector('[data-notice-text]').textContent = eta.notice;
+    const useBtn = noticeEl.querySelector('[data-use-earliest]');
+    useBtn.hidden = !eta.noticeIsError;
+    useBtn.onclick = () => useEarliestSlot(eta.earliestArrival);
+  }
+}
+
+/** Fill the schedule inputs with the earliest possible delivery time. */
+function useEarliestSlot(date) {
+  const d = new Date(date);
+  d.setMinutes(Math.ceil(d.getMinutes() / 5) * 5, 0, 0); // round up to the next 5 minutes
+  const pad = (n) => String(n).padStart(2, '0');
+  const est = getEstimate();
+  est.timeMode = 'scheduled';
+  est.scheduleDate = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  est.scheduleTime = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  saveEstimate(est);
+  hydrateFormFromState();
+  renderReceiptAndEta();
 }
 
 /* ---------- Countdown & Copy ---------- */
@@ -698,11 +811,12 @@ async function handleCopyEstimate() {
   const totalText = document.getElementById('estTotal')?.textContent || 'Rs 0';
   const etaText = document.getElementById('etaTotalRange')?.textContent || '';
 
+  const arrivalText = document.getElementById('etaArrivalText')?.textContent || '';
   const lines = [
     'Crumbery Bakery — Islamabad Estimate',
     ...est.items.map((i) => `• ${i.qty}x ${i.name}: ${formatPKR(i.price * i.qty)}`),
     `Fulfillment: ${est.fulfillmentMode === 'pickup' ? 'F-7 Markaz Pickup' : 'Delivery'}`,
-    `ETA: ${etaText}`,
+    `ETA: ${arrivalText || etaText}`,
     `Estimated Total: ${totalText}`,
   ];
 
