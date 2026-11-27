@@ -4,7 +4,7 @@ A 3-page website for **Crumbery**, a homemade bakery in **F-7 Markaz, Islamabad,
 
 ## Pages
 1. **Cake Studio** (`index.html`) — Interactive 3D cake customiser built with pure CSS 3D transforms.
-2. **Sweet Rewards** (`rewards.html`) — Member sign-in, points balance, membership tiers, and reward redemptions.
+2. **Sweet Rewards** (`rewards.html`) — Points balance, tier progress, membership tiers, reward redemptions, and points history (no sign-in needed).
 3. **Delivery & Bill Estimator** (`estimate.html`) — Menu browser, delivery/pickup selector, schedule & ETA calculator, and instant bill estimate.
 
 ## How to Run Locally
@@ -60,36 +60,21 @@ All product and marquee photography is served from local files in `assets/images
 |---|---|---|---|
 | Shared striped header, offcanvas menu, and footer | Responsive & Accessible | All pages | Member 1 |
 | Newsletter form with email validation | Forms & Input | All pages | Member 1 |
-| Signed-in member greeting and sign-out in header | State & Memory | All pages | Member 2 |
-| 11-step cake customiser rendered from config | Data & Display | index.html | Member 1 |
-| Pure CSS 3D cake viewer (drag, wheel, keyboard, explode, slice, layer select) | Interaction | index.html | Member 1 |
-| Customiser steps rendered once; option clicks update active state only (no focus loss) | Interaction | index.html | Member 1 |
-| Custom colour picker stays open across multiple colour changes | Interaction | index.html | Member 1 |
-| Reset view also resets slice button text and aria-pressed state | Interaction | index.html | Member 1 |
-| "Surprise me" picks 0–3 unique toppings (no duplicate charges) | Logic & Calculation | index.html | Member 1 |
-| Inspector, estimator item name, and "Topped with" use readable labels (not raw ids) | Data & Display | index.html | Member 1 |
-| Notes textarea text safely escaped before DOM insertion | Security | index.html | Member 1 |
-| Layer-separation slider uses terracotta accent colour; filling colour dot visible on selected chip | UI | index.html | Member 1 |
-| Live cake pricing, breakdown, lead time, and Sweet Points preview | Logic & Calculation | index.html | Member 1 |
-| Cake message input with 24-character limit and counter | Forms & Input | index.html | Member 1 |
-| Cake draft persistence and saved designs with canvas thumbnails | State & Memory | index.html | Member 1 |
-| Custom cake passed to Delivery & Bill Estimator | State & Memory | index.html | Member 1 |
-| Sign-in and Create Account with live validation (Bootstrap is-invalid/is-valid borders) and password strength meter | Forms & Input | rewards.html | Member 2 |
-| Password strength scoring and SHA-256 hashing | Logic & Calculation | rewards.html | Member 2 |
-| Tier driven by lifetime points (never decreases on redemption); balance is separate spendable pool | Logic & Calculation | rewards.html | Member 2 |
-| Dashboard shows both spendable balance and lifetime points | Data & Display | rewards.html | Member 2 |
-| Tiers, redemptions, and points history rendered from config | Data & Display | rewards.html | Member 2 |
-| Tier progress bar and points count-up animation | Logic & Calculation | rewards.html | Member 2 |
-| Reward redemption modal and history filter chips | Interaction | rewards.html | Member 2 |
-| Ways to Earn section (4 icon cards: spend, design, birthday, refer) | Data & Display | rewards.html | Member 2 |
-| Rewards FAQ accordion (4 questions about earning, demotion, expiry, stacking) | Data & Display | rewards.html | Member 2 |
-| Member session, points, and history persisted across pages | State & Memory | rewards.html | Member 2 |
-| Menu rendered from data with SVG category icon badges, search, sort, and details modal | Data & Display | estimate.html | Member 3 |
-| All product images served from local `assets/images/` files | UI | estimate.html | Member 3 |
-| Recently viewed items and estimate state restored after reload | State & Memory | estimate.html | Member 3 |
-| Delivery/pickup toggle, geolocation, sector select, and street validation | Forms & Input | estimate.html | Member 3 |
-| Earliest valid start time respects opening hours, 8 PM same-day cut-off, and custom-cake lead time | Logic & Calculation | estimate.html | Member 3 |
-| ETA shows date when delivery is not today; custom-cake slot rounded to next slot | Logic & Calculation | estimate.html | Member 3 |
-| Distance-based delivery fee, member tier discount, tax, and peak-hour ETA | Logic & Calculation | estimate.html | Member 3 |
-| Same-day cut-off countdown timer and custom-cake earliest date | Interaction | estimate.html | Member 3 |
+| Cake Studio layout: 3D stage with numbered build steps | Responsive & Accessible | index.html | Member 1 |
+| Cake options (shape, size, layers, sponge, filling, finish, colour, toppings, dietary) rendered from config | Data & Display | index.html | Member 1 |
+| Pure CSS 3D cake: drag to turn, open layers, tap a layer to change its sponge, cut a slice, keyboard controls | Interaction | index.html | Member 1 |
+| Live cake price breakdown, lead time, and Sweet Points preview at the member's tier rate | Logic & Calculation | index.html | Member 1 |
+| Cake message with 24-character limit and counter, plus notes | Forms & Input | index.html | Member 1 |
+| Cake draft and saved designs (with canvas thumbnails) kept between visits; custom cake sent to the estimator | State & Memory | index.html | Member 1 |
+| Points balance, lifetime points, tier badge, and count-up animation | Data & Display | rewards.html | Member 2 |
+| Tier cards, rewards catalogue, and points history rendered from config | Data & Display | rewards.html | Member 2 |
+| Tier based on lifetime points, so redeeming never lowers it; progress to next tier and points expiry | Logic & Calculation | rewards.html | Member 2 |
+| Redeem confirmation modal, history filters (All / Earned / Redeemed), and FAQ accordion | Interaction | rewards.html | Member 2 |
+| Points balance, tier, and history kept between visits and shared with the estimator | State & Memory | rewards.html | Member 2 |
+| Estimator layout with numbered sections and scalloped receipt summary card | Responsive & Accessible | estimate.html | Member 3 |
+| Menu filtering, search, sorting, product details modal, and recently viewed items | Data & Display | estimate.html | Member 3 |
+| Delivery/pickup toggle, GPS or sector distance, address and schedule inputs | Forms & Input | estimate.html | Member 3 |
+| PKR bill with tier discount, distance-based delivery fee (free above the tier threshold), tax, peak-hour ETA range, and points earned | Logic & Calculation | estimate.html | Member 3 |
+| Same-day cut-off countdown timer | Interaction | estimate.html | Member 3 |
+| Estimate items and recently viewed items restored after reload | State & Memory | estimate.html | Member 3 |
 | Mobile-first layouts, keyboard controls, `aria-live` regions, reduced motion | Responsive & Accessible | All pages | Member 3 |
