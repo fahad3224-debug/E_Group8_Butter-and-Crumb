@@ -376,6 +376,7 @@ $('#addToEstimateBtn').addEventListener('click', () => {
     price: total,
     prepMinutes: CAKE.prepMinutes,
     isCustomCake: true,
+    leadHours: leadHours(state),
     meta: `${describe(state)} · needs ${leadHours(state)}h notice${state.notes.trim() ? ` · Note: ${state.notes.trim()}` : ''}`,
   });
   $('#afterAdd').classList.remove('d-none');

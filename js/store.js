@@ -132,6 +132,7 @@ export function addItemToEstimate(item, qty = 1) {
       qty,
       prepMinutes: item.prepMinutes || 25,
       isCustomCake: Boolean(item.isCustomCake),
+      leadHours: item.leadHours || 0,
       meta: item.meta || '',
     });
   }
