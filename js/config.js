@@ -56,49 +56,52 @@ export const DELIVERY = {
 
 export const TAX_RATE = 0.05;
 
+/**
+ * Sweet Rewards. Tiers are based on LIFETIME points earned, so redeeming
+ * points never lowers a member's tier. Points earned per Rs 100 depends on tier.
+ */
 export const REWARDS = {
-  pointsPerRupee: 0.05, // 5 Sweet Points per Rs 100
-  signupBonus: 150,
   tiers: [
     {
       id: 'crumb',
       name: 'Crumb',
+      label: 'Entry',
       minPoints: 0,
-      discountRate: 0,
-      freeDelivery: false,
-      perkLabel: 'Earn 5 pts / Rs 100',
-    },
-    {
-      id: 'butter',
-      name: 'Butter',
-      minPoints: 500,
       discountRate: 0.05,
+      earnPer100: 1,
       freeDelivery: false,
-      perkLabel: '5% off every order',
+      freeDeliveryOver: null,
+      perks: ['Birthday treat every year', 'Earn 1 pt / Rs 100 spent'],
     },
     {
-      id: 'ganache',
-      name: 'Ganache',
-      minPoints: 1500,
+      id: 'loaf',
+      name: 'Loaf',
+      label: 'Regular',
+      minPoints: 500,
       discountRate: 0.1,
-      freeDelivery: true,
-      perkLabel: '10% off + free delivery',
+      earnPer100: 1.25,
+      freeDelivery: false,
+      freeDeliveryOver: 3000,
+      perks: ['Free delivery over Rs 3,000', 'Earn 1.25 pts / Rs 100 spent'],
     },
     {
-      id: 'goldleaf',
-      name: 'Gold Leaf',
-      minPoints: 3500,
-      discountRate: 0.15,
+      id: 'crust',
+      name: 'Crust',
+      label: 'Elite',
+      minPoints: 2000,
+      discountRate: 0.2,
+      earnPer100: 1.5,
       freeDelivery: true,
-      perkLabel: '15% off + free delivery + priority bake',
+      freeDeliveryOver: 0,
+      perks: ['Always free Islamabad delivery', 'Priority bake slot + 1 free topping', 'Earn 1.5 pts / Rs 100 spent'],
     },
   ],
   redemptions: [
-    { id: 'free-croissant', title: 'Butter Croissant', cost: 250, note: 'Fresh laminated pastry' },
-    { id: 'free-brownie', title: 'Fudge Brownie Box (2 pc)', cost: 400, note: '70% dark chocolate' },
-    { id: 'free-delivery-pass', title: 'Free Delivery Voucher', cost: 300, note: 'Valid across Islamabad' },
-    { id: 'off-1000-cake', title: 'Rs 1,000 Off Custom Cake', cost: 900, note: 'Applies in Cake Studio' },
+    { id: 'free-croissant', title: 'Free Butter Croissant', category: 'Pastry Reward', cost: 150, image: 'assets/images/croissant.jpg' },
+    { id: 'free-delivery', title: 'Free Islamabad Delivery', category: 'Delivery Perk', cost: 200, image: 'assets/images/brownie.jpg' },
+    { id: 'free-cake', title: 'Free 1 kg Custom Cake', category: 'Cake Reward', cost: 2500, image: 'assets/images/hero-cake.jpg' },
   ],
+  pointsExpireMonths: 12,
 };
 
 /**

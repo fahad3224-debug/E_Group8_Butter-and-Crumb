@@ -4,9 +4,9 @@
  * price, lead time and points in sync, and handles saving / adding to the estimate.
  */
 
-import { CAKE, REWARDS } from './config.js';
+import { CAKE } from './config.js';
 import { formatPKR } from './format.js';
-import { addItemToEstimate, getCakeDraft, saveCakeDraft, getSavedDesigns, saveCakeDesign, deleteSavedDesign } from './store.js';
+import { addItemToEstimate, getCakeDraft, saveCakeDraft, getSavedDesigns, saveCakeDesign, deleteSavedDesign, pointsFor } from './store.js';
 import { createCake3D } from './cake/cake3d.js';
 import { pick, cakePrice, leadHours, caption, describe, frostingName, sameSponge } from './cake/pricing.js';
 
@@ -148,7 +148,7 @@ function renderSummary() {
   const { total, lines } = cakePrice(state);
   $('#cakePrice').textContent = formatPKR(total);
   $('#cakeLead').textContent = `Needs ${leadHours(state)} hours’ notice`;
-  $('#cakePoints').textContent = `Earn +${Math.floor(total * REWARDS.pointsPerRupee)} Sweet Points`;
+  $('#cakePoints').textContent = `Earn +${pointsFor(total)} Sweet Points`;
   $('#priceLines').innerHTML = lines.map(([label, amount]) => `<li><span>${esc(label)}</span><span>${formatPKR(amount)}</span></li>`).join('');
 }
 

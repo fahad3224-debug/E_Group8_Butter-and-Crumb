@@ -1,14 +1,13 @@
 /**
  * LocalStorage persistence for Crumbery Bakery:
- * member sessions, rewards ledger, estimator cart/steps,
+ * the Sweet Rewards member, estimator cart/steps,
  * recently viewed items, and saved custom cake designs.
  */
 
 import { REWARDS } from './config.js';
 
 const KEYS = {
-  SESSION: 'crumbery_session',
-  MEMBERS: 'crumbery_members',
+  MEMBER: 'crumbery_member',
   ESTIMATE: 'crumbery_estimate',
   RECENT: 'crumbery_recent',
   DESIGNS: 'crumbery_designs',
@@ -31,36 +30,46 @@ function writeJSON(key, value) {
   }
 }
 
-/* ---------- Auth & Rewards ---------- */
+/* ---------- Sweet Rewards member ---------- */
 
-export function getSession() {
-  return readJSON(KEYS.SESSION, null);
+const DAY = 24 * 60 * 60 * 1000;
+
+// Starting profile so the dashboard has real history to show (680 lifetime points).
+function seedMember() {
+  const ago = (days) => new Date(Date.now() - days * DAY).toISOString();
+  const history = [
+    { date: ago(3), label: 'Sourdough & pastries order', points: 120 },
+    { date: ago(16), label: 'Custom 2 kg cake (Cake Studio)', points: 210 },
+    { date: ago(35), label: 'Referred a friend', points: 150 },
+    { date: ago(62), label: 'Birthday bonus', points: 200 },
+  ];
+  return { name: 'Sweet Rewards Member', balance: 680, lifetime: 680, history };
 }
 
-export function setSession(session) {
-  if (session) {
-    writeJSON(KEYS.SESSION, session);
-  } else {
-    localStorage.removeItem(KEYS.SESSION);
-  }
-  window.dispatchEvent(new CustomEvent('crumbery:auth-changed', { detail: session }));
+export function getMember() {
+  const member = readJSON(KEYS.MEMBER, null);
+  if (member && Array.isArray(member.history)) return member;
+  const fresh = seedMember();
+  writeJSON(KEYS.MEMBER, fresh);
+  return fresh;
 }
 
-export function getMembersMap() {
-  return readJSON(KEYS.MEMBERS, {});
+export function saveMember(member) {
+  writeJSON(KEYS.MEMBER, member);
+  window.dispatchEvent(new CustomEvent('crumbery:member-changed', { detail: member }));
 }
 
-export function saveMembersMap(map) {
-  writeJSON(KEYS.MEMBERS, map);
+/** Spend points on a reward. Returns the updated member, or null if there aren't enough points. */
+export function redeemPoints(reward) {
+  const member = getMember();
+  if (member.balance < reward.cost) return null;
+  member.balance -= reward.cost;
+  member.history.unshift({ date: new Date().toISOString(), label: `Redeemed: ${reward.title}`, points: -reward.cost });
+  saveMember(member);
+  return member;
 }
 
-export function getActiveMember() {
-  const session = getSession();
-  if (!session?.email) return null;
-  const members = getMembersMap();
-  return members[session.email] || null;
-}
-
+/** Tier is based on lifetime points, so redeeming never lowers it. */
 export function getTierForPoints(points) {
   let active = REWARDS.tiers[0];
   for (const tier of REWARDS.tiers) {
@@ -70,9 +79,12 @@ export function getTierForPoints(points) {
 }
 
 export function getActiveTier() {
-  const member = getActiveMember();
-  if (!member) return REWARDS.tiers[0];
-  return getTierForPoints(member.points || 0);
+  return getTierForPoints(getMember().lifetime);
+}
+
+/** Sweet Points earned on an amount at the member's current tier. */
+export function pointsFor(amount) {
+  return Math.floor((Math.max(0, amount) / 100) * getActiveTier().earnPer100);
 }
 
 /* ---------- Estimator State ---------- */

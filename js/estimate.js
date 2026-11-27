@@ -4,7 +4,7 @@
  * 4-step validation, Haversine GPS/sector distance, peak-hour ETA, and PKR receipt.
  */
 
-import { BAKERY, DELIVERY, TAX_RATE, REWARDS } from './config.js';
+import { BAKERY, DELIVERY, TAX_RATE } from './config.js';
 import { formatPKR, formatCountdown, formatTime12h, haversineKm } from './format.js';
 import { MENU_ITEMS } from './data/menu.js';
 import {
@@ -16,7 +16,7 @@ import {
   getRecentViewed,
   pushRecentViewed,
   getActiveTier,
-  getActiveMember,
+  pointsFor,
 } from './store.js';
 
 let activeCategory = 'all';
@@ -253,8 +253,8 @@ function bindEvents() {
     renderReceiptAndEta();
   });
 
-  // Re-calculate if auth/tier changes
-  window.addEventListener('crumbery:auth-changed', renderReceiptAndEta);
+  // Re-calculate if the member's points or tier change
+  window.addEventListener('crumbery:member-changed', renderReceiptAndEta);
 }
 
 /* ---------- Menu & Modal Rendering ---------- */
@@ -551,9 +551,15 @@ function handleUseGps() {
 
 /* ---------- Calculations, ETA & Receipt ---------- */
 
+/** Crust delivers free on everything; Loaf delivers free above its threshold. */
+function qualifiesForFreeDelivery(tier, subtotal) {
+  if (tier.freeDelivery) return true;
+  return tier.freeDeliveryOver != null && subtotal >= tier.freeDeliveryOver;
+}
+
 function getDeliveryFee(distanceKm, subtotal, est, tier) {
   if (est.fulfillmentMode === 'pickup' || subtotal === 0) return 0;
-  if (tier.freeDelivery) return 0;
+  if (qualifiesForFreeDelivery(tier, subtotal)) return 0;
   for (const band of DELIVERY.bands) {
     if (distanceKm <= band.maxKm) return band.fee;
   }
@@ -629,14 +635,13 @@ function renderReceiptAndEta() {
   }
 
   const subtotal = est.items.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const member = getActiveMember();
   const tier = getActiveTier();
-  const discount = member ? Math.round(subtotal * tier.discountRate) : 0;
+  const discount = Math.round(subtotal * tier.discountRate);
   const distanceKm = getDeliveryDistanceKm(est);
   const deliveryFee = getDeliveryFee(distanceKm, subtotal, est, tier);
   const tax = Math.round((subtotal - discount) * TAX_RATE);
   const total = Math.max(0, subtotal - discount + deliveryFee + tax);
-  const pointsEarned = Math.floor((subtotal - discount) * REWARDS.pointsPerRupee);
+  const pointsEarned = pointsFor(subtotal - discount);
 
   if (subtotalEl) subtotalEl.textContent = formatPKR(subtotal);
   if (discountEl) {
@@ -646,7 +651,7 @@ function renderReceiptAndEta() {
   if (deliveryEl) {
     if (est.fulfillmentMode === 'pickup') {
       deliveryEl.textContent = 'Free (Pickup)';
-    } else if (tier.freeDelivery && subtotal > 0) {
+    } else if (subtotal > 0 && qualifiesForFreeDelivery(tier, subtotal)) {
       deliveryEl.textContent = `Free (${tier.name})`;
     } else {
       deliveryEl.textContent = formatPKR(deliveryFee);
