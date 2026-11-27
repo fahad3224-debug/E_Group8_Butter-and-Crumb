@@ -1,7 +1,6 @@
 /**
  * Shared header/footer injector for all Crumbery pages.
- * Marks the active navigation link, renders auth greeting if signed in,
- * and wires the footer newsletter form.
+ * Marks the active navigation link and wires the footer newsletter form.
  */
 
 const NAV_LEFT = [
@@ -18,32 +17,13 @@ function getCurrentPage() {
   return path && path.length > 0 ? path : 'index.html';
 }
 
-function getStoredMemberName() {
-  try {
-    const raw = localStorage.getItem('crumbery_session');
-    if (!raw) return null;
-    const session = JSON.parse(raw);
-    return session && session.name ? session.name : null;
-  } catch {
-    return null;
-  }
-}
-
 function renderHeader(targetEl) {
   const current = getCurrentPage();
-  const memberName = getStoredMemberName();
 
   const linkHtml = (item) => {
     const isActive = current === item.href;
     return `<li><a class="site-nav__link" href="${item.href}" ${isActive ? 'aria-current="page"' : ''}>${item.label}</a></li>`;
   };
-
-  const authHtml = memberName
-    ? `<span class="site-nav__auth">
-         <span>Hi, <strong>${escapeHtml(memberName)}</strong></span>
-         <button type="button" class="site-nav__signout" id="headerSignOutBtn">Sign out</button>
-       </span>`
-    : `<a class="site-nav__link" href="rewards.html">Sign in</a>`;
 
   targetEl.innerHTML = `
     <nav class="site-nav" aria-label="Main navigation">
@@ -65,7 +45,6 @@ function renderHeader(targetEl) {
         <ul class="site-nav__group site-nav__group--right">
           ${NAV_RIGHT.map(linkHtml).join('')}
         </ul>
-        <span id="headerAuthSlot">${authHtml}</span>
       </div>
 
       <div class="d-md-none text-end">
@@ -88,20 +67,9 @@ function renderHeader(targetEl) {
             </li>
           `).join('')}
         </ul>
-        <hr class="border-light opacity-25">
-        <div id="mobileAuthSlot">${authHtml}</div>
       </div>
     </div>
   `;
-
-  const signOutBtn = targetEl.querySelector('#headerSignOutBtn');
-  if (signOutBtn) {
-    signOutBtn.addEventListener('click', () => {
-      localStorage.removeItem('crumbery_session');
-      window.dispatchEvent(new CustomEvent('crumbery:auth-changed'));
-      renderHeader(targetEl);
-    });
-  }
 }
 
 function renderFooter(targetEl) {
@@ -173,24 +141,12 @@ function renderFooter(targetEl) {
   });
 }
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 export function initLayout() {
   const headerSlot = document.getElementById('siteHeaderSlot');
   const footerSlot = document.getElementById('siteFooterSlot');
 
   if (headerSlot) renderHeader(headerSlot);
   if (footerSlot) renderFooter(footerSlot);
-
-  window.addEventListener('crumbery:auth-changed', () => {
-    if (headerSlot) renderHeader(headerSlot);
-  });
 }
 
 initLayout();
