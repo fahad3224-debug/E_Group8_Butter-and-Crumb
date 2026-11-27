@@ -1,385 +1,436 @@
-/**
- * Cake Studio page (index.html).
- * Renders every option from CAKE in config.js, keeps the 3D cake, caption,
- * price, lead time and points in sync, and handles saving / adding to the estimate.
- */
-
-import { CAKE, REWARDS } from './config.js';
+import { CAKE } from './config.js';
 import { formatPKR } from './format.js';
-import { addItemToEstimate, getCakeDraft, saveCakeDraft, getSavedDesigns, saveCakeDesign, deleteSavedDesign } from './store.js';
+import {
+  getCakeDraft,
+  setCakeDraft,
+  getSavedCakes,
+  setSavedCakes,
+  getEstimateState,
+  setEstimateState
+} from './store.js';
+import { initLayout } from './layout.js';
 import { createCake3D } from './cake/cake3d.js';
-import { pick, cakePrice, leadHours, caption, describe, frostingName, sameSponge } from './cake/pricing.js';
+import { calculateCakePrice, getCakeCaption, getCakeDescription } from './cake/pricing.js';
 
-const $ = (sel) => document.querySelector(sel);
-const esc = (str) => String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+initLayout();
 
 const DEFAULT_STATE = {
   shape: 'round',
-  size: '8',
+  size: '2kg',
   layers: 3,
-  sponges: ['chocolate', 'vanilla', 'chocolate', 'vanilla'],
-  filling: 'raspberry-jam',
+  sponges: ['chocolate', 'chocolate', 'chocolate', 'chocolate'],
+  filling: 'ganache',
   finish: 'buttercream',
-  frosting: CAKE.frostings[0].color,
-  toppings: ['berries', 'piped-border'],
+  frosting: '#FBEBD6',
+  toppings: ['berries'],
   msg: '',
   dietary: [],
-  notes: '',
+  notes: ''
 };
 
-// Restore the last design the customer was working on (validated against config)
-function loadState() {
-  const saved = getCakeDraft();
-  const s = { ...structuredClone(DEFAULT_STATE), ...(saved || {}) };
-  const ok = (list, id) => list.some((o) => o.id === id);
-  if (!ok(CAKE.shapes, s.shape)) s.shape = DEFAULT_STATE.shape;
-  if (!ok(CAKE.sizes, s.size)) s.size = DEFAULT_STATE.size;
-  if (!CAKE.layers.includes(s.layers)) s.layers = DEFAULT_STATE.layers;
-  if (!Array.isArray(s.sponges) || s.sponges.length < 4) s.sponges = [...DEFAULT_STATE.sponges];
-  s.sponges = s.sponges.map((id) => (ok(CAKE.sponges, id) ? id : 'vanilla'));
-  if (!ok(CAKE.fillings, s.filling)) s.filling = DEFAULT_STATE.filling;
-  if (!ok(CAKE.finishes, s.finish)) s.finish = DEFAULT_STATE.finish;
-  if (!/^#[0-9a-f]{6}$/i.test(s.frosting)) s.frosting = DEFAULT_STATE.frosting;
-  s.toppings = (s.toppings || []).filter((id) => ok(CAKE.toppings, id));
-  s.dietary = (s.dietary || []).filter((id) => ok(CAKE.dietary, id));
-  s.msg = String(s.msg || '').slice(0, CAKE.messageMax);
-  s.notes = String(s.notes || '');
+function sanitizeState(raw) {
+  if (!raw || typeof raw !== 'object') return { ...DEFAULT_STATE };
+  const s = { ...DEFAULT_STATE };
+  if (CAKE.shapes.some((x) => x.id === raw.shape)) s.shape = raw.shape;
+  if (CAKE.sizes.some((x) => x.id === raw.size)) s.size = raw.size;
+  if (CAKE.layers.some((x) => x.count === raw.layers)) s.layers = raw.layers;
+  if (Array.isArray(raw.sponges) && raw.sponges.length === 4) {
+    s.sponges = raw.sponges.map((id) => (CAKE.sponges.some((x) => x.id === id) ? id : 'vanilla'));
+  }
+  if (CAKE.fillings.some((x) => x.id === raw.filling)) s.filling = raw.filling;
+  if (CAKE.finishes.some((x) => x.id === raw.finish)) s.finish = raw.finish;
+  if (typeof raw.frosting === 'string' && /^#[0-9a-f]{6}$/i.test(raw.frosting)) s.frosting = raw.frosting;
+  if (Array.isArray(raw.toppings)) s.toppings = raw.toppings.filter((id) => CAKE.toppings.some((x) => x.id === id));
+  if (typeof raw.msg === 'string') s.msg = raw.msg.slice(0, CAKE.messageMaxLen);
+  if (Array.isArray(raw.dietary)) s.dietary = raw.dietary.filter((id) => CAKE.dietary.some((x) => x.id === id));
+  if (typeof raw.notes === 'string') s.notes = raw.notes;
   return s;
 }
 
-const state = loadState();
-let selLayer = -1;
+let state = sanitizeState(getCakeDraft());
+let selectedLayer = -1;
 
-/* ---------- render option controls from config ---------- */
+const viewport = document.getElementById('cake-viewport');
+const cake3d = createCake3D(viewport);
 
-const priceTag = (p) => (p ? `<small class="chip__price">+${formatPKR(p)}</small>` : '');
+function renderSteps() {
+  const container = document.getElementById('studio-steps');
+  const activeSponges = state.sponges.slice(0, state.layers);
+  const allSameSponge = activeSponges.every((id) => id === activeSponges[0]);
+  const colorName = CAKE.frostingColors.find((c) => c.hex.toLowerCase() === state.frosting.toLowerCase())?.label || 'Custom';
 
-function chips(el, list, key, label, multi = false) {
-  $(el).innerHTML = list
-    .map((item) => {
-      const val = typeof item === 'object' ? item.id : item;
-      return `<button type="button" class="chip${multi ? ' chip--multi' : ''}" data-k="${key}" data-v="${val}" aria-pressed="false">${label(item)}</button>`;
-    })
-    .join('');
+  container.innerHTML = `
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">1</span><h2 class="font-display fs-4 mb-0">Shape</h2></div>
+      <div class="d-flex flex-wrap gap-2">
+        ${CAKE.shapes.map((sh) => `
+          <button type="button" class="chip ${state.shape === sh.id ? 'is-active' : ''}" data-shape="${sh.id}" aria-pressed="${state.shape === sh.id}">
+            <span>${sh.id === 'round' ? '●' : '■'}</span> ${sh.label} ${sh.price ? `<span class="chip__price">+${formatPKR(sh.price)}</span>` : ''}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">2</span><h2 class="font-display fs-4 mb-0">Size</h2></div>
+      <div class="d-flex flex-wrap gap-2">
+        ${CAKE.sizes.map((sz) => `
+          <button type="button" class="chip ${state.size === sz.id ? 'is-active' : ''}" data-size="${sz.id}" aria-pressed="${state.size === sz.id}">
+            ${sz.label} (${sz.detail}) <span class="chip__price">${formatPKR(sz.price)}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">3</span><h2 class="font-display fs-4 mb-0">Layers</h2></div>
+      <div class="d-flex flex-wrap gap-2">
+        ${CAKE.layers.map((ly) => `
+          <button type="button" class="chip ${state.layers === ly.count ? 'is-active' : ''}" data-layers="${ly.count}" aria-pressed="${state.layers === ly.count}">
+            ${ly.label} ${ly.multiplier ? `<span class="chip__price">+${Math.round(ly.multiplier * 100)}%</span>` : ''}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">4</span><h2 class="font-display fs-4 mb-0">Sponge flavour</h2></div>
+      <label for="sponge-all-select" class="visually-hidden">Sponge flavour for all layers</label>
+      <select id="sponge-all-select" class="form-select">
+        ${!allSameSponge ? '<option value="mixed" selected>Mixed (set per layer on the cake)</option>' : ''}
+        ${CAKE.sponges.map((sp) => `
+          <option value="${sp.id}" ${allSameSponge && activeSponges[0] === sp.id ? 'selected' : ''}>
+            ${sp.label} ${sp.price ? `(+${formatPKR(sp.price)})` : ''}
+          </option>
+        `).join('')}
+      </select>
+      <p class="small text-choco-muted mt-1 mb-0">Tip: tap any layer on the 3D cake to set its sponge individually.</p>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">5</span><h2 class="font-display fs-4 mb-0">Filling</h2></div>
+      <div class="d-flex flex-wrap gap-2">
+        ${CAKE.fillings.map((f) => `
+          <button type="button" class="chip ${state.filling === f.id ? 'is-active' : ''}" data-filling="${f.id}" aria-pressed="${state.filling === f.id}">
+            <span style="width:12px;height:12px;border-radius:50%;background:${f.color};border:1px solid rgba(0,0,0,0.2);"></span>
+            ${f.label} ${f.price ? `<span class="chip__price">+${formatPKR(f.price)}</span>` : ''}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">6</span><h2 class="font-display fs-4 mb-0">Finish</h2></div>
+      <div class="d-flex flex-wrap gap-2">
+        ${CAKE.finishes.map((fn) => `
+          <button type="button" class="chip ${state.finish === fn.id ? 'is-active' : ''}" data-finish="${fn.id}" aria-pressed="${state.finish === fn.id}">
+            ${fn.label} ${fn.price ? `<span class="chip__price">+${formatPKR(fn.price)}</span>` : ''}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">7</span><h2 class="font-display fs-4 mb-0">Frosting colour: <span class="text-terracotta">${colorName}</span></h2></div>
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        ${CAKE.frostingColors.map((c) => `
+          <button type="button" class="color-swatch ${state.frosting.toLowerCase() === c.hex.toLowerCase() ? 'is-active' : ''}"
+            style="background:${c.hex};" data-color="${c.hex}" aria-label="${c.label}" title="${c.label}"></button>
+        `).join('')}
+        <label class="small fw-bold ms-2 d-inline-flex align-items-center gap-1">
+          Custom <input type="color" id="frosting-custom-color" value="${state.frosting}" class="form-control form-control-color border-0 p-0" style="width:32px;height:32px;">
+        </label>
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">8</span><h2 class="font-display fs-4 mb-0">Toppings (pick any)</h2></div>
+      <div class="d-flex flex-wrap gap-2">
+        ${CAKE.toppings.map((t) => {
+          const active = state.toppings.includes(t.id);
+          return `
+            <button type="button" class="chip ${active ? 'is-active' : ''}" data-topping="${t.id}" aria-pressed="${active}">
+              ${active ? '✓ ' : ''}${t.label} <span class="chip__price">+${formatPKR(t.price)}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">9</span><h2 class="font-display fs-4 mb-0">Message on the cake</h2></div>
+      <label for="cake-msg-input" class="visually-hidden">Message on the cake</label>
+      <input id="cake-msg-input" type="text" class="form-control" maxlength="${CAKE.messageMaxLen}" value="${state.msg.replace(/"/g, '&quot;')}" placeholder="Happy Birthday!">
+      <div class="d-flex justify-content-between small text-choco-muted mt-1">
+        <span>+${formatPKR(CAKE.messagePrice)} when not empty</span>
+        <span id="msg-counter">${state.msg.length}/${CAKE.messageMaxLen}</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">10</span><h2 class="font-display fs-4 mb-0">Dietary (optional)</h2></div>
+      <div class="d-flex flex-wrap gap-2">
+        ${CAKE.dietary.map((d) => {
+          const active = state.dietary.includes(d.id);
+          return `
+            <button type="button" class="chip ${active ? 'is-active' : ''}" data-dietary="${d.id}" aria-pressed="${active}">
+              ${active ? '✓ ' : ''}${d.label} ${d.price ? `<span class="chip__price">+${formatPKR(d.price)}</span>` : ''}
+            </button>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="step-num-badge">11</span><h2 class="font-display fs-4 mb-0">Anything else?</h2></div>
+      <label for="cake-notes-input" class="visually-hidden">Additional notes</label>
+      <textarea id="cake-notes-input" class="form-control" rows="2" placeholder="Ribbon colour, allergies, or delivery note...">${state.notes}</textarea>
+    </div>
+  `;
+
+  container.querySelectorAll('[data-shape]').forEach((b) => b.addEventListener('click', () => { state.shape = b.dataset.shape; updateAll(); }));
+  container.querySelectorAll('[data-size]').forEach((b) => b.addEventListener('click', () => { state.size = b.dataset.size; updateAll(); }));
+  container.querySelectorAll('[data-layers]').forEach((b) => b.addEventListener('click', () => { state.layers = Number(b.dataset.layers); updateAll(); }));
+  container.querySelector('#sponge-all-select')?.addEventListener('change', (e) => {
+    if (e.target.value !== 'mixed') {
+      state.sponges = [e.target.value, e.target.value, e.target.value, e.target.value];
+      updateAll();
+    }
+  });
+  container.querySelectorAll('[data-filling]').forEach((b) => b.addEventListener('click', () => { state.filling = b.dataset.filling; updateAll(); }));
+  container.querySelectorAll('[data-finish]').forEach((b) => b.addEventListener('click', () => { state.finish = b.dataset.finish; updateAll(); }));
+  container.querySelectorAll('[data-color]').forEach((b) => b.addEventListener('click', () => { state.frosting = b.dataset.color; updateAll(); }));
+  container.querySelector('#frosting-custom-color')?.addEventListener('input', (e) => { state.frosting = e.target.value; updateAll(); });
+  container.querySelectorAll('[data-topping]').forEach((b) => b.addEventListener('click', () => {
+    const id = b.dataset.topping;
+    state.toppings = state.toppings.includes(id) ? state.toppings.filter((x) => x !== id) : [...state.toppings, id];
+    updateAll();
+  }));
+  container.querySelector('#cake-msg-input')?.addEventListener('input', (e) => {
+    state.msg = e.target.value.slice(0, CAKE.messageMaxLen);
+    document.getElementById('msg-counter').textContent = `${state.msg.length}/${CAKE.messageMaxLen}`;
+    setCakeDraft(state);
+    cake3d.build(state);
+    updatePricePanel();
+  });
+  container.querySelectorAll('[data-dietary]').forEach((b) => b.addEventListener('click', () => {
+    const id = b.dataset.dietary;
+    state.dietary = state.dietary.includes(id) ? state.dietary.filter((x) => x !== id) : [...state.dietary, id];
+    updateAll();
+  }));
+  container.querySelector('#cake-notes-input')?.addEventListener('input', (e) => {
+    state.notes = e.target.value;
+    setCakeDraft(state);
+  });
 }
 
-chips('#optShape', CAKE.shapes, 'shape', (x) => `<span class="chip__shape chip__shape--${x.id}" aria-hidden="true"></span>${x.label}${priceTag(x.price)}`);
-chips('#optSize', CAKE.sizes, 'size', (x) => `${x.label} <small class="chip__sub">${x.sub}</small>`);
-chips('#optLayers', CAKE.layers, 'layers', (x) => `${x} layers`);
-chips('#optFilling', CAKE.fillings, 'filling', (x) => `<span class="chip__dot" style="background:${x.color}" aria-hidden="true"></span>${x.label}${priceTag(x.price)}`);
-chips('#optFinish', CAKE.finishes, 'finish', (x) => `${x.label}${priceTag(x.price)}`);
-chips('#optTop', CAKE.toppings, 'toppings', (x) => `${x.label}${priceTag(x.price)}`, true);
-chips('#optDiet', CAKE.dietary, 'dietary', (x) => `${x.label}${priceTag(x.price)}`, true);
+function updatePricePanel() {
+  const { total, lines, leadHours, points } = calculateCakePrice(state);
+  document.getElementById('studio-total-price').textContent = formatPKR(total);
+  document.getElementById('studio-lead-points').textContent =
+    `Needs ${leadHours} hours’ notice · Earn +${points} Sweet Points`;
+  document.getElementById('studio-breakdown').innerHTML = lines
+    .map((l) => `<li class="d-flex justify-content-between"><span>${l.label}</span><span>${formatPKR(l.amount)}</span></li>`)
+    .join('');
+  document.getElementById('cake-caption').textContent = getCakeCaption(state);
+}
 
-$('#optSponge').innerHTML =
-  `<option value="mixed" disabled>Mixed (set per layer on the cake)</option>` +
-  CAKE.sponges.map((x) => `<option value="${x.id}">${x.label}${x.price ? ` (+${formatPKR(x.price)})` : ''}</option>`).join('');
-
-$('#optFrost').innerHTML = CAKE.frostings
-  .map((f) => `<button type="button" class="swatch-btn" data-k="frosting" data-v="${f.color}" style="background-color:${f.color}" title="${f.label}" aria-label="${f.label} frosting" aria-pressed="false"></button>`)
-  .join('');
-
-$('#optMsg').maxLength = CAKE.messageMax;
-$('#optMsg').value = state.msg;
-$('#optNotes').value = state.notes;
-
-/* ---------- the 3D cake ---------- */
-
-const stage = $('#cake3d');
-const cake = createCake3D(stage, {
-  onSelect: (i) => {
-    selLayer = i;
-    renderLayerInfo();
-  },
-  onExplode: (x) => {
-    $('#tExplode').value = Math.round(x * 100);
-    $('#tExplode').setAttribute('aria-valuetext', `${Math.round(x * 100)}% open`);
-    $('#tOpen').textContent = x > 0.5 ? 'Close layers' : 'Open layers';
-    $('#tOpen').setAttribute('aria-pressed', String(x > 0.5));
-  },
-});
-
-/* ---------- layer inspector ---------- */
-
-function renderLayerInfo() {
-  const el = $('#layerInfo');
-  const i = selLayer;
-  if (i < 0 || i >= state.layers) {
-    el.innerHTML = `<p class="layer-info__empty">Tap any layer on the cake to open it and choose its sponge.</p>`;
+function renderInspector() {
+  const el = document.getElementById('layer-inspector');
+  if (selectedLayer < 0 || selectedLayer >= state.layers) {
+    el.textContent = 'Tap any layer on the cake to open it and choose its sponge.';
     return;
   }
-  const pos = i === 0 ? 'Bottom' : i === state.layers - 1 ? 'Top' : 'Middle';
-  const sp = pick(CAKE.sponges, state.sponges[i]);
-  const edge = state.finish === 'naked' ? 'rgba(70,35,15,.4)' : state.frosting;
-  const topBand = i === state.layers - 1 ? `linear-gradient(${state.finish === 'drip' ? '#3B2314' : state.frosting} 0 6px, transparent 6px), ` : '';
-  const below = i < state.layers - 1 ? `${pick(CAKE.fillings, state.filling).label} spread on top` : `${pick(CAKE.finishes, state.finish).label} on top${state.msg ? `, “${esc(state.msg)}”` : ''}`;
+  const names = ['Bottom layer', 'Middle layer', 'Upper layer', 'Top layer'];
+  const layerName = selectedLayer === state.layers - 1 ? 'Top layer' : names[selectedLayer] || `Layer ${selectedLayer + 1}`;
+  const spongeId = state.sponges[selectedLayer];
+  const sponge = CAKE.sponges.find((s) => s.id === spongeId) || CAKE.sponges[0];
+  const filling = CAKE.fillings.find((f) => f.id === state.filling) || CAKE.fillings[0];
 
   el.innerHTML = `
-    <div class="layer-info__row">
-      <div class="xsec" title="Cross-section" style="background:${topBand}linear-gradient(90deg, ${edge} 0 5px, transparent 5px calc(100% - 5px), ${edge} 0), ${sp.color}"></div>
-      <div class="flex-grow-1">
-        <p class="layer-info__eyebrow">${pos} layer · ${i + 1} of ${state.layers}</p>
-        <label class="visually-hidden" for="layerSponge">Sponge for this layer</label>
-        <select class="form-select form-select-sm crumb-select" id="layerSponge">
-          ${CAKE.sponges.map((x) => `<option value="${x.id}" ${x.id === sp.id ? 'selected' : ''}>${x.label}${x.price ? ` (+${formatPKR(x.price)})` : ''}</option>`).join('')}
-        </select>
-        <small class="layer-info__note">${below}</small>
+    <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+      <div class="d-flex align-items-center gap-2">
+        <span style="width:18px;height:18px;border-radius:4px;background:${sponge.color};border:1px solid rgba(0,0,0,0.2);"></span>
+        <strong>${layerName} · ${selectedLayer + 1} of ${state.layers}</strong>
       </div>
-      <div class="layer-info__nav">
-        <button type="button" class="chip chip--icon" data-lnav="1" ${i === state.layers - 1 ? 'disabled' : ''} aria-label="Layer above">↑</button>
-        <button type="button" class="chip chip--icon" data-lnav="-1" ${i === 0 ? 'disabled' : ''} aria-label="Layer below">↓</button>
+      <div class="d-flex gap-1">
+        <button type="button" class="btn btn-sm btn-outline-dark" id="insp-up" ${selectedLayer >= state.layers - 1 ? 'disabled' : ''}>↑</button>
+        <button type="button" class="btn btn-sm btn-outline-dark" id="insp-down" ${selectedLayer <= 0 ? 'disabled' : ''}>↓</button>
       </div>
-    </div>`;
-
-  $('#layerSponge').addEventListener('change', (e) => {
-    state.sponges[i] = e.target.value;
-    draw();
+    </div>
+    <select id="insp-sponge" class="form-select form-select-sm mb-1" aria-label="Sponge for ${layerName}">
+      ${CAKE.sponges.map((s) => `<option value="${s.id}" ${s.id === spongeId ? 'selected' : ''}>${s.label}</option>`).join('')}
+    </select>
+    <div class="small text-choco-muted">Topped with ${selectedLayer === state.layers - 1 ? state.finish : filling.label}</div>
+  `;
+  el.querySelector('#insp-sponge').addEventListener('change', (e) => {
+    state.sponges[selectedLayer] = e.target.value;
+    updateAll();
   });
+  el.querySelector('#insp-up').addEventListener('click', () => cake3d.select(Math.min(state.layers - 1, selectedLayer + 1)));
+  el.querySelector('#insp-down').addEventListener('click', () => cake3d.select(Math.max(0, selectedLayer - 1)));
 }
 
-$('#layerInfo').addEventListener('click', (e) => {
-  const b = e.target.closest('[data-lnav]');
-  if (b) cake.select(selLayer + Number(b.dataset.lnav));
-});
+function drawThumbnail(cakeState) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 240;
+  canvas.height = 180;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#FCEBD8';
+  ctx.fillRect(0, 0, 240, 180);
 
-/* ---------- summary ---------- */
+  // Plate
+  ctx.fillStyle = '#E5D8C8';
+  ctx.fillRect(30, 152, 180, 10);
 
-function renderSummary() {
-  const { total, lines } = cakePrice(state);
-  $('#cakePrice').textContent = formatPKR(total);
-  $('#cakeLead').textContent = `Needs ${leadHours(state)} hours’ notice`;
-  $('#cakePoints').textContent = `Earn +${Math.floor(total * REWARDS.pointsPerRupee)} Sweet Points`;
-  $('#priceLines').innerHTML = lines.map(([label, amount]) => `<li><span>${esc(label)}</span><span>${formatPKR(amount)}</span></li>`).join('');
-}
-
-/* ---------- redraw everything from state ---------- */
-
-function draw() {
-  cake.build(state);
-
-  document.querySelectorAll('[data-k]').forEach((b) => {
-    const { k, v } = b.dataset;
-    let on;
-    if (k === 'toppings' || k === 'dietary') on = state[k].includes(v);
-    else if (k === 'layers') on = state.layers === Number(v);
-    else if (k === 'frosting') on = state.frosting.toLowerCase() === v.toLowerCase();
-    else on = state[k] === v;
-    b.classList.toggle('is-active', on);
-    b.setAttribute('aria-pressed', String(on));
-  });
-
-  $('#optSponge').value = sameSponge(state) ? state.sponges[0] : 'mixed';
-  $('#frostName').textContent = frostingName(state.frosting);
-  $('#optFrostCustom').value = state.frosting;
-  $('#msgCount').textContent = `${state.msg.length}/${CAKE.messageMax}`;
-  $('#cakeCaption').textContent = caption(state);
-  stage.setAttribute('aria-label', `Interactive 3D cake: ${describe(state)}. Drag or use left and right arrows to turn it, up and down arrows to open the layers.`);
-
-  renderSummary();
-  renderLayerInfo();
-  saveCakeDraft(state);
-}
-
-/* ---------- option events ---------- */
-
-document.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-k]');
-  if (!b) return;
-  const { k, v } = b.dataset;
-  if (k === 'toppings' || k === 'dietary') {
-    state[k] = state[k].includes(v) ? state[k].filter((x) => x !== v) : [...state[k], v];
-  } else if (k === 'layers') {
-    state.layers = Number(v);
-  } else {
-    state[k] = v;
-  }
-  $('#afterAdd').classList.add('d-none');
-  draw();
-});
-
-$('#optSponge').addEventListener('change', (e) => {
-  state.sponges = state.sponges.map(() => e.target.value);
-  draw();
-});
-
-$('#optFrostCustom').addEventListener('input', (e) => {
-  state.frosting = e.target.value;
-  draw();
-});
-
-$('#optMsg').addEventListener('input', (e) => {
-  state.msg = e.target.value.slice(0, CAKE.messageMax);
-  draw();
-});
-
-$('#optNotes').addEventListener('input', (e) => {
-  state.notes = e.target.value;
-  saveCakeDraft(state);
-});
-
-/* ---------- viewer tools ---------- */
-
-$('#tOpen').addEventListener('click', () => {
-  const x = cake.open > 0.5 ? 0 : 1;
-  cake.setOpen(x);
-  $('#tExplode').value = x * 100;
-  $('#tOpen').textContent = x ? 'Close layers' : 'Open layers';
-  $('#tOpen').setAttribute('aria-pressed', String(Boolean(x)));
-});
-
-$('#tExplode').addEventListener('input', (e) => {
-  const x = e.target.value / 100;
-  cake.setOpen(x);
-  $('#tOpen').textContent = x > 0.5 ? 'Close layers' : 'Open layers';
-});
-
-$('#tCut').addEventListener('click', (e) => {
-  const on = cake.toggleCut();
-  e.currentTarget.classList.toggle('is-active', on);
-  e.currentTarget.setAttribute('aria-pressed', String(on));
-  e.currentTarget.textContent = on ? 'Close the slice' : 'Cut a slice';
-});
-
-$('#tReset').addEventListener('click', () => {
-  if (cake.cut) $('#tCut').click();
-  cake.reset();
-});
-
-$('#surprise').addEventListener('click', () => {
-  const r = (n) => Math.floor(Math.random() * n);
-  const any = (list) => list[r(list.length)];
-  const mixed = Math.random() < 0.4;
-  const sponge = any(CAKE.sponges).id;
-  Object.assign(state, {
-    shape: any(CAKE.shapes).id,
-    size: any(CAKE.sizes).id,
-    layers: any(CAKE.layers),
-    sponges: [0, 1, 2, 3].map(() => (mixed ? any(CAKE.sponges).id : sponge)),
-    filling: any(CAKE.fillings).id,
-    finish: any(CAKE.finishes).id,
-    frosting: any(CAKE.frostings).color,
-    toppings: CAKE.toppings.filter(() => Math.random() < 0.3).map((t) => t.id),
-  });
-  draw();
-});
-
-/* ---------- saved designs (thumbnail drawn on a 2D canvas) ---------- */
-
-function thumbnail(s) {
-  const c = document.createElement('canvas');
-  c.width = 240;
-  c.height = 180;
-  const g = c.getContext('2d');
-  g.fillStyle = '#F3D9BF';
-  g.fillRect(0, 0, 240, 180);
-  // plate
-  g.fillStyle = '#FBF3E2';
-  g.beginPath();
-  g.ellipse(120, 150, 100, 16, 0, 0, Math.PI * 2);
-  g.fill();
-  // cross-section: sponges + fillings, bottom to top
-  const w = s.size === '6' ? 130 : s.size === '8' ? 150 : 170;
-  const x = 120 - w / 2;
-  const lh = 84 / s.layers;
-  const edge = s.finish === 'naked' ? null : s.frosting;
-  let y = 146;
-  for (let i = 0; i < s.layers; i++) {
-    y -= lh;
-    g.fillStyle = pick(CAKE.sponges, s.sponges[i]).color;
-    g.fillRect(x, y, w, lh - 5);
-    if (i < s.layers - 1) {
-      g.fillStyle = pick(CAKE.fillings, s.filling).color;
-      g.fillRect(x, y - 5, w, 5);
+  const layerH = Math.floor(96 / cakeState.layers);
+  const fillCfg = CAKE.fillings.find((f) => f.id === cakeState.filling) || CAKE.fillings[0];
+  let y = 152;
+  for (let i = 0; i < cakeState.layers; i++) {
+    const sp = CAKE.sponges.find((s) => s.id === cakeState.sponges[i]) || CAKE.sponges[0];
+    y -= layerH;
+    ctx.fillStyle = sp.color;
+    ctx.fillRect(55, y, 130, layerH);
+    if (i < cakeState.layers - 1) {
+      y -= 5;
+      ctx.fillStyle = fillCfg.color;
+      ctx.fillRect(55, y, 130, 5);
     }
   }
-  const top = y - 5;
-  if (edge) {
-    g.fillStyle = edge;
-    g.fillRect(x - 6, top, 6, 146 - top);
-    g.fillRect(x + w, top, 6, 146 - top);
-  }
-  g.fillStyle = s.finish === 'drip' ? '#3B2314' : s.frosting;
-  g.fillRect(x - (edge ? 6 : 0), top - 7, w + (edge ? 12 : 0), 8);
-  if (s.toppings.includes('berries')) {
-    g.fillStyle = '#9B2440';
-    for (let k = 0; k < 6; k++) {
-      g.beginPath();
-      g.arc(x + 14 + k * ((w - 28) / 5), top - 12, 6, 0, Math.PI * 2);
-      g.fill();
-    }
-  }
-  return c.toDataURL('image/png');
+  ctx.strokeStyle = cakeState.frosting;
+  ctx.lineWidth = 6;
+  ctx.strokeRect(52, y - 3, 136, 152 - y + 3);
+  return canvas.toDataURL('image/png');
 }
 
-function renderSaved() {
-  const list = getSavedDesigns();
-  const strip = $('#savedDesignsStrip');
-  if (!list.length) {
-    strip.innerHTML = `<div class="saved-design-card saved-design-card--empty"><div class="small fw-bold">No saved cakes yet</div><p class="small opacity-75 mb-0">Click “Save design” to keep a copy of your cake here.</p></div>`;
+function renderSavedDesigns() {
+  const grid = document.getElementById('saved-designs-grid');
+  const list = getSavedCakes();
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="col-12"><p class="text-choco-muted">No saved cakes yet — tap “Save design” to keep a copy of your cake here.</p></div>';
     return;
   }
-  strip.innerHTML = list
-    .map(
-      (d) => `
-      <article class="saved-design-card">
-        <img src="${d.thumb}" alt="Cross-section of saved cake: ${esc(d.caption)}" width="240" height="180">
-        <div class="small fw-bold">${esc(d.caption)}</div>
-        <div class="small opacity-75">${formatPKR(d.price)}</div>
+  grid.innerHTML = list.map((item, idx) => `
+    <div class="col-sm-6 col-lg-4">
+      <div class="product-card">
+        <img src="${item.thumb}" alt="${item.caption}" class="saved-cake-thumb mb-2">
+        <div class="small fw-bold mb-1">${item.caption}</div>
+        <div class="fw-bold mb-3">${formatPKR(item.price)}</div>
         <div class="d-flex gap-2 mt-auto">
-          <button type="button" class="chip" data-load="${d.id}">Load</button>
-          <button type="button" class="chip" data-del="${d.id}" aria-label="Delete saved design">Delete</button>
+          <button type="button" class="btn-pill btn-pill--sm flex-grow-1" data-load-cake="${idx}">Load</button>
+          <button type="button" class="btn-pill btn-pill--outline btn-pill--sm" data-del-cake="${idx}">Delete</button>
         </div>
-      </article>`
-    )
-    .join('');
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('[data-load-cake]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const saved = getSavedCakes()[Number(btn.dataset.loadCake)];
+      if (saved) {
+        state = sanitizeState(saved.state);
+        updateAll();
+        document.getElementById('studio-workspace').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+  grid.querySelectorAll('[data-del-cake]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next = getSavedCakes();
+      next.splice(Number(btn.dataset.delCake), 1);
+      setSavedCakes(next);
+      renderSavedDesigns();
+    });
+  });
 }
 
-$('#savedDesignsStrip').addEventListener('click', (e) => {
-  const load = e.target.closest('[data-load]');
-  const del = e.target.closest('[data-del]');
-  if (load) {
-    const d = getSavedDesigns().find((x) => x.id === load.dataset.load);
-    if (!d) return;
-    Object.assign(state, structuredClone(d.state));
-    $('#optMsg').value = state.msg;
-    $('#optNotes').value = state.notes;
-    draw();
-    $('#cakeStudioSection').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-  }
-  if (del) {
-    deleteSavedDesign(del.dataset.del);
-    renderSaved();
-  }
+function updateAll() {
+  setCakeDraft(state);
+  renderSteps();
+  updatePricePanel();
+  cake3d.build(state);
+  renderInspector();
+}
+
+// Stage controls
+const slider = document.getElementById('explode-slider');
+const btnLayers = document.getElementById('btn-toggle-layers');
+const btnSlice = document.getElementById('btn-toggle-slice');
+
+cake3d.onSelect((idx) => {
+  selectedLayer = idx;
+  renderInspector();
+});
+cake3d.onExplode((x) => {
+  const pct = Math.round(x * 100);
+  slider.value = String(pct);
+  document.getElementById('explode-pct').textContent = `${pct}%`;
+  const open = x > 0.1;
+  btnLayers.textContent = open ? 'Close layers' : 'Open layers';
+  btnLayers.classList.toggle('is-active', open);
+  btnLayers.setAttribute('aria-pressed', String(open));
 });
 
-$('#saveDesignBtn').addEventListener('click', () => {
-  saveCakeDesign({
-    id: `cake-${Date.now()}`,
-    state: structuredClone(state),
-    caption: caption(state),
-    price: cakePrice(state).total,
-    thumb: thumbnail(state),
-    savedAt: new Date().toISOString(),
+slider.addEventListener('input', () => cake3d.setOpen(Number(slider.value) / 100));
+btnLayers.addEventListener('click', () => cake3d.setOpen(cake3d.open > 0.1 ? 0 : 1));
+btnSlice.addEventListener('click', () => {
+  const cut = cake3d.toggleCut();
+  btnSlice.textContent = cut ? 'Close the slice' : 'Cut a slice';
+  btnSlice.classList.toggle('is-active', cut);
+  btnSlice.setAttribute('aria-pressed', String(cut));
+});
+document.getElementById('btn-reset-view').addEventListener('click', () => cake3d.reset());
+
+document.getElementById('btn-surprise-me').addEventListener('click', () => {
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const sp = pick(CAKE.sponges).id;
+  state = {
+    ...state,
+    shape: pick(CAKE.shapes).id,
+    size: pick(CAKE.sizes).id,
+    layers: pick(CAKE.layers).count,
+    sponges: [sp, sp, sp, sp],
+    filling: pick(CAKE.fillings).id,
+    finish: pick(CAKE.finishes).id,
+    frosting: pick(CAKE.frostingColors).hex,
+    toppings: [pick(CAKE.toppings).id, pick(CAKE.toppings).id]
+  };
+  updateAll();
+});
+
+document.getElementById('btn-save-design').addEventListener('click', () => {
+  const { total } = calculateCakePrice(state);
+  const saved = getSavedCakes();
+  saved.unshift({
+    id: `saved-${Date.now()}`,
+    caption: getCakeCaption(state),
+    price: total,
+    thumb: drawThumbnail(state),
+    state: { ...state }
   });
-  renderSaved();
-  const fb = $('#studioFeedback');
-  fb.textContent = 'Design saved below in “My saved designs”.';
-  fb.classList.remove('d-none');
+  setSavedCakes(saved.slice(0, 12));
+  renderSavedDesigns();
+  document.getElementById('studio-action-feedback').textContent = 'Design saved below.';
 });
 
-$('#addToEstimateBtn').addEventListener('click', () => {
-  const { total } = cakePrice(state);
-  addItemToEstimate({
+document.getElementById('btn-add-estimate').addEventListener('click', () => {
+  const { total, leadHours } = calculateCakePrice(state);
+  const est = getEstimateState() || { items: {}, customCakes: [], mode: 'delivery', sectorId: 'f7', timeMode: 'asap' };
+  est.customCakes = est.customCakes || [];
+  est.customCakes.push({
     id: `custom-${Date.now()}`,
-    name: `Custom cake (${pick(CAKE.sizes, state.size).label} ${pick(CAKE.shapes, state.shape).label.toLowerCase()})`,
+    name: `Custom cake (${state.size} ${state.shape})`,
     category: 'Cakes',
     price: total,
-    prepMinutes: CAKE.prepMinutes,
+    prepMinutes: 90,
     isCustomCake: true,
-    meta: `${describe(state)} · needs ${leadHours(state)}h notice${state.notes.trim() ? ` · Note: ${state.notes.trim()}` : ''}`,
+    leadHours,
+    meta: getCakeDescription(state)
   });
-  $('#afterAdd').classList.remove('d-none');
+  setEstimateState(est);
+  document.getElementById('studio-action-feedback').textContent =
+    'Added. Open the estimator to see delivery time and total, or keep designing.';
 });
 
-draw();
-renderSaved();
+updateAll();
+renderSavedDesigns();

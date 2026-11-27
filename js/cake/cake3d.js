@@ -1,453 +1,552 @@
-/**
- * Interactive 3D cake built from CSS 3D transforms + vanilla JS (no libraries).
- *
- * Each sponge layer is a "cylinder" made of thin vertical facets plus a top and
- * bottom disc. Facets are shaded by angle so the cake reads as lit from the
- * front-left. Fillings sit between the layers.
- *
- * Interactions:  drag = turn · wheel / arrow up-down = open the layers
- *                click a layer = inspect it · "cut" removes a quarter slice
- */
-
 import { CAKE } from '../config.js';
 
-const N = 32; // facets around a round cake
-const STEP = 360 / N;
-const GAP = 64; // extra space between layers when fully opened
-const DRIP = '#3B2314';
+const STYLE_ID = 'crumbery-c3d-styles';
 
-const LAYER_H = { 2: 58, 3: 48, 4: 40 }; // more layers = thinner sponges, same overall height
-const FILL_H = { 2: 10, 3: 9, 4: 8 };
-
-const CRUMB =
-  'radial-gradient(rgba(40,20,8,.13) 1px, transparent 1.8px) 0 0/7px 7px,' +
-  'radial-gradient(rgba(255,255,255,.14) 1px, transparent 1.7px) 3px 4px/9px 9px,' +
-  'radial-gradient(rgba(40,20,8,.08) 2px, transparent 2.7px) 5px 2px/13px 11px';
-
-const esc = (str) =>
-  String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-/** Hex colour → rgba() with alpha. */
-function alpha(hex, a) {
-  const h = hex.replace('#', '');
-  const n = parseInt(h.length === 3 ? h.replace(/./g, '$&$&') : h, 16);
-  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+function injectStyles() {
+  if (document.getElementById(STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = STYLE_ID;
+  style.textContent = `
+    .c3d-layer, .c3d-filling, .c3d-plate-wrap, .c3d-toppings {
+      position: absolute;
+      left: 0; top: 0;
+      width: 0; height: 0;
+      transform-style: preserve-3d;
+      transition: opacity 0.25s ease;
+    }
+    .c3d-facet {
+      position: absolute;
+      top: 0; left: 0;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+    }
+    .c3d-facet::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #000;
+      opacity: var(--d, 0);
+      pointer-events: none;
+    }
+    .c3d-disc {
+      position: absolute;
+      backface-visibility: hidden;
+    }
+    .c3d-selected .c3d-facet,
+    .c3d-selected .c3d-disc {
+      outline: 2px solid var(--terracotta);
+    }
+    .c3d-faded {
+      opacity: 0.14;
+    }
+    .c3d-drip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #3B2314;
+      border-radius: 0 0 99px 99px;
+      pointer-events: none;
+    }
+    .c3d-cut-plane {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 50%;
+      backface-visibility: visible;
+      border: 1px solid rgba(59, 35, 20, 0.15);
+    }
+    .c3d-billboard {
+      position: absolute;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+    .c3d-billboard-inner {
+      transform: rotateY(var(--iry, 0deg));
+    }
+    .c3d-flame {
+      width: 6px;
+      height: 10px;
+      background: radial-gradient(circle at 50% 70%, #FFF6B0, #F28B30 70%, transparent);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      margin: 0 auto 1px;
+      animation: c3d-flicker 0.6s infinite alternate ease-in-out;
+    }
+    @keyframes c3d-flicker {
+      from { transform: scale(1) rotate(-3deg); }
+      to { transform: scale(1.12) rotate(3deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .c3d-flame { animation: none; }
+    }
+    .c3d-msg {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-sticker);
+      font-weight: 700;
+      text-align: center;
+      padding: 18%;
+      line-height: 1.1;
+      pointer-events: none;
+      word-break: break-word;
+    }
+  `;
+  document.head.appendChild(style);
 }
 
-/** Relative brightness 0–1, used to pick readable text colour on the cake. */
-export function luminance(hex) {
-  const h = hex.replace('#', '');
-  return (0.299 * parseInt(h.slice(0, 2), 16) + 0.587 * parseInt(h.slice(2, 4), 16) + 0.114 * parseInt(h.slice(4, 6), 16)) / 255;
+function crumbBg(hex) {
+  return `
+    radial-gradient(circle at 20% 30%, rgba(59,35,20,0.16) 1px, transparent 1.5px),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,0.2) 1px, transparent 1.5px),
+    radial-gradient(circle at 45% 80%, rgba(59,35,20,0.12) 1px, transparent 1.5px),
+    ${hex}
+  `;
 }
 
-const FLOWER = (petal, centre) =>
-  `<svg viewBox="-20 -20 40 40" width="100%" height="100%" aria-hidden="true">${[0, 72, 144, 216, 288]
-    .map((a) => `<circle cx="${(9 * Math.cos((a * Math.PI) / 180)).toFixed(1)}" cy="${(9 * Math.sin((a * Math.PI) / 180)).toFixed(1)}" r="8" fill="${petal}" stroke="rgba(59,35,20,.35)" stroke-width="1"/>`)
-    .join('')}<circle r="5" fill="${centre}"/></svg>`;
+function getWallStyle(finish, frostingHex, spongeHex) {
+  if (finish === 'naked') {
+    return { background: crumbBg(spongeHex), backgroundSize: '12px 12px, 14px 14px, 10px 10px, auto' };
+  }
+  if (finish === 'semi-naked') {
+    return {
+      background: `linear-gradient(180deg, ${frostingHex}cc 0%, transparent 45%, ${frostingHex}cc 100%), ${crumbBg(spongeHex)}`,
+      backgroundSize: 'auto, 12px 12px, 14px 14px, 10px 10px, auto'
+    };
+  }
+  if (finish === 'fondant') {
+    return {
+      background: `linear-gradient(180deg, rgba(255,255,255,0.28) 0%, transparent 25%), ${frostingHex}`
+    };
+  }
+  return {
+    background: `repeating-linear-gradient(180deg, rgba(255,255,255,0.08) 0 4px, transparent 4px 9px), ${frostingHex}`
+  };
+}
 
-export function createCake3D(root, { onSelect = () => {}, onExplode = () => {}, wheel = true } = {}) {
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const v = { rx: -24, ry: -38, e: 0, eT: 0, sel: -1, cut: false, spin: !reduceMotion, vr: 0 };
-  let s = null;
-  let H = 58;
-  let F = 10;
-  let layers = [];
-  let fills = [];
-  let shade = [];
-  let scale = 1;
-  let drag = null;
-  let lastKey = '';
-  let visible = true;
+function isDarkColor(hex) {
+  const c = hex.replace('#', '');
+  const r = parseInt(c.substring(0, 2), 16) || 0;
+  const g = parseInt(c.substring(2, 4), 16) || 0;
+  const b = parseInt(c.substring(4, 6), 16) || 0;
+  return (r * 299 + g * 587 + b * 114) / 1000 < 140;
+}
 
+export function createCake3D(viewport) {
+  injectStyles();
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let rx = -24;
+  let ry = -38;
+  let vx = 0;
+  let explodeTarget = 0;
+  let explode = 0;
+  let isCut = false;
+  let selectedIdx = -1;
+  let autoSpin = !reducedMotion;
+  let isVisible = true;
+  let dirty = true;
+  let currentState = null;
+
+  let onSelectCb = () => {};
+  let onExplodeCb = () => {};
+
+  viewport.innerHTML = '';
   const world = document.createElement('div');
   world.className = 'c3d-world';
-  root.append(world);
+  viewport.appendChild(world);
 
-  /* ---------- helpers ---------- */
-
-  const opt = (list, id) => list.find((o) => o.id === id) || list[0];
-  const isSquare = () => s.shape === 'square';
-
-  // Evenly scattered points on a disc between radius `inner` and `R`, skipping the cut-away quarter.
-  const pts = (n, R, inner = 0) =>
-    Array.from({ length: n }, (_, i) => {
-      const t = i * 2.39996 + 0.6;
-      const p = Math.sqrt(inner * inner + (R * R - inner * inner) * ((i + 0.5) / n));
-      return [p * Math.cos(t), p * Math.sin(t)];
-    }).filter(([x, z]) => !(v.cut && x > -8 && z > -8));
-
-  // Points evenly spaced around the rim (for the piped border).
-  const ring = (n, R) =>
-    Array.from({ length: n }, (_, i) => {
-      const t = (i / n) * Math.PI * 2;
-      return [R * Math.sin(t), R * Math.cos(t)];
-    }).filter(([x, z]) => !(v.cut && x > -6 && z > -6));
-
-  /* ---------- geometry ---------- */
-
-  // Side walls. Round = N facets; square = 8 half-faces (so a quarter can be cut away).
-  function sides(r, h, side) {
-    let out = '';
-    if (isSquare()) {
-      const w = r + 0.6;
-      [0, 90, 180, 270].forEach((A) => {
-        [-r / 2, r / 2].forEach((off) => {
-          // the quarter x>0, z>0 is removed when the cake is cut
-          if (v.cut && ((A === 0 && off > 0) || (A === 90 && off < 0))) return;
-          out += `<div class="f" data-a="${A}" style="width:${w}px;height:${h}px;left:${-w / 2}px;top:${-h / 2}px;background:${side(A)};transform:rotateY(${A}deg) translateZ(${r}px) translateX(${off}px)"></div>`;
-        });
-      });
-      return out;
-    }
-    const w = 2 * r * Math.tan(Math.PI / N) + 1.5;
-    for (let k = 0; k < N; k++) {
-      if (v.cut && k < N / 4) continue;
-      const a = (k + 0.5) * STEP;
-      out += `<div class="f" data-a="${a}" style="width:${w}px;height:${h}px;left:${-w / 2}px;top:${-h / 2}px;background:${side(a, k)};transform:rotateY(${a}deg) translateZ(${r - 0.5}px)"></div>`;
-    }
-    return out;
-  }
-
-  function disc(r, bg, y, rot, mask, inner = '', extra = '') {
-    const cls = isSquare() ? 'disc sq' : 'disc';
-    return `<div class="${cls}" style="width:${2 * r}px;height:${2 * r}px;left:${-r}px;top:${-r}px;background:${bg};transform:translateY(${y}px) rotateX(${rot}deg);-webkit-mask:${mask};mask:${mask};${extra}">${inner}</div>`;
-  }
-
-  // A layer / filling block: side walls + top & bottom + cut faces when sliced.
-  // Internal discs (between layers) are drawn slightly smaller than the walls so their
-  // edges never poke out through the frosting as coloured lines.
-  function block({ r, h, side, top, bottom, cutFace, topHTML = '', ringColour = '', outerTop = false }) {
-    let out = sides(r, h, side);
-    const mTop = v.cut ? 'conic-gradient(#000 0 90deg,transparent 0 180deg,#000 0)' : 'none';
-    const mBot = v.cut ? 'conic-gradient(transparent 0 90deg,#000 0)' : 'none';
-    const inner = r - 1.5;
-    // square cakes draw the frosting ring with an inset shadow instead of a radial gradient
-    const ringStyle = ringColour && isSquare() ? `box-shadow:inset 0 0 0 6px ${ringColour}` : '';
-    out += disc(outerTop ? r : inner, top, -h / 2, 90, mTop, topHTML, topHTML ? '' : ringStyle);
-    out += disc(inner, bottom, h / 2, -90, mBot, '', ringStyle);
-    if (v.cut) {
-      out += `<div class="f cut" data-a="0" style="width:${r}px;height:${h}px;top:${-h / 2}px;background:${cutFace};transform:rotateY(0deg)"></div>`;
-      out += `<div class="f cut" data-a="90" style="width:${r}px;height:${h}px;top:${-h / 2}px;background:${cutFace};transform:rotateY(-90deg)"></div>`;
-    }
-    return out;
-  }
-
-  /* ---------- decoration ---------- */
-
-  const has = (id) => s.toppings.includes(id);
-
-  // Flat decorations lying on the top surface.
-  function topDecor(r, topColour) {
-    let out = '';
-    const msgInner = s.msg ? r * 0.55 : 0;
-    if (has('sprinkles')) {
-      const cols = ['#C9503A', '#F8E08E', '#5B2A4A', '#FFFFFF', '#8FB4A0'];
-      pts(54, r * 0.86, msgInner).forEach(([x, z], i) => {
-        out += `<i class="spr" style="left:${r + x}px;top:${r + z}px;background:${cols[i % cols.length]};transform:rotate(${i * 47}deg)"></i>`;
-      });
-    }
-    if (has('gold-leaf')) {
-      pts(11, r * 0.75, msgInner).forEach(([x, z], i) => {
-        out += `<i class="leaf" style="left:${r + x}px;top:${r + z}px;transform:rotate(${i * 61}deg)"></i>`;
-      });
-    }
-    if (s.msg) {
-      const light = luminance(topColour) > 0.6;
-      const size = Math.max(12, r / (s.msg.length > 14 ? 6.4 : 4.4));
-      out += `<span class="c3d-msg" style="font-size:${size}px;color:${light ? '#3B2314' : '#FCEBD8'}">${esc(s.msg)}</span>`;
-    }
-    return out;
-  }
-
-  // Toppings that stand up and always face the viewer (billboards).
-  function standing(r, frost) {
-    let out = '';
-    const msgInner = s.msg ? r * 0.55 : 0;
-    const bb = (x, z, w, h, inner, style = '', cls = 'bb') =>
-      `<div class="${cls}" style="width:${w}px;height:${h}px;left:${-w / 2}px;top:${-h / 2}px;${style};transform:translate3d(${x}px,${-H / 2 - h / 2 + 3}px,${z}px) rotateY(var(--iry))">${inner}</div>`;
-
-    if (has('piped-border')) {
-      const n = Math.round(r / 5.5);
-      ring(n, r - 9).forEach(([x, z]) => {
-        out += bb(x, z, 17, 14, '', `background:radial-gradient(circle at 40% 30%, rgba(255,255,255,.6), transparent 45%), repeating-conic-gradient(from 20deg, ${frost} 0 22deg, ${alpha('#3B2314', 0.12)} 22deg 30deg), ${frost};border-radius:50% 50% 40% 40%`);
-      });
-    }
-    if (has('berries')) {
-      pts(16, r * 0.8, msgInner).forEach(([x, z], i) => {
-        const rasp = i % 3 !== 0;
-        const bg = rasp
-          ? 'radial-gradient(circle, rgba(255,255,255,.35) 0 1px, transparent 1.6px) 0 0/5px 5px, radial-gradient(circle at 35% 30%, #E0607A, #9B2440 55%, #5A1224)'
-          : 'radial-gradient(circle at 35% 30%, #A9A4D6, #4A4378 55%, #23203F)';
-        out += bb(x, z, rasp ? 17 : 13, rasp ? 17 : 13, '', `background:${bg};border-radius:50%`);
-      });
-    }
-    if (has('macarons')) {
-      const cols = ['#E8A598', '#BFC99A', '#F6DC86', '#C9A7D6'];
-      pts(5, r * 0.66, msgInner).forEach(([x, z], i) => {
-        const c = cols[i % cols.length];
-        out += bb(x, z, 30, 24, '', `background:linear-gradient(${c} 0 38%, #FBF3E2 38% 56%, ${c} 56%);border-radius:45%;box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)`);
-      });
-    }
-    if (has('shards')) {
-      pts(7, r * 0.6, msgInner).forEach(([x, z], i) => {
-        out += bb(x, z, 22, 30, '', `background:linear-gradient(115deg, #6A4936, ${DRIP} 60%);clip-path:polygon(${20 + (i % 3) * 10}% 0,100% 18%,80% 100%,0 85%)`);
-      });
-    }
-    if (has('flowers')) {
-      pts(4, r * 0.62, msgInner).forEach(([x, z], i) => {
-        out += bb(x, z, 34, 34, FLOWER(i % 2 ? '#FBF3E2' : '#E8A598', '#C9503A'));
-      });
-    }
-    if (has('candles')) {
-      pts(5, r * 0.5, s.msg ? r * 0.45 : 0).forEach(([x, z]) => {
-        out += bb(x, z, 8, 54, '<i class="flame"></i>', '', 'bb candle');
-      });
-    }
-    return out;
-  }
-
-  /* ---------- build the whole cake from state ---------- */
+  const layerEls = [];
+  const fillingEls = [];
+  const facetList = [];
 
   function build(state) {
-    s = state;
-    const n = s.layers;
-    H = LAYER_H[n] || 48;
-    F = FILL_H[n] || 9;
-    const r = opt(CAKE.sizes, s.size).r;
-    const finish = s.finish;
-    const frost = s.frosting;
-    const fill = opt(CAKE.fillings, s.filling).color;
-    const coated = finish === 'buttercream' || finish === 'fondant' || finish === 'drip';
-    const plateR = (isSquare() ? r * 1.42 : r) + 28;
+    currentState = state;
+    world.innerHTML = '';
+    layerEls.length = 0;
+    fillingEls.length = 0;
+    facetList.length = 0;
 
-    if (v.sel >= n) {
-      v.sel = -1;
-      onSelect(-1);
-    }
+    const sizeCfg = CAKE.sizes.find((s) => s.id === state.size) || CAKE.sizes[1];
+    const layerCfg = CAKE.layers.find((l) => l.count === state.layers) || CAKE.layers[0];
+    const fillCfg = CAKE.fillings.find((f) => f.id === state.filling) || CAKE.fillings[0];
+    const radius = sizeCfg.radius;
+    const isRound = state.shape === 'round';
+    const layerH = layerCfg.height;
+    const fillH = layerCfg.fillingHeight;
+    const isNaked = state.finish === 'naked';
 
-    let html = `<div class="disc shadow3d" style="width:${2 * plateR + 70}px;height:${2 * plateR + 70}px;left:${-plateR - 35}px;top:${-plateR - 35}px;transform:translateY(6px) rotateX(90deg)"></div>
-      <div class="disc plate" style="width:${2 * plateR}px;height:${2 * plateR}px;left:${-plateR}px;top:${-plateR}px;transform:rotateX(90deg)"></div>`;
+    // Shadow & Plate
+    const plateWrap = document.createElement('div');
+    plateWrap.className = 'c3d-plate-wrap';
+    const plateR = radius + 28;
+    const shadow = document.createElement('div');
+    shadow.style.cssText = `
+      position:absolute; width:${plateR * 2.2}px; height:${plateR * 2.2}px;
+      left:${-plateR * 1.1}px; top:${-plateR * 1.1}px;
+      border-radius:50%;
+      background: radial-gradient(circle, rgba(59,35,20,0.28) 0%, transparent 70%);
+      transform: rotateX(90deg) translateZ(-12px);
+    `;
+    const plate = document.createElement('div');
+    plate.style.cssText = `
+      position:absolute; width:${plateR * 2}px; height:${plateR * 2}px;
+      left:${-plateR}px; top:${-plateR}px;
+      border-radius:50%;
+      background: radial-gradient(circle at 40% 35%, #FFFDF9 0%, #EFE5D8 75%, #D8C7B4 100%);
+      border: 3px solid #E5D8C8;
+      transform: rotateX(90deg) translateZ(-4px);
+    `;
+    plateWrap.append(shadow, plate);
+    world.appendChild(plateWrap);
 
-    // Outer coat for each finish
-    const coatSide = (sp) => {
-      if (finish === 'fondant') return `linear-gradient(rgba(255,255,255,.32), rgba(255,255,255,.06) 18%, transparent 75%, rgba(0,0,0,.07)), ${frost}`;
-      if (finish === 'naked') return `linear-gradient(rgba(70,35,15,.16), rgba(70,35,15,.16)), ${CRUMB}, ${sp}`;
-      if (finish === 'semi-naked') return `repeating-linear-gradient(0deg, ${alpha(frost, 0.92)} 0 4px, ${alpha(frost, 0.55)} 4px 7px, ${alpha(frost, 0.85)} 7px 11px), ${CRUMB}, ${sp}`;
-      return `linear-gradient(rgba(255,255,255,.2), transparent 35%), repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 3px, rgba(0,0,0,.035) 3px 6px), ${frost}`;
-    };
+    let yCursor = 0;
+    const count = state.layers;
 
-    for (let i = 0; i < n; i++) {
-      const sp = opt(CAKE.sponges, s.sponges[i]).color;
-      const isTop = i === n - 1;
-      const topColour = finish === 'drip' ? DRIP : frost;
-      const edge = coated || finish === 'semi-naked' ? frost : 'rgba(70,35,15,.35)';
-      const inside = isSquare() ? `${CRUMB}, ${sp}` : `radial-gradient(circle, transparent 0 ${r - 6}px, ${edge} ${r - 6}px), ${CRUMB}, ${sp}`;
-      const cutFace = `${isTop ? `linear-gradient(${topColour} 0 7px, transparent 7px), ` : ''}linear-gradient(90deg, transparent 0 calc(100% - 6px), ${edge} 0), ${CRUMB}, ${sp}`;
+    for (let i = 0; i < count; i++) {
+      const spongeId = state.sponges[i] || state.sponges[0];
+      const spongeCfg = CAKE.sponges.find((s) => s.id === spongeId) || CAKE.sponges[0];
+      const wallStyle = getWallStyle(state.finish, state.frosting, spongeCfg.color);
+      const isTopLayer = i === count - 1;
 
-      let side = () => coatSide(sp);
-      if (isTop && finish === 'drip') {
-        // ganache drips of varying length down the top layer
-        side = (a, k = Math.round(a / 45)) => {
-          const len = 9 + ((k * 37) % 19);
-          return `radial-gradient(circle at 50% ${len}px, ${DRIP} 3.5px, transparent 4px), linear-gradient(${DRIP} 0 ${len}px, transparent ${len}px), ${coatSide(sp)}`;
-        };
-      }
-      const topBg = isTop
-        ? finish === 'drip'
-          ? `radial-gradient(circle at 35% 30%, rgba(255,255,255,.28), transparent 38%), ${DRIP}`
-          : `radial-gradient(circle at 38% 32%, rgba(255,255,255,.18), transparent 55%), ${frost}`
-        : inside;
+      const layerWrap = document.createElement('div');
+      layerWrap.className = 'c3d-layer';
+      layerWrap.dataset.layerIndex = String(i);
+      layerWrap.dataset.baseY = String(yCursor);
 
-      html += `<div class="g layer" data-layer="${i}">${block({
-        r,
-        h: H,
-        side,
-        top: topBg,
-        bottom: inside,
-        cutFace,
-        topHTML: isTop ? topDecor(r, topColour) : '',
-        ringColour: coated || finish === 'semi-naked' ? frost : '',
-        outerTop: isTop,
-      })}${isTop ? standing(r, frost) : ''}</div>`;
-
-      if (!isTop) {
-        const fr = coated ? r : r - 3;
-        const fillSide = coated ? coatSide(sp) : finish === 'semi-naked' ? `linear-gradient(${alpha(frost, 0.75)}, ${alpha(frost, 0.75)}), ${fill}` : fill;
-        const fillCut = coated ? `linear-gradient(90deg, transparent 0 calc(100% - 6px), ${frost} 0), ${fill}` : fill;
-        // when coated, the filling shows a frosting rim if the layers are pulled apart
-        const fillFace = coated && !isSquare() ? `radial-gradient(circle, transparent 0 ${fr - 7}px, ${frost} ${fr - 7}px), ${fill}` : fill;
-        html += `<div class="g fill" data-fill="${i}">${block({ r: fr, h: F, side: () => fillSide, top: fillFace, bottom: fillFace, cutFace: fillCut, ringColour: coated ? frost : '' })}</div>`;
-      }
-    }
-
-    world.innerHTML = html;
-    layers = [...world.querySelectorAll('.layer')];
-    fills = [...world.querySelectorAll('.fill')];
-    shade = [...world.querySelectorAll('.f')].map((el) => [el, +el.dataset.a]);
-    markSel();
-    lastKey = '';
-  }
-
-  /* ---------- per-frame layout ---------- */
-
-  const layerY = (i) => -(H / 2 + 2) - i * (H + F) - i * v.e * GAP - (i === v.sel ? 22 * Math.max(v.e, 0.35) : 0);
-  const fillY = (j) => -(2 + H + F / 2) - j * (H + F) - (j + 0.5) * v.e * GAP;
-
-  function fit() {
-    if (!s) return 1;
-    const r = opt(CAKE.sizes, s.size).r;
-    const width = (isSquare() ? r * 1.42 : r) * 2 + 150;
-    const height = s.layers * H + (s.layers - 1) * (F + v.e * GAP) + 90;
-    return Math.min(1, root.clientWidth / width, (root.clientHeight * 0.74) / height);
-  }
-
-  function apply() {
-    scale = fit();
-    const key = [v.rx, v.ry, v.e, v.sel, scale].map((x) => (+x).toFixed(2)).join();
-    if (key === lastKey) return;
-    lastKey = key;
-    world.style.transform = `scale3d(${scale},${scale},${scale}) rotateX(${v.rx}deg) rotateY(${v.ry}deg)`;
-    world.style.setProperty('--iry', `${-v.ry}deg`);
-    layers.forEach((g, i) => (g.style.transform = `translate3d(0,${layerY(i)}px,0)`));
-    fills.forEach((g, j) => (g.style.transform = `translate3d(0,${fillY(j)}px,0)`));
-    // light from the front-left: facets turning away get darker
-    shade.forEach(([el, a]) => el.style.setProperty('--d', (0.36 * (1 - (Math.cos(((a + v.ry + 35) * Math.PI) / 180) + 1) / 2)).toFixed(3)));
-  }
-
-  function loop() {
-    if (visible) {
-      if (!drag) {
-        if (v.spin) v.ry += 0.15;
-        else if (Math.abs(v.vr) > 0.02) {
-          v.ry += v.vr;
-          v.vr *= 0.93;
+      if (isRound) {
+        const segs = 32;
+        const segW = 2 * radius * Math.tan(Math.PI / segs) + 1.5;
+        for (let s = 0; s < segs; s++) {
+          if (isCut && s < 8) continue;
+          const angle = (s * 360) / segs;
+          const facet = document.createElement('div');
+          facet.className = 'c3d-facet';
+          facet.dataset.layerIndex = String(i);
+          facet.style.width = `${segW}px`;
+          facet.style.height = `${layerH}px`;
+          facet.style.left = `${-segW / 2}px`;
+          facet.style.top = `${-layerH}px`;
+          facet.style.background = wallStyle.background;
+          if (wallStyle.backgroundSize) facet.style.backgroundSize = wallStyle.backgroundSize;
+          facet.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+          if (isTopLayer && state.finish === 'chocolate-drip') {
+            const drip = document.createElement('div');
+            drip.className = 'c3d-drip';
+            drip.style.height = `${9 + ((s * 7) % 19)}px`;
+            facet.appendChild(drip);
+          }
+          layerWrap.appendChild(facet);
+          facetList.push({ el: facet, angle });
         }
+      } else {
+        const sides = [0, 90, 180, 270];
+        sides.forEach((angle, sideIdx) => {
+          [-radius / 2, radius / 2].forEach((offsetX, halfIdx) => {
+            if (isCut && ((sideIdx === 0 && halfIdx === 1) || (sideIdx === 1 && halfIdx === 0))) return;
+            const facet = document.createElement('div');
+            facet.className = 'c3d-facet';
+            facet.dataset.layerIndex = String(i);
+            facet.style.width = `${radius + 1}px`;
+            facet.style.height = `${layerH}px`;
+            facet.style.left = `${-radius / 2}px`;
+            facet.style.top = `${-layerH}px`;
+            facet.style.background = wallStyle.background;
+            if (wallStyle.backgroundSize) facet.style.backgroundSize = wallStyle.backgroundSize;
+            facet.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateX(${offsetX}px)`;
+            layerWrap.appendChild(facet);
+            facetList.push({ el: facet, angle });
+          });
+        });
       }
-      v.e += (v.eT - v.e) * (reduceMotion ? 1 : 0.15);
-      if (Math.abs(v.eT - v.e) < 0.001) v.e = v.eT;
-      apply();
+
+      // Top & bottom discs (hairline fix: internal discs 1.5px smaller)
+      const topR = isTopLayer ? radius : radius - 1.5;
+      const topDisc = document.createElement('div');
+      topDisc.className = 'c3d-disc';
+      topDisc.dataset.layerIndex = String(i);
+      const topColor = isTopLayer && state.finish === 'chocolate-drip' ? '#3B2314' : (isNaked ? spongeCfg.color : state.frosting);
+      topDisc.style.cssText = `
+        width:${topR * 2}px; height:${topR * 2}px;
+        left:${-topR}px; top:${-topR}px;
+        border-radius:${isRound ? '50%' : '6px'};
+        background:${topColor};
+        transform: translateY(${-layerH}px) rotateX(90deg);
+      `;
+      if (isCut) {
+        topDisc.style.webkitMaskImage = 'conic-gradient(from 0deg, transparent 0deg 90deg, #000 90deg 360deg)';
+        topDisc.style.maskImage = 'conic-gradient(from 0deg, transparent 0deg 90deg, #000 90deg 360deg)';
+      }
+
+      if (isTopLayer && state.msg) {
+        const msgEl = document.createElement('div');
+        msgEl.className = 'c3d-msg';
+        msgEl.textContent = state.msg;
+        msgEl.style.color = isDarkColor(topColor) ? '#FCEBD8' : '#3B2314';
+        msgEl.style.fontSize = `${Math.max(12, Math.round(radius * 0.14))}px`;
+        topDisc.appendChild(msgEl);
+      }
+
+      layerWrap.appendChild(topDisc);
+
+      if (isCut) {
+        [0, -90].forEach((rot) => {
+          const cutPlane = document.createElement('div');
+          cutPlane.className = 'c3d-cut-plane';
+          cutPlane.style.width = `${radius}px`;
+          cutPlane.style.height = `${layerH}px`;
+          cutPlane.style.top = `${-layerH}px`;
+          cutPlane.style.background = crumbBg(spongeCfg.color);
+          cutPlane.style.backgroundSize = '12px 12px, 14px 14px, 10px 10px, auto';
+          cutPlane.style.transform = `rotateY(${rot}deg)`;
+          layerWrap.appendChild(cutPlane);
+        });
+      }
+
+      world.appendChild(layerWrap);
+      layerEls.push(layerWrap);
+      yCursor -= layerH;
+
+      // Filling between layers
+      if (i < count - 1) {
+        const fillWrap = document.createElement('div');
+        fillWrap.className = 'c3d-filling';
+        fillWrap.dataset.baseY = String(yCursor);
+        const fillColor = isNaked ? fillCfg.color : state.frosting;
+        const fDisc = document.createElement('div');
+        fDisc.className = 'c3d-disc';
+        const fR = radius - 1.5;
+        fDisc.style.cssText = `
+          width:${fR * 2}px; height:${fR * 2}px;
+          left:${-fR}px; top:${-fR}px;
+          border-radius:${isRound ? '50%' : '6px'};
+          background:${fillColor};
+          transform: translateY(${-fillH / 2}px) rotateX(90deg);
+        `;
+        fillWrap.appendChild(fDisc);
+        world.appendChild(fillWrap);
+        fillingEls.push(fillWrap);
+        yCursor -= fillH;
+      }
     }
-    requestAnimationFrame(loop);
-  }
 
-  // Pause the animation while the cake is scrolled out of view
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([entry]) => (visible = entry.isIntersecting)).observe(root);
-  }
+    // Toppings on top layer
+    if (state.toppings && state.toppings.length > 0 && layerEls.length > 0) {
+      const topLayer = layerEls[layerEls.length - 1];
+      const topY = -layerH;
+      const goldenAngle = 2.39996323;
+      let tIdx = 0;
 
-  /* ---------- selection ---------- */
+      state.toppings.forEach((tId) => {
+        const itemCount = tId === 'piped-border' ? 12 : tId === 'candles' ? 5 : 6;
+        for (let k = 0; k < itemCount; k++) {
+          const angle = tId === 'piped-border' ? (k * 2 * Math.PI) / itemCount : tIdx * goldenAngle;
+          if (isCut && angle >= 0 && angle <= Math.PI / 2) {
+            tIdx++;
+            continue;
+          }
+          const minR = state.msg ? radius * 0.62 : radius * 0.22;
+          const dist = tId === 'piped-border' ? radius * 0.84 : minR + ((k * 19) % Math.max(12, radius * 0.55 - minR));
+          const x = Math.cos(angle) * dist;
+          const z = Math.sin(angle) * dist;
 
-  function markSel() {
-    layers.forEach((g, i) => {
-      g.classList.toggle('dim', v.sel >= 0 && i !== v.sel);
-      g.classList.toggle('sel', i === v.sel);
-    });
-    fills.forEach((g) => g.classList.toggle('dim', v.sel >= 0));
-  }
+          const bb = document.createElement('div');
+          bb.className = 'c3d-billboard';
+          bb.style.transform = `translate3d(${x}px, ${topY}px, ${z}px)`;
 
-  function select(i, toggle) {
-    v.sel = toggle && i === v.sel ? -1 : i;
-    if (v.sel >= 0 && v.eT < 0.55) {
-      v.eT = 0.7;
-      onExplode(v.eT);
-    }
-    markSel();
-    onSelect(v.sel);
-  }
-
-  /* ---------- input ---------- */
-
-  root.addEventListener('pointerdown', (e) => {
-    if (e.button) return;
-    drag = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY };
-    v.spin = false;
-    v.vr = 0;
-    root.setPointerCapture(e.pointerId);
-    root.classList.add('grabbing');
-  });
-
-  root.addEventListener('pointermove', (e) => {
-    if (!drag) return;
-    const dx = e.clientX - drag.x;
-    const dy = e.clientY - drag.y;
-    drag.x = e.clientX;
-    drag.y = e.clientY;
-    v.ry += dx * 0.5;
-    v.vr = dx * 0.5;
-    if (e.pointerType === 'mouse') v.rx = Math.max(-75, Math.min(8, v.rx - dy * 0.3));
-  });
-
-  const end = (e) => {
-    if (!drag) return;
-    const moved = Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy);
-    drag = null;
-    root.classList.remove('grabbing');
-    if (moved < 6 && e.type === 'pointerup') {
-      v.vr = 0;
-      // pointer capture means the event target is the stage, so find what's under the pointer
-      const el = document.elementFromPoint(e.clientX, e.clientY);
-      const layer = el && el.closest('[data-layer]');
-      const fillEl = el && el.closest('[data-fill]');
-      select(layer ? +layer.dataset.layer : fillEl ? +fillEl.dataset.fill : -1, true);
-    }
-  };
-  root.addEventListener('pointerup', end);
-  root.addEventListener('pointercancel', end);
-
-  // Wheel opens/closes the layers; once fully open or closed, the page scrolls normally
-  if (wheel) {
-    root.addEventListener(
-      'wheel',
-      (e) => {
-        const d = e.deltaY;
-        if ((d > 0 && v.eT < 1) || (d < 0 && v.eT > 0)) {
-          e.preventDefault();
-          v.eT = Math.max(0, Math.min(1, v.eT + d * 0.0018));
-          onExplode(v.eT);
+          const inner = document.createElement('div');
+          inner.className = 'c3d-billboard-inner';
+          if (tId === 'berries') {
+            inner.innerHTML = `<div style="width:14px;height:14px;border-radius:50%;background:${k % 2 ? '#9C2338' : '#2C3E73'};margin-top:-14px;box-shadow:inset -2px -2px 0 rgba(0,0,0,0.25);"></div>`;
+          } else if (tId === 'macarons') {
+            inner.innerHTML = `<div style="width:18px;height:12px;border-radius:6px;background:#E8A598;border-bottom:3px solid #FBF3E2;margin-top:-12px;"></div>`;
+          } else if (tId === 'candles') {
+            inner.innerHTML = `<div style="margin-top:-36px;"><div class="c3d-flame"></div><div style="width:5px;height:24px;background:repeating-linear-gradient(45deg,#F8E08E 0 4px,#C9503A 4px 8px);margin:0 auto;border-radius:2px;"></div></div>`;
+          } else if (tId === 'gold-leaf') {
+            inner.innerHTML = `<div style="width:12px;height:10px;background:linear-gradient(135deg,#FFE57F,#D4AF37);clip-path:polygon(10% 0,90% 20%,100% 90%,0 70%);margin-top:-4px;"></div>`;
+          } else if (tId === 'piped-border') {
+            inner.innerHTML = `<div style="width:12px;height:10px;border-radius:50%;background:${state.frosting};border:1px solid rgba(59,35,20,0.15);margin-top:-9px;"></div>`;
+          } else {
+            inner.innerHTML = `<div style="width:10px;height:10px;border-radius:3px;background:${tId === 'shards' ? '#3B2314' : '#F8E08E'};margin-top:-10px;"></div>`;
+          }
+          bb.appendChild(inner);
+          topLayer.appendChild(bb);
+          tIdx++;
         }
-      },
-      { passive: false }
+      });
+    }
+
+    updateAriaLabel();
+    dirty = true;
+  }
+
+  function updateAriaLabel() {
+    if (!currentState) return;
+    viewport.setAttribute(
+      'aria-label',
+      `3D ${currentState.size} ${currentState.shape} cake with ${currentState.layers} layers and ${currentState.finish} finish`
     );
   }
 
-  root.addEventListener('keydown', (e) => {
-    const k = e.key;
-    if (k === 'ArrowLeft' || k === 'ArrowRight') {
-      v.spin = false;
-      v.ry += k === 'ArrowLeft' ? -12 : 12;
-    } else if (k === 'ArrowUp' || k === 'ArrowDown') {
-      v.eT = Math.max(0, Math.min(1, v.eT + (k === 'ArrowUp' ? 0.2 : -0.2)));
-      onExplode(v.eT);
-    } else if (k === 'Escape') select(-1);
-    else return;
-    e.preventDefault();
+  // Pointer & Wheel & Keyboard Controls
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  let moved = 0;
+
+  viewport.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    autoSpin = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    moved = 0;
+    viewport.setPointerCapture(e.pointerId);
   });
 
-  addEventListener('resize', () => (lastKey = ''));
-  requestAnimationFrame(loop);
+  viewport.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    moved += Math.hypot(dx, dy);
+    ry += dx * 0.45;
+    vx = dx * 0.45;
+    if (e.pointerType === 'mouse') {
+      rx = Math.max(-75, Math.min(8, rx - dy * 0.3));
+    }
+    startX = e.clientX;
+    startY = e.clientY;
+    dirty = true;
+  });
+
+  viewport.addEventListener('pointerup', (e) => {
+    if (!dragging) return;
+    dragging = false;
+    if (moved < 6) {
+      const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-layer-index]');
+      if (hit) {
+        const idx = Number(hit.dataset.layerIndex);
+        select(selectedIdx === idx ? -1 : idx);
+      }
+    }
+  });
+
+  viewport.addEventListener('wheel', (e) => {
+    const next = Math.max(0, Math.min(1, explodeTarget + (e.deltaY > 0 ? 0.12 : -0.12)));
+    if (next !== explodeTarget) {
+      e.preventDefault();
+      autoSpin = false;
+      setOpen(next);
+    }
+  }, { passive: false });
+
+  viewport.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') { ry -= 12; autoSpin = false; dirty = true; }
+    else if (e.key === 'ArrowRight') { ry += 12; autoSpin = false; dirty = true; }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setOpen(Math.min(1, explodeTarget + 0.2)); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); setOpen(Math.max(0, explodeTarget - 0.2)); }
+    else if (e.key === 'Escape') { select(-1); }
+  });
+
+  const io = new IntersectionObserver((entries) => {
+    isVisible = entries[0]?.isIntersecting ?? true;
+  });
+  io.observe(viewport);
+
+  function frame() {
+    if (isVisible) {
+      if (autoSpin) {
+        ry += 0.22;
+        dirty = true;
+      } else if (!dragging && Math.abs(vx) > 0.05) {
+        ry += vx;
+        vx *= 0.92;
+        dirty = true;
+      }
+      if (Math.abs(explode - explodeTarget) > 0.002) {
+        explode += (explodeTarget - explode) * 0.18;
+        dirty = true;
+      }
+
+      if (dirty) {
+        const vw = viewport.clientWidth || 320;
+        const vh = viewport.clientHeight || 340;
+        const maxR = 160;
+        const totalH = 210 + explode * 180;
+        const scale = Math.min(1.05, (vw * 0.72) / (maxR * 2), (vh * 0.76) / totalH);
+
+        world.style.setProperty('--iry', `${-ry}deg`);
+        world.style.transform = `scale3d(${scale}, ${scale}, ${scale}) rotateX(${rx}deg) rotateY(${ry}deg)`;
+
+        layerEls.forEach((el, idx) => {
+          const baseY = Number(el.dataset.baseY || 0);
+          const lift = idx * explode * 64 + (selectedIdx === idx ? -22 : 0);
+          el.style.transform = `translateY(${baseY - idx * explode * 64 + (selectedIdx === idx ? -22 : 0)}px)`;
+          el.classList.toggle('c3d-selected', selectedIdx === idx);
+          el.classList.toggle('c3d-faded', selectedIdx >= 0 && selectedIdx !== idx);
+          void lift;
+        });
+
+        fillingEls.forEach((el, idx) => {
+          const baseY = Number(el.dataset.baseY || 0);
+          el.style.transform = `translateY(${baseY - (idx + 0.5) * explode * 64}px)`;
+          el.classList.toggle('c3d-faded', selectedIdx >= 0);
+        });
+
+        facetList.forEach(({ el, angle }) => {
+          const rad = ((angle + ry + 35) * Math.PI) / 180;
+          const d = 0.36 * (1 - (Math.cos(rad) + 1) / 2);
+          el.style.setProperty('--d', d.toFixed(3));
+        });
+
+        dirty = false;
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  function select(i) {
+    selectedIdx = i;
+    if (i >= 0 && explodeTarget < 0.7) {
+      setOpen(0.7);
+    }
+    dirty = true;
+    onSelectCb(selectedIdx);
+  }
+
+  function setOpen(x) {
+    explodeTarget = Math.max(0, Math.min(1, x));
+    dirty = true;
+    onExplodeCb(explodeTarget);
+  }
+
+  function toggleCut() {
+    isCut = !isCut;
+    if (currentState) build(currentState);
+    return isCut;
+  }
+
+  function reset() {
+    rx = -24;
+    ry = -38;
+    vx = 0;
+    selectedIdx = -1;
+    isCut = false;
+    setOpen(0);
+    if (currentState) build(currentState);
+    onSelectCb(-1);
+  }
 
   return {
     build,
-    select: (i) => select(i, false),
-    setOpen(x) {
-      v.eT = x;
-    },
-    get open() {
-      return v.eT;
-    },
-    get cut() {
-      return v.cut;
-    },
-    toggleCut() {
-      v.cut = !v.cut;
-      build(s);
-      return v.cut;
-    },
-    reset() {
-      Object.assign(v, { rx: -24, ry: -38, eT: 0, vr: 0, sel: -1, spin: false });
-      markSel();
-      onSelect(-1);
-      onExplode(0);
-    },
+    select,
+    setOpen,
+    get open() { return explodeTarget; },
+    get cut() { return isCut; },
+    toggleCut,
+    reset,
+    onSelect(cb) { onSelectCb = cb; },
+    onExplode(cb) { onExplodeCb = cb; }
   };
 }

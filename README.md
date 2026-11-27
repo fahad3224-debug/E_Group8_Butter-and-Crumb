@@ -1,79 +1,81 @@
-# Crumbery Bakery — Islamabad
+# Crumbery Bakery Website
 
-A 3-page responsive website for **Crumbery**, a homemade bakery in **F-7 Markaz, Islamabad, Pakistan**. Built with semantic HTML5, custom CSS3, vanilla ES modules, Bootstrap 5.3, and an **interactive 3D cake built with pure CSS 3D transforms** (no 3D libraries).
+A 3-page website for **Crumbery**, a homemade bakery in **F-7 Markaz, Islamabad, Pakistan**.
+
+## Pages
+1. **Cake Studio** (`index.html`) — Interactive 3D cake customiser built with pure CSS 3D transforms.
+2. **Sweet Rewards** (`rewards.html`) — Member sign-in, points balance, membership tiers, and reward redemptions.
+3. **Delivery & Bill Estimator** (`estimate.html`) — Menu browser, delivery/pickup selector, schedule & ETA calculator, and instant bill estimate.
 
 ## How to Run Locally
-
-Because this project uses native ES modules (`<script type="module">`), it must be served over HTTP rather than opened directly with `file://`.
-
-```bash
-# Option 1: Python built-in HTTP server
-python -m http.server 8000
-# Then open http://localhost:8000
-
-# Option 2: VS Code Live Server extension
-# Right-click index.html -> "Open with Live Server"
-```
+1. Open the project folder in **VS Code**.
+2. Install the **Live Server** extension.
+3. Right-click `index.html` and choose **"Open with Live Server"** (ES modules do not load over `file://`).
 
 ## Tech Used
-
-- **HTML5, CSS3, Vanilla JavaScript (ES Modules)**
-- **Bootstrap 5.3** (grid, utilities, offcanvas, modals, accordion)
-- **CSS 3D cake** (`js/cake/cake3d.js`): each sponge layer is a cylinder of thin shaded facets plus top and bottom discs, with fillings between them. Drag to turn, scroll or use the slider to separate the layers, tap a layer to change its sponge, and cut a slice to see the cross-section. No WebGL or 3D libraries.
-- **Google Fonts**: `Bricolage Grotesque`, `Bagel Fat One`, `Gluten`, `DM Sans`
+- HTML5, CSS3, Vanilla JavaScript (ES Modules)
+- Bootstrap 5.3 (layout grid, modals, offcanvas, tabs, accordion, carousel)
+- Google Fonts (`Bricolage Grotesque`, `Bagel Fat One`, `Gluten`, `DM Sans`)
+- Pure CSS 3D transforms (`perspective`, `preserve-3d`, `rotateX/Y`, `translateZ`) for the Cake Studio 3D viewer
 
 ## Folder Structure
-
-```text
+```
 /
-├── index.html          → Cake Studio (3D cake customizer)
-├── rewards.html        → Rewards & membership
-├── estimate.html       → Delivery & bill estimator
+├── index.html
+├── rewards.html
+├── estimate.html
 ├── css/
-│   ├── tokens.css      → custom properties, fonts
-│   ├── components.css  → shared components & signature shapes
-│   └── pages/          → page-specific styles
+│   ├── tokens.css
+│   ├── components.css
+│   └── pages/
+│       ├── studio.css
+│       ├── rewards.css
+│       └── estimate.css
 ├── js/
-│   ├── config.js       → prices, tax, tiers, delivery zones, hours
-│   ├── format.js       → PKR currency + time formatting helpers
-│   ├── data/menu.js    → menu items
-│   ├── store.js        → localStorage persistence
-│   ├── layout.js       → shared header/footer + active nav
-│   ├── cake/           → cake3d.js (3D cake), pricing.js (price, lead time, descriptions)
-│   ├── studio.js       → Cake Studio page: options, summary, saving, add to estimate
+│   ├── config.js
+│   ├── format.js
+│   ├── store.js
+│   ├── layout.js
+│   ├── studio.js
 │   ├── rewards.js
-│   └── estimate.js
-├── assets/images/ , assets/icons/
+│   ├── estimate.js
+│   ├── data/
+│   │   └── menu.js
+│   └── cake/
+│       ├── cake3d.js
+│       └── pricing.js
+├── assets/images/
 └── README.md
 ```
 
-## Features Table
+## How the 3D Cake Works
+The 3D cake in `js/cake/cake3d.js` is built from DOM elements inside a `perspective: 1100px` viewport using `transform-style: preserve-3d`. Round layers use 32 angled facets arranged in a cylinder, square layers use 8 half-faces, and each facet computes directional shading every frame. Layers separate smoothly along the Y-axis, and cutting a slice hides one quarter of the facets and masks the discs with `conic-gradient`.
+
+## Image Credits
+All product and marquee photography is loaded from Unsplash (royalty-free).
+
+## Features
 
 | Feature | Category | Page | Member |
 |---|---|---|---|
-| Shared striped frame, wavy hero, offcanvas nav & newsletter footer | Responsive & Accessible | All pages | [TBD] |
-| Footer newsletter email validation & feedback | Forms & Input | All pages | [TBD] |
-| Cake Studio responsive layout: 3D stage + numbered build steps | Responsive & Accessible | index.html | [TBD] |
-| Cake options rendered from config (shape, size, layers, sponge, filling, finish, colour, toppings, dietary) | Data & Display | index.html | [TBD] |
-| Interactive 3D cake: drag to turn, separate layers, per-layer sponge, cut a slice, keyboard controls | Interaction | index.html | [TBD] |
-| Live cake price breakdown, lead time and Sweet Points preview | Logic & Calculation | index.html | [TBD] |
-| Cake message (24-char limit with counter) and notes | Forms & Input | index.html | [TBD] |
-| Cake draft and saved designs (with thumbnails) kept in localStorage; custom cake sent to the estimator | State & Memory | index.html | [TBD] |
-| Rewards dashboard layout, tier cards & FAQ accordion | Data & Display | rewards.html | [TBD] |
-| Estimator 4-step layout & scalloped paper-receipt summary card | Responsive & Accessible | estimate.html | [TBD] |
-| Menu catalog filtering, sorting, product modal & recently viewed items | Data & Display | estimate.html | [TBD] |
-| 4-step estimator validation, GPS/sector distance & pickup/delivery toggle | Forms & Input | estimate.html | [TBD] |
-| PKR bill calculation, peak-hour ETA range & same-day countdown timer | Logic & Calculation | estimate.html | [TBD] |
-| Persistent estimator cart, step progress & recently viewed in localStorage | State & Memory | estimate.html | [TBD] |
-
-## Image Credits
-
-All placeholder photography is royalty-free from [Unsplash](https://unsplash.com):
-- `assets/images/hero-cake.jpg` — Layered chocolate berry cake
-- `assets/images/sourdough-boule.jpg` — Artisan sourdough boule
-- `assets/images/croissant.jpg` — Butter croissant
-- `assets/images/cheesecake.jpg` — Berry cheesecake
-- `assets/images/focaccia.jpg` — Rosemary focaccia
-- `assets/images/brownie.jpg` — Chocolate fudge brownie
-- `assets/images/baker-story.jpg` — Baker in kitchen
-- `assets/images/berry-danish.jpg` — Berry pastry & baked goods
+| Shared striped header, offcanvas menu, and footer | Responsive & Accessible | All pages | Member 1 |
+| Newsletter form with email validation | Forms & Input | All pages | Member 1 |
+| Signed-in member greeting and sign-out in header | State & Memory | All pages | Member 2 |
+| 11-step cake customiser rendered from config | Data & Display | index.html | Member 1 |
+| Pure CSS 3D cake viewer (drag, wheel, keyboard, explode, slice, layer select) | Interaction | index.html | Member 1 |
+| Live cake pricing, breakdown, lead time, and Sweet Points preview | Logic & Calculation | index.html | Member 1 |
+| Cake message input with 24-character limit and counter | Forms & Input | index.html | Member 1 |
+| Cake draft persistence and saved designs with canvas thumbnails | State & Memory | index.html | Member 1 |
+| Custom cake passed to Delivery & Bill Estimator | State & Memory | index.html | Member 1 |
+| Sign-in and Create Account with live validation and password strength meter | Forms & Input | rewards.html | Member 2 |
+| Password strength scoring and SHA-256 hashing | Logic & Calculation | rewards.html | Member 2 |
+| Tiers, redemptions, and points history rendered from config | Data & Display | rewards.html | Member 2 |
+| Tier progress bar and points count-up animation | Logic & Calculation | rewards.html | Member 2 |
+| Reward redemption modal and history filter chips | Interaction | rewards.html | Member 2 |
+| Member session, points, and history persisted across pages | State & Memory | rewards.html | Member 2 |
+| Menu rendered from data with category badges, search, sort, and details modal | Data & Display | estimate.html | Member 3 |
+| Recently viewed items and estimate state restored after reload | State & Memory | estimate.html | Member 3 |
+| Delivery/pickup toggle, geolocation, sector select, and street validation | Forms & Input | estimate.html | Member 3 |
+| Distance-based delivery fee, member tier discount, tax, and peak-hour ETA | Logic & Calculation | estimate.html | Member 3 |
+| Same-day cut-off countdown timer and custom-cake earliest date | Interaction | estimate.html | Member 3 |
+| Mobile-first layouts, keyboard controls, `aria-live` regions, reduced motion | Responsive & Accessible | All pages | Member 3 |

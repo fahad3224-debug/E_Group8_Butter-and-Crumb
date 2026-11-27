@@ -1,47 +1,31 @@
-/* ==========================================================================
-   Crumbery Design System Tokens
-   ========================================================================== */
+/* Crumbery Design System Tokens */
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Bricolage+Grotesque:wdth,wght@75,700..800&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Gluten:wght@600;700&display=swap');
 
 :root {
-  /* Core Brand Palette */
+  /* Colours */
   --choco: #3B2314;
   --choco-stripe: #4A2C1A;
   --choco-muted: #6A4936;
   --cream: #FCEBD8;
   --tan: #F3D9BF;
-  --tan-hover: #ECD0B2;
   --terracotta: #C9503A;
-  --terracotta-stripe: #BF4834;
   --butter: #F8E08E;
-  --butter-deep: #EFCF69;
   --plum: #5B2A4A;
-  --plum-stripe: #683355;
-
-  /* Semantic Aliases */
-  --bg-page: var(--cream);
-  --bg-card: var(--tan);
-  --text-primary: var(--choco);
-  --text-inverse: var(--cream);
-  --accent-primary: var(--terracotta);
-  --accent-highlight: var(--butter);
-  --border-subtle: rgba(59, 35, 20, 0.14);
-  --focus-ring: 0 0 0 3px var(--butter), 0 0 0 5px var(--choco);
 
   /* Typography */
-  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
-  --font-logo: 'Bagel Fat One', cursive;
-  --font-sticker: 'Gluten', cursive;
+  --font-display: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --font-wordmark: 'Bagel Fat One', cursive, system-ui, sans-serif;
+  --font-sticker: 'Gluten', cursive, system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
 
-  /* Radii */
-  --radius-card: 20px;
-  --radius-section: 32px;
+  /* Radii & Spacing */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
   --radius-pill: 999px;
 
-  /* Shadows */
-  --shadow-soft: 0 10px 24px rgba(59, 35, 20, 0.08);
-  --shadow-lift: 0 14px 28px rgba(59, 35, 20, 0.16);
-
-  /* Transitions */
-  --ease-snappy: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Shadows & Transitions */
+  --shadow-soft: 0 10px 28px rgba(59, 35, 20, 0.08);
+  --shadow-card: 0 6px 18px rgba(59, 35, 20, 0.06);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }

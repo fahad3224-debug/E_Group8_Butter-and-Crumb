@@ -1,0 +1,6 @@
+*-prompt.md
+.vscode/
+.claude/
+.DS_Store
+Thumbs.db
+*.log

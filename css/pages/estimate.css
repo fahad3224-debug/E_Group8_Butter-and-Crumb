@@ -1,243 +1,60 @@
-/* ==========================================================================
-   Page 3: Delivery & Bill Estimator (estimate.html) — single-scroll form
-   ========================================================================== */
-
-/* Main two-column layout */
-.est-layout {
+/* Delivery & Bill Estimator Page Styles */
+.estimate-layout {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
   align-items: start;
 }
 
 @media (min-width: 992px) {
-  .est-layout {
-    grid-template-columns: minmax(0, 1.35fr) 360px;
+  .estimate-layout {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.9fr);
   }
-}
-
-/* Left panel: white card holding all sections */
-.est-panel {
-  background-color: var(--tan);
-  border-radius: var(--radius-section);
-  padding: 0;
-  box-shadow: var(--shadow-soft);
-  overflow: hidden;
-}
-
-/* Individual form section */
-.est-section {
-  padding: 1.75rem 1.75rem 1.5rem;
-}
-
-/* Visual divider between sections */
-.est-divider {
-  height: 2px;
-  background: repeating-linear-gradient(90deg, rgba(59,35,20,.1) 0, rgba(59,35,20,.1) 6px, transparent 6px, transparent 12px);
-  margin: 0 1.75rem;
-}
-
-/* Section numbered header */
-.est-section__header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-
-.est-section__num {
-  width: 32px;
-  height: 32px;
-  background-color: var(--choco);
-  color: var(--cream);
-  border-radius: 50%;
-  font-size: 0.82rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.est-section__title {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--choco);
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-
-/* Category filter chips */
-.est-filter-strip {
-  background-color: var(--cream);
-  border-radius: 22px;
-  padding: 0.9rem 1rem;
-  border: 1.5px solid rgba(59, 35, 20, 0.1);
-}
-
-/* Search & Sort Inputs */
-.est-search-wrap {
-  position: relative;
-}
-
-.est-search-wrap__icon {
-  position: absolute;
-  left: 0.95rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: rgba(59, 35, 20, 0.45);
-  pointer-events: none;
-}
-
-.est-input,
-.est-select {
-  background-color: var(--cream);
-  border: 1.5px solid rgba(59, 35, 20, 0.2);
-  border-radius: var(--radius-pill);
-  color: var(--choco);
-  font-weight: 500;
-  padding: 0.62rem 1.05rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.est-search-wrap .est-input {
-  padding-left: 2.5rem;
-}
-
-.est-input:focus,
-.est-select:focus {
-  background-color: #FFF8EE;
-  border-color: var(--terracotta);
-  box-shadow: 0 0 0 3px rgba(201, 80, 58, 0.18);
-  color: var(--choco);
-  outline: none;
-}
-
-/* Fulfillment mode toggle */
-.est-mode-toggle {
-  display: inline-flex;
-  flex-wrap: wrap;
-  background-color: var(--cream);
-  padding: 0.3rem;
-  border-radius: var(--radius-pill);
-  border: 1.5px solid rgba(59, 35, 20, 0.15);
-  gap: 0.3rem;
-}
-
-.est-mode-toggle .btn,
-.est-time-toggle .btn {
-  border: 0;
-  border-radius: var(--radius-pill);
-  color: var(--choco);
-  font-weight: 700;
-  font-size: 0.84rem;
-  padding: 0.5rem 1.1rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.est-mode-toggle .btn-check:checked + .btn,
-.est-time-toggle .btn-check:checked + .btn {
-  background-color: var(--choco);
-  color: var(--cream);
-}
-
-/* Time toggle */
-.est-time-toggle {
-  display: inline-flex;
-  flex-wrap: wrap;
-  background-color: var(--cream);
-  padding: 0.3rem;
-  border-radius: var(--radius-pill);
-  border: 1.5px solid rgba(59, 35, 20, 0.15);
-  gap: 0.3rem;
-}
-
-/* ETA Timeline */
-.eta-timeline {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.eta-timeline__step {
-  flex: 1;
-  min-width: 100px;
-  background-color: var(--cream);
-  border-radius: 18px;
-  padding: 1rem 0.75rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.eta-timeline__step--total {
-  border: 2px solid var(--terracotta);
-}
-
-.eta-timeline__step-icon {
-  font-size: 1.4rem;
-  line-height: 1;
-}
-
-.eta-timeline__step-time {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: rgba(59, 35, 20, 0.6);
-  display: block;
-}
-
-.eta-timeline__connector {
-  font-size: 1.2rem;
-  color: rgba(59, 35, 20, 0.3);
-  flex-shrink: 0;
-}
-
-/* Sticky Receipt Card with Scalloped Top Edge */
-.receipt-card {
-  position: relative;
-  background-color: var(--tan);
-  border-radius: 0 0 24px 24px;
-  padding: 1.5rem 1.35rem;
-  box-shadow: var(--shadow-soft);
-  margin-top: 12px;
-}
-
-.receipt-card::before {
-  content: '';
-  position: absolute;
-  top: -12px;
-  left: 0;
-  right: 0;
-  height: 12px;
-  background-repeat: repeat-x;
-  background-size: 24px 12px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12' preserveAspectRatio='none'%3E%3Cpath d='M0 12 Q12 -4 24 12 Z' fill='%23F3D9BF'/%3E%3C/svg%3E");
-}
-
-@media (min-width: 992px) {
   .receipt-card {
     position: sticky;
     top: 1.25rem;
   }
 }
 
-/* Countdown pill */
-.countdown-pill {
-  display: inline-flex;
+.receipt-card {
+  background: var(--tan);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: 1.75rem 1.5rem 1.5rem;
+  position: relative;
+  box-shadow: var(--shadow-soft);
+  margin-top: 14px;
+}
+
+.receipt-card::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 14'%3E%3Cpath d='M0 14 L14 0 L28 14 Z' fill='%23F3D9BF'/%3E%3C/svg%3E");
+  background-size: 28px 14px;
+  background-repeat: round no-repeat;
+}
+
+.mobile-estimate-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1030;
+  background: var(--choco);
+  color: var(--cream);
+  padding: 0.75rem 1rem;
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background-color: var(--butter);
-  color: var(--choco);
-  border-radius: var(--radius-pill);
-  padding: 0.4rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 700;
+  justify-content: space-between;
+  gap: 0.75rem;
+  box-shadow: 0 -6px 20px rgba(59, 35, 20, 0.2);
+}
+
+@media (max-width: 991.98px) {
+  body {
+    padding-bottom: 4.5rem;
+  }
 }

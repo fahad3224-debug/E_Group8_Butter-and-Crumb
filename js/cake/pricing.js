@@ -1,83 +1,98 @@
-/**
- * Cake Studio pricing, lead time and plain-text descriptions.
- * All numbers come from CAKE in config.js.
- */
+import { CAKE, REWARDS } from '../config.js';
 
-import { CAKE } from '../config.js';
+export function calculateCakePrice(state) {
+  const size = CAKE.sizes.find((s) => s.id === state.size) || CAKE.sizes[1];
+  const shape = CAKE.shapes.find((s) => s.id === state.shape) || CAKE.shapes[0];
+  const layer = CAKE.layers.find((l) => l.count === state.layers) || CAKE.layers[0];
+  const filling = CAKE.fillings.find((f) => f.id === state.filling) || CAKE.fillings[0];
+  const finish = CAKE.finishes.find((f) => f.id === state.finish) || CAKE.finishes[0];
 
-export const pick = (list, id) => list.find((o) => o.id === id) || list[0];
+  const lines = [];
+  let rawTotal = 0;
 
-/** The frosting's friendly name, or "custom colour" for a picker value. */
-export function frostingName(hex) {
-  const match = CAKE.frostings.find((f) => f.color.toLowerCase() === String(hex).toLowerCase());
-  return match ? match.label : 'Custom colour';
-}
+  lines.push({ label: `${size.label} ${shape.label.toLowerCase()} base`, amount: size.price });
+  rawTotal += size.price;
 
-/** Price breakdown for a cake design. Returns { total, lines: [[label, amount], …] }. */
-export function cakePrice(s) {
-  const size = pick(CAKE.sizes, s.size);
-  const shape = pick(CAKE.shapes, s.shape);
-  const lines = [[`${size.label} ${shape.label.toLowerCase()} base`, size.price]];
+  if (shape.price > 0) {
+    lines.push({ label: `${shape.label} shape`, amount: shape.price });
+    rawTotal += shape.price;
+  }
 
-  if (shape.price) lines.push([`${shape.label} tin`, shape.price]);
+  const extraLayersAmt = Math.round(size.price * layer.multiplier);
+  if (extraLayersAmt > 0) {
+    lines.push({ label: `${layer.count} layers`, amount: extraLayersAmt });
+    rawTotal += extraLayersAmt;
+  }
 
-  const extraLayers = Math.max(0, s.layers - 2);
-  if (extraLayers) lines.push([`${extraLayers} extra layer${extraLayers > 1 ? 's' : ''}`, Math.round(size.price * CAKE.extraLayerRate * extraLayers)]);
+  const activeSponges = (state.sponges || []).slice(0, state.layers);
+  const avgSponge =
+    activeSponges.reduce((sum, id) => {
+      const sp = CAKE.sponges.find((s) => s.id === id);
+      return sum + (sp ? sp.price : 0);
+    }, 0) / Math.max(1, activeSponges.length);
+  if (avgSponge > 0) {
+    const roundedSponge = Math.round(avgSponge);
+    lines.push({ label: 'Sponge flavour', amount: roundedSponge });
+    rawTotal += roundedSponge;
+  }
 
-  // Sponges are charged per layer, averaged so mixed cakes stay fair
-  const used = s.sponges.slice(0, s.layers);
-  const spongeAvg = used.reduce((sum, id) => sum + pick(CAKE.sponges, id).price, 0) / s.layers;
-  if (spongeAvg) lines.push([sameSponge(s) ? `${pick(CAKE.sponges, used[0]).label} sponge` : 'Mixed sponges', Math.round(spongeAvg)]);
+  if (filling.price > 0) {
+    lines.push({ label: `${filling.label} filling`, amount: filling.price });
+    rawTotal += filling.price;
+  }
 
-  const filling = pick(CAKE.fillings, s.filling);
-  if (filling.price) lines.push([`${filling.label} filling`, filling.price]);
+  if (finish.price > 0) {
+    lines.push({ label: `${finish.label} finish`, amount: finish.price });
+    rawTotal += finish.price;
+  }
 
-  const finish = pick(CAKE.finishes, s.finish);
-  if (finish.price) lines.push([`${finish.label} finish`, finish.price]);
-
-  s.toppings.forEach((id) => {
-    const t = pick(CAKE.toppings, id);
-    lines.push([t.label, t.price]);
+  (state.toppings || []).forEach((tId) => {
+    const t = CAKE.toppings.find((x) => x.id === tId);
+    if (t && t.price > 0) {
+      lines.push({ label: t.label, amount: t.price });
+      rawTotal += t.price;
+    }
   });
 
-  if (s.msg.trim()) lines.push(['Message on top', CAKE.messagePrice]);
+  if (state.msg && state.msg.trim().length > 0) {
+    lines.push({ label: 'Cake message', amount: CAKE.messagePrice });
+    rawTotal += CAKE.messagePrice;
+  }
 
-  s.dietary.forEach((id) => {
-    const d = pick(CAKE.dietary, id);
-    if (d.price) lines.push([d.label, d.price]);
+  (state.dietary || []).forEach((dId) => {
+    const d = CAKE.dietary.find((x) => x.id === dId);
+    if (d && d.price > 0) {
+      lines.push({ label: d.label, amount: d.price });
+      rawTotal += d.price;
+    }
   });
 
-  const raw = lines.reduce((sum, [, amount]) => sum + amount, 0);
-  return { total: Math.round(raw / CAKE.roundTo) * CAKE.roundTo, lines };
+  const total = Math.round(rawTotal / 50) * 50;
+  const leadHours = state.layers >= 4 || (state.dietary && state.dietary.length > 0) ? 48 : 24;
+  const points = Math.floor(total * REWARDS.pointsPerRupee);
+
+  return { total, lines, leadHours, points };
 }
 
-export const sameSponge = (s) => s.sponges.slice(0, s.layers).every((id) => id === s.sponges[0]);
+export function getCakeCaption(state) {
+  const size = CAKE.sizes.find((s) => s.id === state.size) || CAKE.sizes[1];
+  const shape = CAKE.shapes.find((s) => s.id === state.shape) || CAKE.shapes[0];
+  const finish = CAKE.finishes.find((f) => f.id === state.finish) || CAKE.finishes[0];
+  const active = (state.sponges || []).slice(0, state.layers);
+  const allSame = active.every((s) => s === active[0]);
+  const spongeLabel = allSame
+    ? (CAKE.sponges.find((s) => s.id === active[0])?.label || 'Vanilla')
+    : 'Mixed sponge';
 
-/** Hours of notice the bakery needs for this design. */
-export function leadHours(s) {
-  return s.layers >= 4 || s.dietary.length ? CAKE.leadHours.special : CAKE.leadHours.standard;
+  return `${size.label} ${shape.label} · ${spongeLabel} · ${state.layers} layers · ${finish.label}`.toUpperCase();
 }
 
-/** Short caption, e.g. "2 kg round · vanilla · 3 layers · buttercream". */
-export function caption(s) {
-  const sponge = sameSponge(s) ? pick(CAKE.sponges, s.sponges[0]).label.toLowerCase() : 'mixed sponge';
-  return `${pick(CAKE.sizes, s.size).label} ${pick(CAKE.shapes, s.shape).label.toLowerCase()} · ${sponge} · ${s.layers} layers · ${pick(CAKE.finishes, s.finish).label.toLowerCase()}`;
-}
-
-/** Full one-line spec used in the estimator and saved designs. */
-export function describe(s) {
-  const sponges = sameSponge(s)
-    ? `${pick(CAKE.sponges, s.sponges[0]).label} sponge`
-    : `Layers (bottom to top): ${s.sponges.slice(0, s.layers).map((id) => pick(CAKE.sponges, id).label).join(' / ')}`;
-  return [
-    `${pick(CAKE.sizes, s.size).label} ${pick(CAKE.shapes, s.shape).label.toLowerCase()}, ${s.layers} layers`,
-    sponges,
-    `${pick(CAKE.fillings, s.filling).label} filling`,
-    `${pick(CAKE.finishes, s.finish).label} in ${frostingName(s.frosting).toLowerCase()}`,
-    s.toppings.map((id) => pick(CAKE.toppings, id).label).join(', '),
-    s.msg.trim() ? `“${s.msg.trim()}”` : '',
-    s.dietary.map((id) => pick(CAKE.dietary, id).label).join(', '),
-  ]
-    .filter(Boolean)
-    .join(' · ');
+export function getCakeDescription(state) {
+  const fill = CAKE.fillings.find((f) => f.id === state.filling)?.label || 'Vanilla cream';
+  const parts = [getCakeCaption(state), `Filling: ${fill}`];
+  if (state.toppings?.length) parts.push(`Toppings: ${state.toppings.join(', ')}`);
+  if (state.msg?.trim()) parts.push(`Message: "${state.msg.trim()}"`);
+  if (state.dietary?.length) parts.push(`Dietary: ${state.dietary.join(', ')}`);
+  if (state.notes?.trim()) parts.push(`Notes: ${state.notes.trim()}`);
+  return parts.join(' · ');
 }
