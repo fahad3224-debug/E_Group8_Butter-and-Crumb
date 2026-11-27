@@ -1,6 +1,6 @@
 # Crumbery Bakery — Islamabad
 
-A 3-page responsive website for **Crumbery**, a homemade bakery in **F-7 Markaz, Islamabad, Pakistan**. Built with semantic HTML5, custom CSS3, vanilla ES modules, Bootstrap 5.3, and a **hand-written WebGL2 PBR renderer** (zero 3D or math libraries).
+A 3-page responsive website for **Crumbery**, a homemade bakery in **F-7 Markaz, Islamabad, Pakistan**. Built with semantic HTML5, custom CSS3, vanilla ES modules, Bootstrap 5.3, and an **interactive 3D cake built with pure CSS 3D transforms** (no 3D libraries).
 
 ## How to Run Locally
 
@@ -19,14 +19,14 @@ python -m http.server 8000
 
 - **HTML5, CSS3, Vanilla JavaScript (ES Modules)**
 - **Bootstrap 5.3** (grid, utilities, offcanvas, modals, accordion)
-- **Hand-written WebGL2 Engine** (`js/gl/`) — custom `vec3`/`mat4` math, lathe/wedge/rounded-box/heart geometry builders, procedural canvas textures + normal maps, Cook-Torrance GGX PBR shader with Charlie sheen, clearcoat, wrap subsurface scattering, 3×3 PCF shadow mapping, and ACES filmic tone mapping.
+- **CSS 3D cake** (`js/cake/cake3d.js`): each sponge layer is a cylinder of thin shaded facets plus top and bottom discs, with fillings between them. Drag to turn, scroll or use the slider to separate the layers, tap a layer to change its sponge, and cut a slice to see the cross-section. No WebGL or 3D libraries.
 - **Google Fonts**: `Bricolage Grotesque`, `Bagel Fat One`, `Gluten`, `DM Sans`
 
 ## Folder Structure
 
 ```text
 /
-├── index.html          → Cake Studio (WebGL2 customizer)
+├── index.html          → Cake Studio (3D cake customizer)
 ├── rewards.html        → Rewards & membership
 ├── estimate.html       → Delivery & bill estimator
 ├── css/
@@ -39,8 +39,8 @@ python -m http.server 8000
 │   ├── data/menu.js    → menu items
 │   ├── store.js        → localStorage persistence
 │   ├── layout.js       → shared header/footer + active nav
-│   ├── gl/             → hand-written WebGL2 engine
-│   ├── cake/           → cake model, options, pricing, studio UI
+│   ├── cake/           → cake3d.js (3D cake), pricing.js (price, lead time, descriptions)
+│   ├── studio.js       → Cake Studio page: options, summary, saving, add to estimate
 │   ├── rewards.js
 │   └── estimate.js
 ├── assets/images/ , assets/icons/
@@ -53,7 +53,12 @@ python -m http.server 8000
 |---|---|---|---|
 | Shared striped frame, wavy hero, offcanvas nav & newsletter footer | Responsive & Accessible | All pages | [TBD] |
 | Footer newsletter email validation & feedback | Forms & Input | All pages | [TBD] |
-| Cake Studio responsive layout, option tabs & sticky summary bar | Responsive & Accessible | index.html | [TBD] |
+| Cake Studio responsive layout: 3D stage + numbered build steps | Responsive & Accessible | index.html | [TBD] |
+| Cake options rendered from config (shape, size, layers, sponge, filling, finish, colour, toppings, dietary) | Data & Display | index.html | [TBD] |
+| Interactive 3D cake: drag to turn, separate layers, per-layer sponge, cut a slice, keyboard controls | Interaction | index.html | [TBD] |
+| Live cake price breakdown, lead time and Sweet Points preview | Logic & Calculation | index.html | [TBD] |
+| Cake message (24-char limit with counter) and notes | Forms & Input | index.html | [TBD] |
+| Cake draft and saved designs (with thumbnails) kept in localStorage; custom cake sent to the estimator | State & Memory | index.html | [TBD] |
 | Rewards dashboard layout, tier cards & FAQ accordion | Data & Display | rewards.html | [TBD] |
 | Estimator 4-step layout & scalloped paper-receipt summary card | Responsive & Accessible | estimate.html | [TBD] |
 | Menu catalog filtering, sorting, product modal & recently viewed items | Data & Display | estimate.html | [TBD] |
