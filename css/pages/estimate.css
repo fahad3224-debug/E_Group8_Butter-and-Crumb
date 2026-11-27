@@ -1,38 +1,8 @@
 /* ==========================================================================
-   Page 3: Delivery & Bill Estimator (estimate.html)
+   Page 3: Delivery & Bill Estimator (estimate.html) — single-scroll form
    ========================================================================== */
 
-/* 4-Step Progress Stepper */
-.est-stepper {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-  margin-bottom: 1.75rem;
-}
-
-.est-step-btn {
-  background-color: var(--tan);
-  color: var(--choco);
-  border: 2px solid transparent;
-  border-radius: 16px;
-  padding: 0.7rem 0.5rem;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.est-step-btn.is-active {
-  background-color: var(--terracotta);
-  color: var(--cream);
-}
-
-.est-step-btn.is-done {
-  border-color: var(--choco);
-  background-color: var(--butter);
-}
-
+/* Main two-column layout */
 .est-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -46,14 +16,59 @@
   }
 }
 
+/* Left panel: white card holding all sections */
 .est-panel {
   background-color: var(--tan);
   border-radius: var(--radius-section);
-  padding: 1.5rem;
+  padding: 0;
   box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
 
-/* Styled Menu Controls (Search, Sort, Category Bar, Form Inputs) */
+/* Individual form section */
+.est-section {
+  padding: 1.75rem 1.75rem 1.5rem;
+}
+
+/* Visual divider between sections */
+.est-divider {
+  height: 2px;
+  background: repeating-linear-gradient(90deg, rgba(59,35,20,.1) 0, rgba(59,35,20,.1) 6px, transparent 6px, transparent 12px);
+  margin: 0 1.75rem;
+}
+
+/* Section numbered header */
+.est-section__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.est-section__num {
+  width: 32px;
+  height: 32px;
+  background-color: var(--choco);
+  color: var(--cream);
+  border-radius: 50%;
+  font-size: 0.82rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.est-section__title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--choco);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Category filter chips */
 .est-filter-strip {
   background-color: var(--cream);
   border-radius: 22px;
@@ -61,6 +76,7 @@
   border: 1.5px solid rgba(59, 35, 20, 0.1);
 }
 
+/* Search & Sort Inputs */
 .est-search-wrap {
   position: relative;
 }
@@ -70,7 +86,7 @@
   left: 0.95rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--choco-muted);
+  color: rgba(59, 35, 20, 0.45);
   pointer-events: none;
 }
 
@@ -82,7 +98,7 @@
   color: var(--choco);
   font-weight: 500;
   padding: 0.62rem 1.05rem;
-  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .est-search-wrap .est-input {
@@ -95,10 +111,13 @@
   border-color: var(--terracotta);
   box-shadow: 0 0 0 3px rgba(201, 80, 58, 0.18);
   color: var(--choco);
+  outline: none;
 }
 
+/* Fulfillment mode toggle */
 .est-mode-toggle {
   display: inline-flex;
+  flex-wrap: wrap;
   background-color: var(--cream);
   padding: 0.3rem;
   border-radius: var(--radius-pill);
@@ -106,18 +125,79 @@
   gap: 0.3rem;
 }
 
-.est-mode-toggle .btn {
+.est-mode-toggle .btn,
+.est-time-toggle .btn {
   border: 0;
   border-radius: var(--radius-pill);
   color: var(--choco);
   font-weight: 700;
   font-size: 0.84rem;
-  padding: 0.45rem 1rem;
+  padding: 0.5rem 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
-.est-mode-toggle .btn-check:checked + .btn {
+.est-mode-toggle .btn-check:checked + .btn,
+.est-time-toggle .btn-check:checked + .btn {
   background-color: var(--choco);
   color: var(--cream);
+}
+
+/* Time toggle */
+.est-time-toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  background-color: var(--cream);
+  padding: 0.3rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid rgba(59, 35, 20, 0.15);
+  gap: 0.3rem;
+}
+
+/* ETA Timeline */
+.eta-timeline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.eta-timeline__step {
+  flex: 1;
+  min-width: 100px;
+  background-color: var(--cream);
+  border-radius: 18px;
+  padding: 1rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.eta-timeline__step--total {
+  border: 2px solid var(--terracotta);
+}
+
+.eta-timeline__step-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.eta-timeline__step-time {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(59, 35, 20, 0.6);
+  display: block;
+}
+
+.eta-timeline__connector {
+  font-size: 1.2rem;
+  color: rgba(59, 35, 20, 0.3);
+  flex-shrink: 0;
 }
 
 /* Sticky Receipt Card with Scalloped Top Edge */
@@ -149,47 +229,7 @@
   }
 }
 
-.qty-stepper {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  background-color: var(--choco);
-  color: var(--cream);
-  border-radius: var(--radius-pill);
-  padding: 0.2rem 0.45rem;
-}
-
-.qty-stepper button {
-  background: transparent;
-  border: 0;
-  color: var(--cream);
-  font-weight: 700;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.qty-stepper button:hover {
-  background-color: rgba(252, 235, 216, 0.2);
-}
-
-/* Delivery 3-step timeline */
-.eta-timeline {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  text-align: center;
-}
-
-.eta-timeline__step {
-  background-color: var(--cream);
-  border-radius: 16px;
-  padding: 0.9rem 0.5rem;
-  font-size: 0.84rem;
-  font-weight: 700;
-}
-
+/* Countdown pill */
 .countdown-pill {
   display: inline-flex;
   align-items: center;

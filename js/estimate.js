@@ -42,7 +42,6 @@ function initEstimator() {
   renderMenu();
   renderRecentlyViewed();
   renderReceiptAndEta();
-  goToStep(getEstimate().step, false);
 }
 
 /* ---------- Sectors & Initial Hydration ---------- */
@@ -252,7 +251,6 @@ function bindEvents() {
     hydrateFormFromState();
     renderMenu();
     renderReceiptAndEta();
-    goToStep(1);
   });
 
   // Re-calculate if auth/tier changes
