@@ -1,4 +1,6 @@
-// Crumbery Bakery Menu Data (16 items)
+// Crumbery Bakery Menu Data — uses local images from assets/images/
+const IMG = (name) => `assets/images/${name}`;
+
 export const MENU_ITEMS = [
   {
     id: 'sourdough-boule',
@@ -10,19 +12,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten',
     prepMinutes: 10,
     popularity: 98,
-    image: 'https://images.unsplash.com/photo-1585478259715-876acc5be8eb?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    id: 'seeded-whole-grain',
-    name: 'Seeded Whole Grain',
-    category: 'Breads',
-    price: 1350,
-    description: 'Hearty whole-wheat loaf rolled in toasted sesame, flax, sunflower, and pumpkin seeds.',
-    ingredients: 'Whole wheat flour, flaxseed, sunflower seeds, pumpkin seeds, honey, salt',
-    allergens: 'Gluten, Sesame',
-    prepMinutes: 10,
-    popularity: 84,
-    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80'
+    image: IMG('sourdough-boule.jpg')
   },
   {
     id: 'rosemary-focaccia',
@@ -34,19 +24,19 @@ export const MENU_ITEMS = [
     allergens: 'Gluten',
     prepMinutes: 12,
     popularity: 90,
-    image: 'https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&w=600&q=80'
+    image: IMG('focaccia.jpg')
   },
   {
-    id: 'garlic-herb-baguette',
-    name: 'Garlic Herb Baguette',
+    id: 'seeded-whole-grain',
+    name: 'Seeded Whole Grain',
     category: 'Breads',
-    price: 750,
-    description: 'Crisp French baguette brushed with roasted garlic and parsley butter.',
-    ingredients: 'Wheat flour, butter, roasted garlic, parsley, yeast, salt',
-    allergens: 'Gluten, Dairy',
+    price: 1350,
+    description: 'Hearty whole-wheat loaf rolled in toasted sesame, flax, sunflower, and pumpkin seeds.',
+    ingredients: 'Whole wheat flour, flaxseed, sunflower seeds, pumpkin seeds, honey, salt',
+    allergens: 'Gluten, Sesame',
     prepMinutes: 10,
-    popularity: 79,
-    image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&w=600&q=80'
+    popularity: 84,
+    image: IMG('sourdough-boule.jpg')
   },
   {
     id: 'butter-croissant',
@@ -58,7 +48,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs',
     prepMinutes: 8,
     popularity: 99,
-    image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80'
+    image: IMG('croissant.jpg')
   },
   {
     id: 'pain-au-chocolat',
@@ -70,7 +60,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs, Soy',
     prepMinutes: 8,
     popularity: 96,
-    image: 'https://images.unsplash.com/photo-1530610476181-d83430b64dcd?auto=format&fit=crop&w=600&q=80'
+    image: IMG('croissant.jpg')
   },
   {
     id: 'berry-danish',
@@ -82,7 +72,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs',
     prepMinutes: 10,
     popularity: 88,
-    image: 'https://images.unsplash.com/photo-1509365465985-25d11c17e812?auto=format&fit=crop&w=600&q=80'
+    image: IMG('berry-danish.jpg')
   },
   {
     id: 'pistachio-cruffin',
@@ -94,7 +84,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs, Tree Nuts',
     prepMinutes: 10,
     popularity: 93,
-    image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=600&q=80'
+    image: IMG('croissant.jpg')
   },
   {
     id: 'fudge-brownie',
@@ -106,7 +96,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs',
     prepMinutes: 5,
     popularity: 95,
-    image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80'
+    image: IMG('brownie.jpg')
   },
   {
     id: 'salted-caramel-tart',
@@ -118,7 +108,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy',
     prepMinutes: 8,
     popularity: 86,
-    image: 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=600&q=80'
+    image: IMG('brownie.jpg')
   },
   {
     id: 'cinnamon-roll',
@@ -130,7 +120,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs',
     prepMinutes: 10,
     popularity: 91,
-    image: 'https://images.unsplash.com/photo-1509365390695-33aee754301f?auto=format&fit=crop&w=600&q=80'
+    image: IMG('berry-danish.jpg')
   },
   {
     id: 'macaron-box',
@@ -142,7 +132,7 @@ export const MENU_ITEMS = [
     allergens: 'Tree Nuts, Eggs, Dairy',
     prepMinutes: 5,
     popularity: 85,
-    image: 'https://images.unsplash.com/photo-1569864358642-9d1684040f43?auto=format&fit=crop&w=600&q=80'
+    image: IMG('berry-danish.jpg')
   },
   {
     id: 'blueberry-cheesecake-slice',
@@ -154,7 +144,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs',
     prepMinutes: 8,
     popularity: 94,
-    image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80'
+    image: IMG('cheesecake.jpg')
   },
   {
     id: 'biscoff-cheesecake-slice',
@@ -166,7 +156,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Soy',
     prepMinutes: 8,
     popularity: 97,
-    image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=80'
+    image: IMG('cheesecake.jpg')
   },
   {
     id: 'belgian-chocolate-slice',
@@ -178,7 +168,7 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs',
     prepMinutes: 8,
     popularity: 92,
-    image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80'
+    image: IMG('hero-cake.jpg')
   },
   {
     id: 'red-velvet-slice',
@@ -190,6 +180,18 @@ export const MENU_ITEMS = [
     allergens: 'Gluten, Dairy, Eggs',
     prepMinutes: 8,
     popularity: 89,
-    image: 'https://images.unsplash.com/photo-1586788680434-30d324b2d46f?auto=format&fit=crop&w=600&q=80'
+    image: IMG('hero-cake.jpg')
+  },
+  {
+    id: 'custom-cake-counter',
+    name: 'Custom Layer Cake (Whole)',
+    category: 'Cakes',
+    price: 4200,
+    description: 'A fully custom layer cake designed in the Cake Studio. Price shown is an estimate — use the Cake Studio for an exact quote.',
+    ingredients: 'Varies by design',
+    allergens: 'Gluten, Dairy, Eggs (may vary)',
+    prepMinutes: 60,
+    popularity: 100,
+    image: IMG('hero-cake.jpg')
   }
 ];
