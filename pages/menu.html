@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu | Butter and Crumb — Home Bakery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="menu">
+  <!-- Shared Header & Navigation -->
+  <header class="bc-header">
+    <nav class="navbar navbar-expand-md bc-navbar container" aria-label="Main Navigation">
+      <a class="bc-brand" href="../index.html">
+        <img src="../images/logo.svg" alt="Butter and Crumb Logo" class="bc-brand-logo">
+        <span>Butter and Crumb</span>
+      </a>
+
+      <div class="d-flex align-items-center gap-2 order-md-2">
+        <button type="button" class="bc-cart-btn" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">
+          <span>Cart</span>
+          <span class="bc-cart-count" data-cart-count>0</span>
+        </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation menu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+
+      <div class="collapse navbar-collapse order-md-1 justify-content-center" id="mainNav">
+        <ul class="navbar-nav gap-1 gap-md-2 mt-3 mt-md-0">
+          <li class="nav-item"><a class="nav-link bc-nav-link" href="../index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link bc-nav-link active" href="menu.html" aria-current="page">Menu</a></li>
+          <li class="nav-item"><a class="nav-link bc-nav-link" href="cakes.html">Cakes</a></li>
+          <li class="nav-item"><a class="nav-link bc-nav-link" href="breads.html">Breads</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Banner (Page 1 Prototype) -->
+    <section class="bc-hero-wrap" aria-labelledby="menuHeroTitle">
+      <div class="container">
+        <div class="bc-hero-card">
+          <span class="bc-eyebrow">Our Menu</span>
+          <h1 id="menuHeroTitle" class="bc-hero-title">Have Some <span class="accent">Sweetness!</span></h1>
+          <p class="bc-hero-subtitle">Fresh handmade products baked with care in our home kitchen.</p>
+          <span class="bc-sticker">Fresh &bull; Tasty &bull; Homemade</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Products Section (2-Column Grid from Page 1 Prototype) -->
+    <section class="bc-section" aria-labelledby="popularHeading">
+      <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+          <div>
+            <h2 id="popularHeading" class="bc-section-heading">Popular Products</h2>
+            <p class="bc-section-sub mb-0">Customer favorites from our cakes, breads, and morning bakes.</p>
+          </div>
+          <span class="small fw-semibold" style="color: var(--bc-terracotta);">Allergens clearly labeled on every item</span>
+        </div>
+
+        <div id="popularProductsGrid" class="row g-4"></div>
+      </div>
+    </section>
+
+    <!-- Category Links to Cakes & Breads (Page 1 Prototype) -->
+    <section class="bc-section pt-0" aria-labelledby="exploreCategoriesHeading">
+      <div class="container">
+        <h2 id="exploreCategoriesHeading" class="visually-hidden">Explore Bakery Categories</h2>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="bc-explore-card">
+              <div>
+                <h3>Cakes</h3>
+                <p>Explore all cakes — rich chocolate, mango, red velvet, strawberry, and classic celebration sponges.</p>
+              </div>
+              <a href="cakes.html" class="bc-view-all-btn">View All &rarr;</a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="bc-explore-card breads-card">
+              <div>
+                <h3>Breads</h3>
+                <p>Explore all breads — daily white loaves, roasted garlic bread, whole-wheat, multigrain, and French baguettes.</p>
+              </div>
+              <a href="breads.html" class="bc-view-all-btn">View All &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Reviews Section -->
+    <section class="bc-section bc-section-alt" aria-labelledby="reviewsHeading">
+      <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+          <div>
+            <span class="bc-eyebrow mb-2">Customer Love</span>
+            <h2 id="reviewsHeading" class="bc-section-heading">Product Reviews</h2>
+            <p class="bc-section-sub mb-0" id="averageRatingDisplay">Loading reviews...</p>
+          </div>
+          <div style="min-width: 220px;">
+            <label for="reviewFilterSelect" class="form-label small fw-bold mb-1">Filter by Product</label>
+            <select id="reviewFilterSelect" class="form-select form-select-sm"></select>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div id="reviewsGrid" class="row g-3"></div>
+          </div>
+
+          <!-- Leave a Review Form with Live Validation -->
+          <div class="col-lg-4">
+            <div class="bc-review-form-box">
+              <h3 class="h4 mb-1">Write a Review</h3>
+              <p class="small text-muted mb-3">Tried one of our bakes? Share your honest thoughts.</p>
+              <form id="reviewForm" novalidate>
+                <div class="mb-2">
+                  <label for="reviewerName" class="form-label small fw-semibold">Your Name</label>
+                  <input type="text" id="reviewerName" class="form-control form-control-sm" placeholder="e.g. Sara Khan" required>
+                </div>
+                <div class="mb-2">
+                  <label for="reviewProduct" class="form-label small fw-semibold">Product</label>
+                  <select id="reviewProduct" class="form-select form-select-sm" required></select>
+                </div>
+                <div class="mb-2">
+                  <label for="reviewRating" class="form-label small fw-semibold">Rating</label>
+                  <select id="reviewRating" class="form-select form-select-sm" required>
+                    <option value="5">5 Stars — Loved it</option>
+                    <option value="4">4 Stars — Very good</option>
+                    <option value="3">3 Stars — Good</option>
+                    <option value="2">2 Stars — Fair</option>
+                    <option value="1">1 Star — Needs work</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="reviewComment" class="form-label small fw-semibold">Your Review</label>
+                  <textarea id="reviewComment" rows="3" class="form-control form-control-sm" placeholder="Tell us about taste, freshness, or texture..." required></textarea>
+                </div>
+                <button type="submit" class="bc-btn-primary w-100">Submit Review</button>
+                <div id="reviewFormFeedback" role="alert"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Shared Footer -->
+  <footer class="bc-footer">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 text-center text-md-start">
+      <div>
+        <p class="fw-bold mb-1">Butter and Crumb | Baked with Love</p>
+        <p class="bc-footer-note mb-0">Selected product photos were generated using Antigravity AI Image Generator; remaining illustrations and logo are custom SVG artwork.</p>
+      </div>
+      <nav aria-label="Footer Navigation" class="d-flex flex-wrap gap-3 small fw-semibold">
+        <a href="../index.html">Home</a>
+        <a href="menu.html">Menu</a>
+        <a href="cakes.html">Cakes</a>
+        <a href="breads.html">Breads</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Mobile Quick Navigation Bar (Matching Mobile View Prototype) -->
+  <nav class="bc-mobile-bottom-nav" aria-label="Mobile Quick Navigation">
+    <a class="bc-mobile-bottom-link" href="../index.html">Home</a>
+    <a class="bc-mobile-bottom-link active" href="menu.html">Menu</a>
+    <a class="bc-mobile-bottom-link" href="cakes.html">Cakes</a>
+    <a class="bc-mobile-bottom-link" href="breads.html">Breads</a>
+    <button type="button" class="bc-mobile-bottom-link" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+      Cart (<span data-cart-count>0</span>)
+    </button>
+  </nav>
+
+  <!-- Shared Cart Offcanvas Drawer -->
+  <div class="offcanvas offcanvas-end bc-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header">
+      <h2 class="offcanvas-title h5 mb-0 text-white" id="cartOffcanvasLabel">Your Bakery Cart</h2>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close Cart"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="cartItemsContainer"></div>
+      <div id="cartSummary"></div>
+    </div>
+  </div>
+
+  <!-- Shared Quick-View Modal -->
+  <div class="modal fade" id="productQuickViewModal" tabindex="-1" aria-labelledby="quickViewTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background-color: var(--bc-cream); border-radius: 20px;">
+        <div class="modal-header border-0">
+          <h2 class="modal-title h4" id="quickViewTitle">Product Details</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Details"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <img id="quickViewImage" src="" alt="" class="w-100 rounded-4 mb-3 object-fit-cover" style="max-height: 240px;">
+          <p id="quickViewPrice" class="fs-5 fw-bold mb-2" style="color: var(--bc-terracotta);"></p>
+          <p id="quickViewDesc" class="mb-3"></p>
+          <div class="mb-3">
+            <span class="bc-allergen-label d-block mb-1">Contains Allergens:</span>
+            <div id="quickViewAllergens" class="d-flex flex-wrap gap-2"></div>
+          </div>
+          <button type="button" id="quickViewAddBtn" class="bc-btn-primary w-100">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add to Cart Toast -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="cartToast" class="toast align-items-center text-white border-0" style="background-color: var(--bc-espresso);" role="status" aria-live="polite" aria-atomic="true">
+      <div class="d-flex">
+        <div id="cartToastBody" class="toast-body fw-semibold"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close notification"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/pages.js"></script>
+</body>
+</html>

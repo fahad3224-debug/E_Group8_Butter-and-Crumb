@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Garlic Bread">
+  <rect width="400" height="300" fill="#FDF5EB"/>
+  <ellipse cx="200" cy="236" rx="145" ry="20" fill="#EAD4BA"/>
+  <!-- Garlic Bread Slices -->
+  <rect x="75" y="128" width="120" height="86" rx="22" transform="rotate(-8 135 171)" fill="#D9943B" stroke="#4A2C1D" stroke-width="3"/>
+  <rect x="86" y="138" width="98" height="66" rx="16" transform="rotate(-8 135 171)" fill="#F9E7A8"/>
+  <rect x="190" y="118" width="130" height="90" rx="22" transform="rotate(6 255 163)" fill="#D9943B" stroke="#4A2C1D" stroke-width="3"/>
+  <rect x="202" y="128" width="106" height="70" rx="16" transform="rotate(6 255 163)" fill="#F9E7A8"/>
+  <!-- Parsley & Herb Flecks -->
+  <circle cx="120" cy="166" r="5" fill="#3D7A3B"/>
+  <circle cx="148" cy="180" r="4" fill="#3D7A3B"/>
+  <circle cx="240" cy="155" r="5" fill="#3D7A3B"/>
+  <circle cx="270" cy="172" r="5" fill="#3D7A3B"/>
+  <circle cx="255" cy="185" r="4" fill="#3D7A3B"/>
+</svg>

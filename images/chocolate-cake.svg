@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Chocolate Cake">
+  <rect width="400" height="300" fill="#FDF5EB"/>
+  <ellipse cx="200" cy="242" rx="138" ry="22" fill="#EAD4BA"/>
+  <ellipse cx="200" cy="236" rx="130" ry="18" fill="#FFFFFF" stroke="#4A2C1D" stroke-width="3"/>
+  <path d="M105 130 H295 V220 C295 234, 105 234, 105 220 Z" fill="#4A2C1D"/>
+  <path d="M105 130 C105 112, 295 112, 295 130 C295 148, 105 148, 105 130 Z" fill="#6B3E28"/>
+  <path d="M105 136 Q120 165 135 142 T165 162 T198 144 T230 168 T262 145 T295 148 V130 H105 Z" fill="#361E12"/>
+  <circle cx="165" cy="122" r="10" fill="#8B5A3C"/>
+  <circle cx="200" cy="118" r="12" fill="#8B5A3C"/>
+  <circle cx="235" cy="122" r="10" fill="#8B5A3C"/>
+  <path d="M180 108 Q200 95 220 108" fill="none" stroke="#F2D16B" stroke-width="4" stroke-linecap="round"/>
+</svg>

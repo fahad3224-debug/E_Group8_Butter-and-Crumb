@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Cupcakes">
+  <rect width="400" height="300" fill="#FDF5EB"/>
+  <ellipse cx="200" cy="246" rx="150" ry="18" fill="#EAD4BA"/>
+  <!-- Left Cupcake -->
+  <polygon points="95,180 155,180 145,235 105,235" fill="#C94A38" stroke="#4A2C1D" stroke-width="2.5"/>
+  <path d="M90 180 C90 140, 160 140, 160 180 Z" fill="#FFF8EE" stroke="#4A2C1D" stroke-width="2.5"/>
+  <circle cx="125" cy="144" r="8" fill="#C94A38"/>
+  <!-- Center Cupcake -->
+  <polygon points="168,165 232,165 220,235 180,235" fill="#F2D16B" stroke="#4A2C1D" stroke-width="2.5"/>
+  <path d="M162 165 C162 115, 238 115, 238 165 Z" fill="#4A2C1D"/>
+  <circle cx="200" cy="122" r="9" fill="#C94A38"/>
+  <!-- Right Cupcake -->
+  <polygon points="245,180 305,180 295,235 255,235" fill="#C94A38" stroke="#4A2C1D" stroke-width="2.5"/>
+  <path d="M240 180 C240 140, 310 140, 310 180 Z" fill="#F9E7A8" stroke="#4A2C1D" stroke-width="2.5"/>
+  <circle cx="275" cy="144" r="8" fill="#4A2C1D"/>
+</svg>

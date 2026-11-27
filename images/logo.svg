@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Butter and Crumb Logo">
+  <circle cx="60" cy="60" r="56" fill="#FDF5EB" stroke="#4A2C1D" stroke-width="5"/>
+  <circle cx="60" cy="60" r="47" fill="none" stroke="#F2D16B" stroke-width="3" stroke-dasharray="6 4"/>
+  <!-- Croissant / Loaf silhouette -->
+  <path d="M28 66 C28 48, 42 36, 60 36 C78 36, 92 48, 92 66 Z" fill="#C94A38" stroke="#4A2C1D" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M25 66 H95 C95 74, 88 80, 80 80 H40 C32 80, 25 74, 25 66 Z" fill="#F2D16B" stroke="#4A2C1D" stroke-width="3.5" stroke-linejoin="round"/>
+  <!-- Score marks on bread -->
+  <path d="M46 44 L52 54 M60 41 L60 54 M74 44 L68 54" stroke="#FDF5EB" stroke-width="3" stroke-linecap="round"/>
+  <!-- Small wheat/crumb dots -->
+  <circle cx="42" cy="91" r="2.5" fill="#4A2C1D"/>
+  <circle cx="60" cy="93" r="3" fill="#C94A38"/>
+  <circle cx="78" cy="91" r="2.5" fill="#4A2C1D"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Red Velvet Cake">
+  <rect width="400" height="300" fill="#FDF5EB"/>
+  <ellipse cx="200" cy="242" rx="138" ry="22" fill="#EAD4BA"/>
+  <ellipse cx="200" cy="236" rx="130" ry="18" fill="#FFFFFF" stroke="#4A2C1D" stroke-width="3"/>
+  <path d="M108 132 H292 V220 C292 234, 108 234, 108 220 Z" fill="#B5332A"/>
+  <rect x="108" y="168" width="184" height="14" fill="#FFF8EE"/>
+  <ellipse cx="200" cy="132" rx="92" ry="18" fill="#FFF8EE" stroke="#E8D8C3" stroke-width="2"/>
+  <path d="M108 132 Q125 156 142 138 T180 154 T220 138 T260 152 T292 132" fill="#FFF8EE"/>
+  <circle cx="170" cy="126" r="5" fill="#C94A38"/>
+  <circle cx="195" cy="122" r="6" fill="#B5332A"/>
+  <circle cx="222" cy="128" r="5" fill="#C94A38"/>
+  <circle cx="206" cy="134" r="4" fill="#B5332A"/>
+</svg>

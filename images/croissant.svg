@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Butter Croissant">
+  <rect width="400" height="300" fill="#FDF5EB"/>
+  <ellipse cx="200" cy="234" rx="138" ry="18" fill="#EAD4BA"/>
+  <path d="M84 190 C90 130, 145 100, 200 100 C255 100, 310 130, 316 190 C292 204, 268 192, 250 176 C230 162, 170 162, 150 176 C132 192, 108 204, 84 190 Z" fill="#D98A2B" stroke="#4A2C1D" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M150 108 Q165 142 156 172 M200 100 V166 M250 108 Q235 142 244 172" fill="none" stroke="#4A2C1D" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="200" cy="128" rx="22" ry="9" fill="#F2D16B" opacity="0.65"/>
+</svg>

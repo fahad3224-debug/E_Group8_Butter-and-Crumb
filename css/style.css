@@ -1,0 +1,635 @@
+/* ==========================================================================
+   Butter and Crumb — Shared Stylesheet
+   Visual Theme: Warm Cream, Soft Oat, Espresso Brown, Terracotta & Butter Gold
+   ========================================================================== */
+
+:root {
+  --bc-cream: #FDF5EB;
+  --bc-oat: #F5E6D3;
+  --bc-oat-dark: #EAD4BA;
+  --bc-espresso: #4A2C1D;
+  --bc-espresso-deep: #361E12;
+  --bc-terracotta: #C94A38;
+  --bc-terracotta-dark: #A93A2B;
+  --bc-butter: #F2D16B;
+  --bc-butter-soft: #F9E7A8;
+  --bc-white: #FFFFFF;
+  --bc-border: rgba(74, 44, 29, 0.14);
+  --bc-shadow: 0 10px 26px rgba(74, 44, 29, 0.08);
+  --bc-shadow-hover: 0 16px 34px rgba(74, 44, 29, 0.14);
+  --bc-font-display: 'Oswald', 'Trebuchet MS', sans-serif;
+  --bc-font-body: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --bc-radius-lg: 22px;
+  --bc-radius-md: 16px;
+  --bc-radius-pill: 999px;
+}
+
+/* Base Reset & Typography */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bc-cream);
+  color: var(--bc-espresso);
+  font-family: var(--bc-font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+h1, h2, h3, .bc-display {
+  font-family: var(--bc-font-display);
+  letter-spacing: 0.02em;
+  color: var(--bc-espresso);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Accessible Focus Ring */
+:focus-visible {
+  outline: 3px solid var(--bc-terracotta);
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   Header & Navigation (Consistent across Menu, Cakes, Breads)
+   ========================================================================== */
+.bc-header {
+  background-color: var(--bc-espresso);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 22px,
+    transparent 22px,
+    transparent 44px
+  );
+  border-bottom: 4px solid var(--bc-butter);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.bc-navbar {
+  padding: 0.7rem 0;
+}
+
+.bc-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--bc-cream);
+  font-family: var(--bc-font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bc-brand:hover {
+  color: var(--bc-butter);
+}
+
+.bc-brand-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.bc-nav-link {
+  color: var(--bc-cream) !important;
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.45rem 1rem !important;
+  border-radius: var(--bc-radius-pill);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.bc-nav-link:hover {
+  background-color: rgba(253, 245, 235, 0.12);
+  color: var(--bc-butter) !important;
+}
+
+.bc-nav-link.active {
+  background-color: var(--bc-terracotta);
+  color: var(--bc-white) !important;
+}
+
+.bc-cart-btn {
+  background-color: var(--bc-butter);
+  color: var(--bc-espresso);
+  border: none;
+  border-radius: var(--bc-radius-pill);
+  padding: 0.45rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.bc-cart-btn:hover {
+  background-color: var(--bc-cream);
+  color: var(--bc-espresso);
+  transform: translateY(-1px);
+}
+
+.bc-cart-count {
+  background-color: var(--bc-terracotta);
+  color: var(--bc-white);
+  border-radius: var(--bc-radius-pill);
+  padding: 0.1rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.navbar-toggler {
+  border-color: rgba(253, 245, 235, 0.45);
+}
+
+.navbar-toggler-icon {
+  filter: invert(95%) sepia(12%) saturate(300%) hue-rotate(330deg);
+}
+
+/* ==========================================================================
+   Hero Banner (Framed Warm Bakery Style)
+   ========================================================================== */
+.bc-hero-wrap {
+  background-color: var(--bc-espresso);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 26px,
+    transparent 26px,
+    transparent 52px
+  );
+  padding: 2rem 0 2.5rem;
+}
+
+.bc-hero-card {
+  background-color: var(--bc-cream);
+  border-radius: var(--bc-radius-lg);
+  padding: 2.25rem 1.75rem;
+  text-align: center;
+  position: relative;
+  border: 3px dashed var(--bc-oat-dark);
+  box-shadow: var(--bc-shadow);
+}
+
+.bc-eyebrow {
+  display: inline-block;
+  background-color: var(--bc-terracotta);
+  color: var(--bc-white);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--bc-radius-pill);
+  margin-bottom: 0.75rem;
+}
+
+.bc-hero-title {
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.08;
+  margin-bottom: 0.5rem;
+}
+
+.bc-hero-title .accent {
+  color: var(--bc-terracotta);
+}
+
+.bc-hero-subtitle {
+  font-size: 1.05rem;
+  color: rgba(74, 44, 29, 0.82);
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+.bc-sticker {
+  display: inline-block;
+  background-color: var(--bc-butter);
+  color: var(--bc-espresso);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--bc-radius-pill);
+  margin-top: 0.85rem;
+  transform: rotate(-1.5deg);
+}
+
+/* ==========================================================================
+   Section Headings & Controls (Search / Filter)
+   ========================================================================== */
+.bc-section {
+  padding: 2.75rem 0;
+}
+
+.bc-section-alt {
+  background-color: var(--bc-oat);
+  border-top: 1px solid var(--bc-border);
+  border-bottom: 1px solid var(--bc-border);
+}
+
+.bc-section-heading {
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.bc-section-sub {
+  color: rgba(74, 44, 29, 0.78);
+  font-size: 0.96rem;
+}
+
+.bc-search-box {
+  background-color: var(--bc-white);
+  border: 2px solid var(--bc-oat-dark);
+  border-radius: var(--bc-radius-pill);
+  padding: 0.35rem 0.75rem 0.35rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 14px rgba(74, 44, 29, 0.05);
+}
+
+.bc-search-box:focus-within {
+  border-color: var(--bc-terracotta);
+}
+
+.bc-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  color: var(--bc-espresso);
+  font-size: 0.96rem;
+}
+
+.bc-filter-chip {
+  border: 1.5px solid var(--bc-espresso);
+  background-color: transparent;
+  color: var(--bc-espresso);
+  border-radius: var(--bc-radius-pill);
+  padding: 0.35rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.18s ease;
+}
+
+.bc-filter-chip:hover,
+.bc-filter-chip.active {
+  background-color: var(--bc-espresso);
+  color: var(--bc-cream);
+}
+
+/* ==========================================================================
+   Product Cards
+   ========================================================================== */
+.bc-product-card {
+  background-color: var(--bc-oat);
+  border: 1.5px solid var(--bc-border);
+  border-radius: var(--bc-radius-lg);
+  padding: 1.15rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bc-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--bc-shadow-hover);
+}
+
+.bc-product-img-wrap {
+  background-color: var(--bc-cream);
+  border-radius: var(--bc-radius-md);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.bc-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bc-category-badge {
+  position: absolute;
+  top: 0.65rem;
+  left: 0.65rem;
+  background-color: var(--bc-butter);
+  color: var(--bc-espresso);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--bc-radius-pill);
+}
+
+.bc-product-title {
+  font-size: 1.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.bc-product-price {
+  font-weight: 800;
+  font-size: 1.08rem;
+  color: var(--bc-terracotta);
+  margin-bottom: 0.6rem;
+}
+
+.bc-allergen-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.bc-allergen-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(74, 44, 29, 0.75);
+  margin-right: 0.15rem;
+}
+
+.bc-allergen-tag {
+  background-color: var(--bc-cream);
+  border: 1px solid rgba(74, 44, 29, 0.2);
+  color: var(--bc-espresso);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--bc-radius-pill);
+}
+
+.bc-btn-primary {
+  background-color: var(--bc-espresso);
+  color: var(--bc-cream);
+  border: none;
+  border-radius: var(--bc-radius-pill);
+  padding: 0.65rem 1.25rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+
+.bc-btn-primary:hover {
+  background-color: var(--bc-terracotta);
+  color: var(--bc-white);
+}
+
+.bc-btn-primary.is-added {
+  background-color: #2e7d32;
+  color: var(--bc-white);
+}
+
+.bc-btn-outline {
+  background-color: transparent;
+  color: var(--bc-espresso);
+  border: 2px solid var(--bc-espresso);
+  border-radius: var(--bc-radius-pill);
+  padding: 0.5rem 1.1rem;
+  font-weight: 700;
+  font-size: 0.86rem;
+  transition: all 0.2s ease;
+}
+
+.bc-btn-outline:hover {
+  background-color: var(--bc-espresso);
+  color: var(--bc-cream);
+}
+
+/* ==========================================================================
+   Explore Category Cards (Menu Page)
+   ========================================================================== */
+.bc-explore-card {
+  background-color: var(--bc-terracotta);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0px,
+    rgba(255, 255, 255, 0.05) 20px,
+    transparent 20px,
+    transparent 40px
+  );
+  color: var(--bc-cream);
+  border-radius: var(--bc-radius-lg);
+  padding: 1.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--bc-shadow);
+}
+
+.bc-explore-card.breads-card {
+  background-color: var(--bc-espresso);
+}
+
+.bc-explore-card h3 {
+  color: var(--bc-cream);
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.bc-explore-card p {
+  color: rgba(253, 245, 235, 0.9);
+  margin-bottom: 1.25rem;
+}
+
+.bc-view-all-btn {
+  background-color: var(--bc-butter);
+  color: var(--bc-espresso);
+  border-radius: var(--bc-radius-pill);
+  padding: 0.6rem 1.35rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  align-self: flex-start;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.bc-view-all-btn:hover {
+  background-color: var(--bc-cream);
+  color: var(--bc-espresso);
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   Product Reviews Section (Menu Page)
+   ========================================================================== */
+.bc-review-card {
+  background-color: var(--bc-cream);
+  border: 1.5px solid var(--bc-border);
+  border-radius: var(--bc-radius-md);
+  padding: 1.25rem;
+  height: 100%;
+  box-shadow: 0 6px 18px rgba(74, 44, 29, 0.05);
+}
+
+.bc-stars {
+  color: #D98A16;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+.bc-review-product-pill {
+  background-color: var(--bc-butter-soft);
+  color: var(--bc-espresso);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--bc-radius-pill);
+}
+
+.bc-review-form-box {
+  background-color: var(--bc-cream);
+  border: 2px solid var(--bc-oat-dark);
+  border-radius: var(--bc-radius-lg);
+  padding: 1.5rem;
+}
+
+/* ==========================================================================
+   Cart Drawer (Bootstrap Offcanvas) & Empty State
+   ========================================================================== */
+.bc-offcanvas {
+  background-color: var(--bc-cream);
+  color: var(--bc-espresso);
+}
+
+.bc-offcanvas .offcanvas-header {
+  background-color: var(--bc-espresso);
+  color: var(--bc-cream);
+}
+
+.bc-cart-item {
+  background-color: var(--bc-oat);
+  border-radius: var(--bc-radius-md);
+  padding: 0.85rem;
+  border: 1px solid var(--bc-border);
+}
+
+.bc-qty-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--bc-espresso);
+  background-color: var(--bc-cream);
+  color: var(--bc-espresso);
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bc-qty-btn:hover {
+  background-color: var(--bc-espresso);
+  color: var(--bc-cream);
+}
+
+.bc-empty-state {
+  background-color: var(--bc-oat);
+  border: 2px dashed var(--bc-oat-dark);
+  border-radius: var(--bc-radius-lg);
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Footer & Mobile Quick Navigation Bar
+   ========================================================================== */
+.bc-footer {
+  background-color: var(--bc-espresso);
+  color: var(--bc-cream);
+  padding: 2rem 0 1.5rem;
+  border-top: 4px solid var(--bc-butter);
+}
+
+.bc-footer-note {
+  font-size: 0.84rem;
+  color: rgba(253, 245, 235, 0.78);
+}
+
+.bc-mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  body {
+    padding-bottom: 68px;
+  }
+
+  .bc-hero-wrap {
+    padding: 1.25rem 0 1.5rem;
+  }
+
+  .bc-hero-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .bc-mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--bc-espresso);
+    border-top: 2px solid var(--bc-butter);
+    z-index: 1025;
+    justify-content: space-around;
+    padding: 0.45rem 0.25rem;
+  }
+
+  .bc-mobile-bottom-link {
+    color: var(--bc-cream);
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+    border-radius: var(--bc-radius-pill);
+    text-align: center;
+    background: transparent;
+    border: none;
+  }
+
+  .bc-mobile-bottom-link.active {
+    background-color: var(--bc-terracotta);
+    color: var(--bc-white);
+  }
+}

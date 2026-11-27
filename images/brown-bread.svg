@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Brown Bread">
+  <rect width="400" height="300" fill="#FDF5EB"/>
+  <ellipse cx="200" cy="238" rx="140" ry="20" fill="#EAD4BA"/>
+  <path d="M90 155 C90 100, 310 100, 310 155 V215 C310 226, 298 232, 286 232 H114 C102 232, 90 226, 90 215 Z" fill="#8B5A3C" stroke="#4A2C1D" stroke-width="3.5"/>
+  <path d="M98 155 C98 110, 302 110, 302 155" fill="#6B3E28"/>
+  <path d="M145 126 L165 144 M195 120 L212 140 M245 126 L260 144" stroke="#F5E6D3" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Vanilla Cake">
+  <rect width="400" height="300" fill="#FDF5EB"/>
+  <ellipse cx="200" cy="242" rx="138" ry="22" fill="#EAD4BA"/>
+  <ellipse cx="200" cy="236" rx="130" ry="18" fill="#FFFFFF" stroke="#4A2C1D" stroke-width="3"/>
+  <path d="M108 132 H292 V220 C292 234, 108 234, 108 220 Z" fill="#F9E7A8" stroke="#D9B664" stroke-width="2"/>
+  <rect x="108" y="170" width="184" height="12" fill="#FFFDF8"/>
+  <ellipse cx="200" cy="132" rx="92" ry="18" fill="#FFFDF8" stroke="#EAD4BA" stroke-width="2"/>
+  <circle cx="150" cy="126" r="10" fill="#F2D16B"/>
+  <circle cx="200" cy="121" r="12" fill="#F2D16B"/>
+  <circle cx="250" cy="126" r="10" fill="#F2D16B"/>
+  <circle cx="200" cy="111" r="4" fill="#C94A38"/>
+</svg>
