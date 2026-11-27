@@ -83,16 +83,25 @@ export function getCakeCaption(state) {
   const spongeLabel = allSame
     ? (CAKE.sponges.find((s) => s.id === active[0])?.label || 'Vanilla')
     : 'Mixed sponge';
-
   return `${size.label} ${shape.label} · ${spongeLabel} · ${state.layers} layers · ${finish.label}`.toUpperCase();
 }
 
 export function getCakeDescription(state) {
   const fill = CAKE.fillings.find((f) => f.id === state.filling)?.label || 'Vanilla cream';
   const parts = [getCakeCaption(state), `Filling: ${fill}`];
-  if (state.toppings?.length) parts.push(`Toppings: ${state.toppings.join(', ')}`);
+  if (state.toppings?.length) {
+    const toppingLabels = state.toppings
+      .map((id) => CAKE.toppings.find((t) => t.id === id)?.label || id)
+      .join(', ');
+    parts.push(`Toppings: ${toppingLabels}`);
+  }
   if (state.msg?.trim()) parts.push(`Message: "${state.msg.trim()}"`);
-  if (state.dietary?.length) parts.push(`Dietary: ${state.dietary.join(', ')}`);
+  if (state.dietary?.length) {
+    const dietLabels = state.dietary
+      .map((id) => CAKE.dietary.find((d) => d.id === id)?.label || id)
+      .join(', ');
+    parts.push(`Dietary: ${dietLabels}`);
+  }
   if (state.notes?.trim()) parts.push(`Notes: ${state.notes.trim()}`);
   return parts.join(' · ');
 }
