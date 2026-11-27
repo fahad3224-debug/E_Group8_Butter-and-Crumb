@@ -3,222 +3,290 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crumbery — Cake Studio | F-7 Markaz, Islamabad</title>
+  <title>Crumbery — Cake Studio &amp; Homemade Bakery in Islamabad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,700..800&family=DM+Sans:wght@400;500;700&family=Gluten:wght@700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pages/studio.css">
 </head>
-<body>
-  <div class="container py-3 py-md-4">
-    <div class="striped-frame">
-      <header id="site-header"></header>
-      <section class="wavy-hero">
-        <div class="row align-items-center g-4">
-          <div class="col-lg-8">
-            <span class="sticker mb-3">baked fresh in F-7</span>
-            <h1 class="font-display display-hero mb-3">
-              Design your <span class="text-terracotta">dream cake</span> in 3D
-            </h1>
-            <p class="fs-5 text-choco-muted mb-4" style="max-width: 54ch;">
-              Pick your sponges, fillings, frosting and toppings, then spin and slice your creation live before sending it to the estimator.
-            </p>
-            <div class="d-flex flex-wrap gap-2">
-              <a class="btn-pill" href="#studio-workspace">Start building <span class="arrow">→</span></a>
-              <a class="btn-pill btn-pill--outline" href="estimate.html">Open estimator <span class="arrow">→</span></a>
+<body id="top">
+  <a class="sr-only-focusable" href="#mainContent">Skip to main content</a>
+
+  <div class="container-xl pt-3">
+    <header class="striped-frame">
+      <div id="siteHeaderSlot"></div>
+
+      <section class="wavy-panel text-center position-relative">
+        <!-- Faint line-art rolling pin doodle -->
+        <svg class="doodle-line mx-auto mb-2" width="54" height="24" viewBox="0 0 64 24" fill="none" aria-hidden="true">
+          <rect x="14" y="6" width="36" height="12" rx="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 12h10M50 12h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="4" cy="12" r="2.2" stroke="currentColor" stroke-width="1.8"/>
+          <circle cx="60" cy="12" r="2.2" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+
+        <div class="d-inline-block position-relative">
+          <h1 class="display-headline display-headline--hero mb-3">
+            <span class="text-terracotta">Design Your</span><br>Dream Cake
+          </h1>
+          <span class="sticker position-absolute top-0 end-0 translate-middle-y d-none d-sm-inline-block">
+            homemade bakery
+          </span>
+        </div>
+
+        <p class="mx-auto mb-4" style="max-width: 560px;">
+          Crafted fresh in F-7 Markaz, Islamabad. Spin your cake in 3D, peek between sponge layers, slice it open, and get an instant PKR estimate.
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="#cakeStudioSection" class="pill-btn">
+            Start Designing <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+          <a href="estimate.html" class="pill-btn pill-btn--outline">
+            Delivery Estimator <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </section>
+    </header>
+  </div>
+
+  <main id="mainContent" class="container-xl py-5">
+    <!-- ==================== CAKE STUDIO ==================== -->
+    <section id="cakeStudioSection" aria-labelledby="studioHeading">
+      <div class="text-center mb-4">
+        <span class="sticker sticker--terracotta sticker--sm mb-2">3d cake studio</span>
+        <h2 id="studioHeading" class="display-headline display-headline--section">
+          Build Every <span class="text-terracotta">Layer &amp; Crumb</span>
+        </h2>
+        <p class="mx-auto mb-0 studio-intro">Build your cake below and watch it change as you choose. Custom cakes need <strong>24 hours’ notice</strong> (48 for four layers or dietary bakes).</p>
+      </div>
+
+      <div class="row g-4 g-lg-5">
+        <!-- Left: the 3D cake -->
+        <div class="col-lg-6">
+          <div class="stage">
+            <div class="c3d" id="cake3d" tabindex="0" role="application"
+                 aria-label="Interactive 3D cake. Drag or use left and right arrows to turn it, up and down arrows to open the layers."></div>
+            <p class="stage__caption" id="cakeCaption"></p>
+            <p class="stage__hint">Drag to turn · Scroll over the cake to open its layers · Tap a layer to look inside</p>
+            <div class="stage__tools">
+              <button type="button" class="chip" id="tOpen" aria-pressed="false">Open layers</button>
+              <button type="button" class="chip" id="tCut" aria-pressed="false">Cut a slice</button>
+              <button type="button" class="chip" id="tReset">Reset view</button>
+            </div>
+            <label class="stage__label" for="tExplode">Separate the layers</label>
+            <input type="range" id="tExplode" class="stage__range" min="0" max="100" value="0">
+            <div class="layer-info" id="layerInfo" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Right: build steps -->
+        <div class="col-lg-6">
+          <div class="d-flex justify-content-between align-items-center gap-3">
+            <span class="sticker sticker--sm">build your cake</span>
+            <button class="surprise-btn" id="surprise" type="button">✻ Surprise me</button>
+          </div>
+
+          <h3 class="opt-title"><span class="opt-num">1</span>Shape</h3>
+          <div class="chip-row" id="optShape"></div>
+
+          <h3 class="opt-title"><span class="opt-num">2</span>Size</h3>
+          <div class="chip-row" id="optSize"></div>
+
+          <h3 class="opt-title"><span class="opt-num">3</span>Layers</h3>
+          <div class="chip-row" id="optLayers"></div>
+
+          <h3 class="opt-title"><label for="optSponge"><span class="opt-num">4</span>Sponge flavour</label></h3>
+          <select class="form-select crumb-select" id="optSponge"></select>
+          <p class="opt-help">Want different sponges? Tap a layer on the cake to change just that one.</p>
+
+          <h3 class="opt-title"><span class="opt-num">5</span>Filling</h3>
+          <div class="chip-row" id="optFilling"></div>
+
+          <h3 class="opt-title"><span class="opt-num">6</span>Finish</h3>
+          <div class="chip-row" id="optFinish"></div>
+
+          <h3 class="opt-title"><span class="opt-num">7</span>Frosting colour: <em class="opt-em" id="frostName"></em></h3>
+          <div class="swatch-row" id="optFrostRow">
+            <div class="swatch-row" id="optFrost"></div>
+            <label class="swatch-custom">
+              Custom
+              <input type="color" id="optFrostCustom" value="#FBEBD6" aria-label="Pick a custom frosting colour">
+            </label>
+          </div>
+
+          <h3 class="opt-title"><span class="opt-num">8</span>Toppings <small class="opt-small">(pick any)</small></h3>
+          <div class="chip-row" id="optTop"></div>
+
+          <h3 class="opt-title"><label for="optMsg"><span class="opt-num">9</span>Message on the cake</label></h3>
+          <div class="msg-wrap">
+            <input class="form-control crumb-input" id="optMsg" maxlength="24" placeholder="Happy birthday, Zara" aria-describedby="msgCount">
+            <span class="msg-wrap__count" id="msgCount">0/24</span>
+          </div>
+
+          <h3 class="opt-title"><span class="opt-num">10</span>Dietary <small class="opt-small">(optional)</small></h3>
+          <div class="chip-row" id="optDiet"></div>
+
+          <h3 class="opt-title"><label for="optNotes"><span class="opt-num">11</span>Anything else?</label></h3>
+          <textarea class="form-control crumb-input" id="optNotes" rows="3" placeholder="Theme, allergies, the colour of the party napkins…"></textarea>
+
+          <div class="price-panel mt-4" aria-live="polite">
+            <div class="price-panel__top">
+              <div>
+                <p class="price-panel__eyebrow">Your cake</p>
+                <div class="price-panel__price" id="cakePrice">Rs 0</div>
+                <div class="price-panel__meta"><span id="cakeLead"></span> · <span id="cakePoints"></span></div>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="pill-btn pill-btn--sm pill-btn--ghost" id="saveDesignBtn">Save design</button>
+                <button type="button" class="pill-btn pill-btn--sm pill-btn--terracotta" id="addToEstimateBtn">
+                  Add to estimate <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+                </button>
+              </div>
+            </div>
+            <details class="price-panel__details">
+              <summary>Price breakdown</summary>
+              <ul class="price-lines" id="priceLines"></ul>
+            </details>
+          </div>
+          <p id="afterAdd" class="studio-feedback d-none">Added. <a href="estimate.html">Open the estimator</a> to see delivery time and total, or keep designing.</p>
+          <p id="studioFeedback" class="studio-feedback d-none" role="status"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Saved Designs Strip -->
+    <section class="mt-5" aria-labelledby="savedDesignsHeading">
+      <div class="mb-3">
+        <h2 id="savedDesignsHeading" class="display-headline display-headline--sub mb-0">My Saved Designs</h2>
+      </div>
+      <div class="saved-designs-strip" id="savedDesignsStrip"></div>
+    </section>
+
+    <!-- ==================== STORY SECTION (Reference Match) ==================== -->
+    <section class="story-section mt-5" aria-labelledby="storyHeading">
+      <div class="row align-items-center g-4">
+        <div class="col-12 col-lg-5">
+          <img src="assets/images/baker-story.jpg" alt="Crumbery head baker in the Islamabad kitchen" class="rounded-4 w-100 object-fit-cover" style="max-height: 360px;" loading="lazy">
+        </div>
+        <div class="col-12 col-lg-7">
+          <span class="sticker sticker--sm mb-3">our islamabad kitchen</span>
+          <h2 id="storyHeading" class="display-headline display-headline--section text-cream mb-3">
+            We believe baking is about bringing people together with every slice we make.
+          </h2>
+          <p class="opacity-90 mb-4" style="max-width: 540px;">
+            From single-origin cocoa ganache to slow-fermented sourdough, everything at Crumbery is mixed, whipped, and baked in small batches right in F-7 Markaz.
+          </p>
+          <a href="rewards.html" class="pill-btn" style="background: var(--cream); color: var(--choco); border-color: var(--cream);">
+            Join Sweet Rewards <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PROMO CARDS ==================== -->
+    <section class="row g-4 mt-4" aria-label="Featured promotions">
+      <div class="col-12 col-md-6">
+        <div class="promo-card promo-card--butter h-100 d-flex flex-column justify-content-between">
+          <div>
+            <span class="sticker sticker--terracotta sticker--sm mb-2">member perk</span>
+            <h3 class="display-headline display-headline--sub mb-2">Up to 15% Off Every Bake</h3>
+            <p class="mb-3">Climb from Crumb to Master Baker to unlock priority slots and free Islamabad delivery.</p>
+          </div>
+          <div>
+            <a href="rewards.html" class="pill-btn pill-btn--sm">
+              Explore Tiers <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="promo-card promo-card--plum h-100 d-flex flex-column justify-content-between">
+          <div>
+            <span class="sticker sticker--sm mb-2">instant quote</span>
+            <h3 class="display-headline display-headline--sub text-cream mb-2">Know Your Bill &amp; ETA</h3>
+            <p class="opacity-90 mb-3">Pick your Islamabad sector, see peak-hour travel times, and calculate your exact PKR total.</p>
+          </div>
+          <div>
+            <a href="estimate.html" class="pill-btn pill-btn--sm" style="background: var(--butter); color: var(--choco); border-color: var(--butter);">
+              Open Estimator <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MARQUEE SHOWCASE ==================== -->
+    <section class="marquee-showcase my-5" aria-hidden="true">
+      <div class="marquee-band">
+        <div class="marquee-band__track">
+          <span class="marquee-band__text">FRESHLY BAKED IN ISLAMABAD &bull;</span>
+          <span class="marquee-band__text">FRESHLY BAKED IN ISLAMABAD &bull;</span>
+        </div>
+      </div>
+      <img src="assets/images/sourdough-boule.jpg" alt="" class="marquee-showcase__img" loading="lazy">
+    </section>
+
+    <!-- ==================== TESTIMONIAL & FAQ ==================== -->
+    <section class="row g-4 align-items-start mt-2">
+      <div class="col-12 col-lg-5">
+        <div class="testimonial-card">
+          <span class="sticker sticker--terracotta sticker--sm mb-2">customer love</span>
+          <div class="testimonial-card__stars mb-2" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote class="mb-3 fw-medium">
+            “The Lotus Biscoff drip cake looked identical to our 3D preview and arrived right on time in F-8. Easily the softest sponge in Islamabad.”
+          </blockquote>
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="fw-bold small">Ayesha K. &mdash; F-8/3, Islamabad</span>
+            <div class="testimonial-dots" aria-hidden="true">
+              <span class="testimonial-dot is-active"></span>
+              <span class="testimonial-dot"></span>
+              <span class="testimonial-dot"></span>
             </div>
           </div>
         </div>
-      </section>
-    </div>
-  </div>
-
-  <main id="main-content" class="container py-4">
-    <!-- Cake Studio Workspace -->
-    <section id="studio-workspace" class="studio-grid mb-5" aria-label="Cake Studio">
-      <!-- Left: 3D Stage -->
-      <div class="studio-stage-col">
-        <div class="cake-arch-stage">
-          <div id="cake-viewport" class="c3d-viewport" tabindex="0" role="application" aria-label="Interactive 3D cake preview">
-            <div class="c3d-empty-hint">3D Cake Stage</div>
-          </div>
-          <p id="cake-caption" class="font-display fs-5 text-center mt-3 mb-1" aria-live="polite">
-            2 KG ROUND · VANILLA · 2 LAYERS · BUTTERCREAM
-          </p>
-          <p class="small text-choco-muted text-center mb-3">
-            Drag to turn · Scroll over the cake to open its layers · Tap a layer to look inside
-          </p>
-          <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-            <button type="button" class="chip" id="btn-toggle-layers" aria-pressed="false">Open layers</button>
-            <button type="button" class="chip" id="btn-toggle-slice" aria-pressed="false">Cut a slice</button>
-            <button type="button" class="chip" id="btn-reset-view">Reset view</button>
-          </div>
-          <div class="mb-3 px-2">
-            <label for="explode-slider" class="form-label small fw-bold d-flex justify-content-between">
-              <span>Separate the layers</span>
-              <span id="explode-pct">0%</span>
-            </label>
-            <input type="range" class="form-range" id="explode-slider" min="0" max="100" value="0">
-          </div>
-          <div id="layer-inspector" class="layer-inspector" aria-live="polite">
-            Tap any layer on the cake to open it and choose its sponge.
-          </div>
-        </div>
       </div>
 
-      <!-- Right: Numbered Build Steps -->
-      <div class="studio-controls-col">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
-          <span class="sticker">build your cake</span>
-          <button type="button" id="btn-surprise-me" class="btn-pill btn-pill--outline btn-pill--sm">
-            ✻ Surprise me
-          </button>
-        </div>
-
-        <div id="studio-steps" class="d-grid gap-4"></div>
-
-        <!-- Dark Brown Price Panel -->
-        <div id="studio-price-panel" class="price-panel mt-4" aria-live="polite">
-          <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2">
-            <span class="text-uppercase small fw-bold" style="letter-spacing: 0.08em;">Your Cake</span>
-            <span id="studio-total-price" class="font-display" style="font-size: clamp(2rem, 4vw, 2.75rem); color: var(--butter);">Rs 4,200</span>
+      <div class="col-12 col-lg-7">
+        <span class="sticker sticker--sm mb-2">faq</span>
+        <h2 class="display-headline display-headline--sub mb-3">Frequently Asked Questions</h2>
+        <div class="accordion faq-accordion" id="studioFaq">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#studioFaq1">
+                How far in advance should I book a custom cake?
+              </button>
+            </h3>
+            <div id="studioFaq1" class="accordion-collapse collapse show" data-bs-parent="#studioFaq">
+              <div class="accordion-body">
+                Single-tier custom cakes need 24 hours notice; 3-tier or dietary (eggless/sugar-free) cakes require 48 hours.
+              </div>
+            </div>
           </div>
-          <p id="studio-lead-points" class="small mb-3" style="color: rgba(252,235,216,0.85);">
-            Needs 24 hours’ notice · Earn +210 Sweet Points
-          </p>
-          <div class="d-flex flex-wrap gap-2 studio-cta-row">
-            <button type="button" id="btn-save-design" class="btn-pill btn-pill--cream">Save design</button>
-            <button type="button" id="btn-add-estimate" class="btn-pill btn-pill--terracotta">Add to estimate <span class="arrow">→</span></button>
-          </div>
-          <div id="studio-action-feedback" class="small mt-2" style="color: var(--butter);" aria-live="polite"></div>
-          <details class="mt-3">
-            <summary class="small fw-bold" style="cursor: pointer; color: var(--butter);">Price breakdown</summary>
-            <ul id="studio-breakdown" class="list-unstyled small mt-2 mb-0 d-grid gap-1"></ul>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <!-- Saved Designs -->
-    <section class="mb-5" aria-labelledby="saved-designs-heading">
-      <h2 id="saved-designs-heading" class="font-display display-section mb-3">
-        My <span class="text-terracotta">Saved</span> Designs
-      </h2>
-      <div id="saved-designs-grid" class="row g-3">
-        <div class="col-12">
-          <p class="text-choco-muted">No saved cakes yet — tap “Save design” to keep a copy of your cake here.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Story Section -->
-    <section class="story-section mb-5">
-      <div class="row align-items-center g-4">
-        <div class="col-lg-8">
-          <span class="sticker mb-3">from our F-7 oven</span>
-          <h2 class="font-display display-section mb-3">Small-batch baking, zero shortcuts</h2>
-          <p class="mb-0" style="max-width: 60ch;">
-            Every sponge is baked to order with real butter, Belgian cocoa, and seasonal fruit from Islamabad markets. We never freeze our cakes.
-          </p>
-        </div>
-        <div class="col-lg-4 text-lg-end">
-          <a class="btn-pill btn-pill--cream" href="estimate.html">Check delivery ETA <span class="arrow">→</span></a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Promo Cards -->
-    <section class="row g-4 mb-5">
-      <div class="col-md-6">
-        <div class="promo-card promo-card--butter">
-          <div>
-            <span class="sticker sticker--terracotta mb-3">sweet rewards</span>
-            <h2 class="font-display fs-2 mb-2">Earn points on every slice</h2>
-            <p class="mb-4">Join Crumbery Sweet Rewards for 150 bonus points and up to 15% off custom cakes.</p>
-          </div>
-          <div>
-            <a class="btn-pill" href="rewards.html">Join Sweet Rewards <span class="arrow">→</span></a>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="promo-card promo-card--plum">
-          <div>
-            <span class="sticker mb-3">instant quote</span>
-            <h2 class="font-display fs-2 mb-2">Plan your delivery &amp; bill</h2>
-            <p class="mb-4">Combine pastries, sourdough, and your custom cake to see exact delivery fees and timing.</p>
-          </div>
-          <div>
-            <a class="btn-pill btn-pill--cream" href="estimate.html">Open Estimator <span class="arrow">→</span></a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Marquee -->
-    <section class="marquee-band mb-5" aria-label="Freshly baked in Islamabad">
-      <div class="marquee-track" aria-hidden="true">
-        <span class="marquee-text">FRESHLY BAKED IN ISLAMABAD ·</span>
-        <span class="marquee-text">FRESHLY BAKED IN ISLAMABAD ·</span>
-        <span class="marquee-text">FRESHLY BAKED IN ISLAMABAD ·</span>
-        <span class="marquee-text">FRESHLY BAKED IN ISLAMABAD ·</span>
-      </div>
-      <img class="marquee-center-photo" src="assets/images/hero-cake.jpg" alt="Chocolate layer cake">
-    </section>
-
-    <!-- Testimonial Carousel -->
-    <section class="mb-5" aria-label="Customer reviews">
-      <div id="testimonialCarousel" class="carousel slide testimonial-card" data-bs-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <p class="mb-2" aria-label="5 out of 5 stars">★★★★★</p>
-            <blockquote class="fs-4 fw-bold mb-2">“The 3D studio let us match our pistachio sponge and blush buttercream before ordering. Looked identical in person!”</blockquote>
-            <p class="small text-choco-muted mb-0">— Ayesha K., F-6 Islamabad</p>
-          </div>
-          <div class="carousel-item">
-            <p class="mb-2" aria-label="5 out of 5 stars">★★★★★</p>
-            <blockquote class="fs-4 fw-bold mb-2">“Best sourdough and Lotus Biscoff cheesecake in Jinnah Super. Delivery ETA was spot on.”</blockquote>
-            <p class="small text-choco-muted mb-0">— Hamza R., G-9 Markaz</p>
-          </div>
-        </div>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="0" class="btn btn-sm btn-dark rounded-pill" aria-label="Review 1">1</button>
-          <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="1" class="btn btn-sm btn-outline-dark rounded-pill" aria-label="Review 2">2</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Cake FAQ -->
-    <section class="mb-4" aria-labelledby="cake-faq-heading">
-      <h2 id="cake-faq-heading" class="font-display display-section mb-3">Cake <span class="text-terracotta">FAQ</span></h2>
-      <div class="accordion crumbery-faq" id="cakeFaq">
-        <div class="accordion-item">
-          <h3 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-              How much notice do custom cakes need?
-            </button>
-          </h3>
-          <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#cakeFaq">
-            <div class="accordion-body">Standard 2-layer and 3-layer cakes need 24 hours’ notice. 4-layer cakes or dietary options (eggless, sugar-free, nut-free) need 48 hours.</div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h3 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-              Can I mix sponge flavours in one cake?
-            </button>
-          </h3>
-          <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#cakeFaq">
-            <div class="accordion-body">Yes! Tap any layer on the 3D cake to open it and pick a different sponge for that specific layer.</div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#studioFaq2">
+                Do you deliver across Islamabad and Rawalpindi?
+              </button>
+            </h3>
+            <div id="studioFaq2" class="accordion-collapse collapse" data-bs-parent="#studioFaq">
+              <div class="accordion-body">
+                Yes! We deliver up to 30 km from F-7 Markaz, including Bahria Town, DHA Phase 2, and Saddar.
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer id="site-footer"></footer>
+  <div id="siteFooterSlot"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="js/layout.js"></script>
   <script type="module" src="js/studio.js"></script>
 </body>
 </html>

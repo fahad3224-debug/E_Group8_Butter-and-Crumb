@@ -193,7 +193,7 @@ export function createCake3D(root, { onSelect = () => {}, onExplode = () => {}, 
         out += bb(x, z, 22, 30, '', `background:linear-gradient(115deg, #6A4936, ${DRIP} 60%);clip-path:polygon(${20 + (i % 3) * 10}% 0,100% 18%,80% 100%,0 85%)`);
       });
     }
-    if (has('sugar-flowers')) {
+    if (has('flowers')) {
       pts(4, r * 0.62, msgInner).forEach(([x, z], i) => {
         out += bb(x, z, 34, 34, FLOWER(i % 2 ? '#FBF3E2' : '#E8A598', '#C9503A'));
       });
@@ -211,21 +211,13 @@ export function createCake3D(root, { onSelect = () => {}, onExplode = () => {}, 
   function build(state) {
     s = state;
     const n = s.layers;
-    const layerCfg = CAKE.layers.find((l) => l.count === n) || CAKE.layers[0];
-    H = layerCfg.height;
-    F = layerCfg.fillingHeight;
-    const sizeCfg = opt(CAKE.sizes, s.size);
-    const r = sizeCfg.radius;
-    const shapeCfg = opt(CAKE.shapes, s.shape);
-    const finishCfg = opt(CAKE.finishes, finish);
-    root.setAttribute(
-      'aria-label',
-      `3D ${sizeCfg.label} ${shapeCfg.label.toLowerCase()} cake with ${n} layers and ${finishCfg.label.toLowerCase()} finish`
-    );
+    H = LAYER_H[n] || 48;
+    F = FILL_H[n] || 9;
+    const r = opt(CAKE.sizes, s.size).r;
     const finish = s.finish;
     const frost = s.frosting;
     const fill = opt(CAKE.fillings, s.filling).color;
-    const coated = finish === 'buttercream' || finish === 'fondant' || finish === 'chocolate-drip';
+    const coated = finish === 'buttercream' || finish === 'fondant' || finish === 'drip';
     const plateR = (isSquare() ? r * 1.42 : r) + 28;
 
     if (v.sel >= n) {
@@ -247,13 +239,13 @@ export function createCake3D(root, { onSelect = () => {}, onExplode = () => {}, 
     for (let i = 0; i < n; i++) {
       const sp = opt(CAKE.sponges, s.sponges[i]).color;
       const isTop = i === n - 1;
-      const topColour = finish === 'chocolate-drip' ? DRIP : frost;
+      const topColour = finish === 'drip' ? DRIP : frost;
       const edge = coated || finish === 'semi-naked' ? frost : 'rgba(70,35,15,.35)';
       const inside = isSquare() ? `${CRUMB}, ${sp}` : `radial-gradient(circle, transparent 0 ${r - 6}px, ${edge} ${r - 6}px), ${CRUMB}, ${sp}`;
       const cutFace = `${isTop ? `linear-gradient(${topColour} 0 7px, transparent 7px), ` : ''}linear-gradient(90deg, transparent 0 calc(100% - 6px), ${edge} 0), ${CRUMB}, ${sp}`;
 
       let side = () => coatSide(sp);
-      if (isTop && finish === 'chocolate-drip') {
+      if (isTop && finish === 'drip') {
         // ganache drips of varying length down the top layer
         side = (a, k = Math.round(a / 45)) => {
           const len = 9 + ((k * 37) % 19);
@@ -261,7 +253,7 @@ export function createCake3D(root, { onSelect = () => {}, onExplode = () => {}, 
         };
       }
       const topBg = isTop
-        ? finish === 'chocolate-drip'
+        ? finish === 'drip'
           ? `radial-gradient(circle at 35% 30%, rgba(255,255,255,.28), transparent 38%), ${DRIP}`
           : `radial-gradient(circle at 38% 32%, rgba(255,255,255,.18), transparent 55%), ${frost}`
         : inside;
@@ -303,7 +295,7 @@ export function createCake3D(root, { onSelect = () => {}, onExplode = () => {}, 
 
   function fit() {
     if (!s) return 1;
-    const r = opt(CAKE.sizes, s.size).radius;
+    const r = opt(CAKE.sizes, s.size).r;
     const width = (isSquare() ? r * 1.42 : r) * 2 + 150;
     const height = s.layers * H + (s.layers - 1) * (F + v.e * GAP) + 90;
     return Math.min(1, root.clientWidth / width, (root.clientHeight * 0.74) / height);
@@ -456,12 +448,6 @@ export function createCake3D(root, { onSelect = () => {}, onExplode = () => {}, 
       markSel();
       onSelect(-1);
       onExplode(0);
-    },
-    onSelect(cb) {
-      onSelect = cb;
-    },
-    onExplode(cb) {
-      onExplode = cb;
     },
   };
 }

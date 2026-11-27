@@ -1,65 +1,171 @@
-/* Sweet Rewards Page Styles */
-.rewards-auth-card {
-  background: var(--tan);
-  border-radius: var(--radius-lg);
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  max-width: 580px;
-  margin: 0 auto;
-  box-shadow: var(--shadow-soft);
-}
-
-.rewards-auth-card .nav-pills .nav-link {
-  color: var(--choco);
-  font-weight: 700;
-  border-radius: var(--radius-pill);
-}
-
-.rewards-auth-card .nav-pills .nav-link.active {
-  background-color: var(--choco);
-  color: var(--cream);
-}
-
-.strength-meter {
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: rgba(59, 35, 20, 0.14);
-  overflow: hidden;
-}
-
-.strength-meter__fill {
-  height: 100%;
-  width: 0;
-  transition: width 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
-}
+/* ==========================================================================
+   Rewards tiers - new 3-tier visual cards
+   ========================================================================== */
 
 .tier-card {
-  background: var(--tan);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  height: 100%;
+  background-color: var(--tan);
+  border-radius: 24px;
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
   position: relative;
-  border: 2px solid transparent;
+  border: 2.5px solid rgba(59, 35, 20, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tier-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 32px rgba(59, 35, 20, 0.12);
 }
 
 .tier-card.is-current {
-  background: var(--butter);
-  border-color: var(--choco);
+  background-color: var(--cream);
+  border-color: var(--terracotta);
+  box-shadow: 0 6px 24px rgba(201, 80, 58, 0.18);
 }
 
 .tier-card.is-locked {
-  opacity: 0.68;
+  opacity: 0.75;
+  filter: grayscale(0.2);
 }
 
-.rewards-progress {
-  height: 16px;
-  border-radius: var(--radius-pill);
-  background: var(--tan);
+.tier-card__current-label {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tier-card__icon {
+  margin-bottom: 0.5rem;
+}
+
+.tier-card__badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(59, 35, 20, 0.5);
+  margin-bottom: 0.1rem;
+}
+
+.tier-card__name {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--choco);
+  line-height: 1;
+  margin: 0;
+}
+
+.tier-card--loaf .tier-card__name { color: var(--terracotta); }
+.tier-card--crust .tier-card__name { color: var(--plum); }
+
+.tier-card__discount {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--terracotta);
+  margin: 0.35rem 0;
+}
+
+.tier-card__perks {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--choco);
+  text-align: left;
+  width: 100%;
+}
+
+.tier-card__perks li {
+  padding: 0.22rem 0;
+  padding-left: 1.1rem;
+  position: relative;
+  opacity: 0.85;
+}
+
+.tier-card__perks li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--terracotta);
+  font-weight: 700;
+}
+
+.tier-card__threshold {
+  margin-top: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(59, 35, 20, 0.5);
+  background: rgba(59, 35, 20, 0.07);
+  border-radius: 20px;
+  padding: 0.3rem 0.85rem;
+  width: 100%;
+}
+
+/* Progress track */
+.tier-progress-track {
+  background-color: var(--cream);
+  border-radius: 20px;
+  height: 10px;
   overflow: hidden;
 }
 
-.rewards-progress__bar {
-  background: var(--terracotta);
+.tier-progress-fill {
   height: 100%;
+  background-color: var(--terracotta);
+  border-radius: 20px;
+  transition: width 0.6s ease;
+}
+
+/* Ways to earn cards */
+.earn-card {
+  background-color: var(--cream);
+  border-radius: 18px;
+  padding: 1rem;
+  text-align: center;
+  border: 1.5px solid rgba(59, 35, 20, 0.1);
+  height: 100%;
+}
+
+/* History table */
+.history-table-wrap {
+  background-color: var(--cream);
+  border-radius: 18px;
+  padding: 0.5rem;
+  overflow: hidden;
+}
+
+/* Countdown pill */
+.countdown-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--butter);
+  color: var(--choco);
   border-radius: var(--radius-pill);
-  transition: width 0.4s var(--ease-out);
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* Points hero stat in wavy panel */
+.points-hero-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--tan);
+  border-radius: 20px;
+  padding: 0.75rem 1.25rem;
+}
+
+.points-hero-stat__value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--choco);
+  line-height: 1;
 }

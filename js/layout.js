@@ -1,145 +1,196 @@
-import { BAKERY } from './config.js';
-import { getMember, clearMember } from './store.js';
+/**
+ * Shared header/footer injector for all Crumbery pages.
+ * Marks the active navigation link, renders auth greeting if signed in,
+ * and wires the footer newsletter form.
+ */
 
-const NAV_LINKS = [
-  { href: 'index.html', label: 'Cake Studio' },
-  { href: 'rewards.html', label: 'Sweet Rewards' },
-  { href: 'estimate.html', label: 'Estimator' }
+const NAV_LEFT = [
+  { label: 'Cake Studio', href: 'index.html' },
+  { label: 'Rewards', href: 'rewards.html' },
+];
+
+const NAV_RIGHT = [
+  { label: 'Estimator', href: 'estimate.html' },
 ];
 
 function getCurrentPage() {
-  const path = window.location.pathname.split('/').pop() || 'index.html';
-  return path === '' ? 'index.html' : path;
+  const path = window.location.pathname.split('/').pop();
+  return path && path.length > 0 ? path : 'index.html';
 }
 
-function renderMemberStatus(member) {
-  if (!member) return '';
-  const firstName = (member.name || 'Friend').trim().split(/\s+/)[0];
-  return `
-    <span class="nav-user-badge">
-      <span>Hi, ${escapeHtml(firstName)}</span>
-      <button type="button" class="nav-signout-btn" data-action="signout">Sign out</button>
-    </span>
+function getStoredMemberName() {
+  try {
+    const raw = localStorage.getItem('crumbery_session');
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    return session && session.name ? session.name : null;
+  } catch {
+    return null;
+  }
+}
+
+function renderHeader(targetEl) {
+  const current = getCurrentPage();
+  const memberName = getStoredMemberName();
+
+  const linkHtml = (item) => {
+    const isActive = current === item.href;
+    return `<li><a class="site-nav__link" href="${item.href}" ${isActive ? 'aria-current="page"' : ''}>${item.label}</a></li>`;
+  };
+
+  const authHtml = memberName
+    ? `<span class="site-nav__auth">
+         <span>Hi, <strong>${escapeHtml(memberName)}</strong></span>
+         <button type="button" class="site-nav__signout" id="headerSignOutBtn">Sign out</button>
+       </span>`
+    : `<a class="site-nav__link" href="rewards.html">Sign in</a>`;
+
+  targetEl.innerHTML = `
+    <nav class="site-nav" aria-label="Main navigation">
+      <div class="d-none d-md-block">
+        <ul class="site-nav__group site-nav__group--left">
+          ${NAV_LEFT.map(linkHtml).join('')}
+        </ul>
+      </div>
+
+      <div class="d-md-none">
+        <button class="nav-hamburger" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavOffcanvas" aria-controls="mobileNavOffcanvas" aria-label="Open menu">
+          Menu
+        </button>
+      </div>
+
+      <a href="index.html" class="site-nav__brand wordmark" aria-label="Crumbery home">crumbery</a>
+
+      <div class="d-none d-md-flex align-items-center justify-content-start gap-3">
+        <ul class="site-nav__group site-nav__group--right">
+          ${NAV_RIGHT.map(linkHtml).join('')}
+        </ul>
+        <span id="headerAuthSlot">${authHtml}</span>
+      </div>
+
+      <div class="d-md-none text-end">
+        <a href="estimate.html" class="site-nav__link">Estimate</a>
+      </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start offcanvas-crumbery" tabindex="-1" id="mobileNavOffcanvas" aria-labelledby="mobileNavLabel">
+      <div class="offcanvas-header">
+        <span class="offcanvas-title wordmark fs-2" id="mobileNavLabel">crumbery</span>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close navigation"></button>
+      </div>
+      <div class="offcanvas-body d-flex flex-column gap-3">
+        <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+          ${[...NAV_LEFT, ...NAV_RIGHT].map((item) => `
+            <li>
+              <a class="site-nav__link fs-6 d-block py-2" href="${item.href}" ${current === item.href ? 'aria-current="page"' : ''}>
+                ${item.label}
+              </a>
+            </li>
+          `).join('')}
+        </ul>
+        <hr class="border-light opacity-25">
+        <div id="mobileAuthSlot">${authHtml}</div>
+      </div>
+    </div>
   `;
+
+  const signOutBtn = targetEl.querySelector('#headerSignOutBtn');
+  if (signOutBtn) {
+    signOutBtn.addEventListener('click', () => {
+      localStorage.removeItem('crumbery_session');
+      window.dispatchEvent(new CustomEvent('crumbery:auth-changed'));
+      renderHeader(targetEl);
+    });
+  }
+}
+
+function renderFooter(targetEl) {
+  targetEl.innerHTML = `
+    <footer class="site-footer">
+      <div class="container">
+        <div class="text-center mb-5">
+          <span class="sticker sticker--sm mb-3">fresh from our oven</span>
+          <h2 class="display-headline display-headline--sub text-cream mb-3">Subscribe for seasonal drops</h2>
+          <form class="footer-newsletter" id="footerNewsletterForm" novalidate>
+            <label for="newsletterEmail" class="visually-hidden">Email address</label>
+            <input id="newsletterEmail" type="email" placeholder="you@example.com" required>
+            <button type="submit" class="pill-btn pill-btn--sm pill-btn--terracotta">
+              Join <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+            </button>
+          </form>
+          <p class="small mt-2 mb-0 text-cream opacity-75" id="newsletterFeedback" aria-live="polite"></p>
+        </div>
+
+        <div class="row g-4 align-items-start border-top border-light border-opacity-25 pt-4">
+          <div class="col-12 col-md-4">
+            <span class="wordmark fs-2 d-block mb-2">crumbery</span>
+            <p class="small opacity-75 mb-0">
+              Homemade cakes, artisan loaves, and flaky pastries baked daily in Islamabad.
+            </p>
+          </div>
+          <div class="col-6 col-md-4">
+            <h3 class="h6 text-uppercase fw-bold opacity-75 mb-3">Pages</h3>
+            <ul class="list-unstyled d-flex flex-column gap-2 small">
+              <li><a href="index.html" class="text-decoration-none">Cake Studio</a></li>
+              <li><a href="rewards.html" class="text-decoration-none">Sweet Rewards</a></li>
+              <li><a href="estimate.html" class="text-decoration-none">Delivery &amp; Bill Estimator</a></li>
+            </ul>
+          </div>
+          <div class="col-6 col-md-4">
+            <h3 class="h6 text-uppercase fw-bold opacity-75 mb-3">Islamabad Bakery</h3>
+            <p class="small opacity-75 mb-2">
+              Jinnah Super, F-7 Markaz, Islamabad<br>
+              +92 51 555 0148 &bull; 9:00 AM – 11:00 PM
+            </p>
+            <div class="d-flex gap-2 mt-3">
+              <a href="#top" class="social-circle" aria-label="Instagram">IG</a>
+              <a href="#top" class="social-circle" aria-label="Facebook">FB</a>
+              <a href="#top" class="social-circle" aria-label="WhatsApp">WA</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center small opacity-50 mt-4 pt-3 border-top border-light border-opacity-10">
+          &copy; ${new Date().getFullYear()} Crumbery Bakery Islamabad. All prices in PKR.
+        </div>
+      </div>
+    </footer>
+  `;
+
+  const form = targetEl.querySelector('#footerNewsletterForm');
+  const input = targetEl.querySelector('#newsletterEmail');
+  const feedback = targetEl.querySelector('#newsletterFeedback');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = input.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      feedback.textContent = 'Please enter a valid email address.';
+      return;
+    }
+    feedback.textContent = `Thanks! ${email} is subscribed for Islamabad bake drops.`;
+    input.value = '';
+  });
 }
 
 function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, (ch) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[ch]));
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 export function initLayout() {
-  const current = getCurrentPage();
-  const member = getMember();
-  const headerMount = document.getElementById('site-header');
-  const footerMount = document.getElementById('site-footer');
+  const headerSlot = document.getElementById('siteHeaderSlot');
+  const footerSlot = document.getElementById('siteFooterSlot');
 
-  if (headerMount) {
-    headerMount.innerHTML = `
-      <a class="skip-link" href="#main-content">Skip to content</a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <div class="nav-group d-none d-md-flex">
-          <a class="nav-link-custom ${current === 'index.html' ? 'is-active' : ''}" href="index.html">Cake Studio</a>
-          <a class="nav-link-custom ${current === 'rewards.html' ? 'is-active' : ''}" href="rewards.html">Sweet Rewards</a>
-        </div>
-        <button class="mobile-menu-btn d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavOffcanvas" aria-controls="mobileNavOffcanvas">
-          Menu
-        </button>
-        <a class="wordmark fs-2" href="index.html" aria-label="Crumbery home">crumbery</a>
-        <div class="nav-group nav-group--right">
-          <a class="nav-link-custom d-none d-md-inline-block ${current === 'estimate.html' ? 'is-active' : ''}" href="estimate.html">Estimator</a>
-          <a class="nav-link-custom d-md-none ${current === 'estimate.html' ? 'is-active' : ''}" href="estimate.html">Estimate</a>
-          <span class="d-none d-md-inline-flex">${renderMemberStatus(member)}</span>
-        </div>
-      </nav>
-      <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="mobileNavOffcanvas" aria-labelledby="mobileNavLabel" style="background-color: var(--choco); color: var(--cream);">
-        <div class="offcanvas-header">
-          <span class="wordmark fs-3" id="mobileNavLabel">crumbery</span>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column gap-3">
-          ${NAV_LINKS.map((l) => `
-            <a class="nav-link-custom fs-5 ${current === l.href ? 'is-active' : ''}" href="${l.href}">${l.label}</a>
-          `).join('')}
-          <div class="mt-3 pt-3 border-top border-secondary">
-            ${renderMemberStatus(member) || `<a class="btn-pill btn-pill--cream btn-pill--sm" href="rewards.html">Sign in <span class="arrow">→</span></a>`}
-          </div>
-        </div>
-      </div>
-    `;
+  if (headerSlot) renderHeader(headerSlot);
+  if (footerSlot) renderFooter(footerSlot);
 
-    headerMount.querySelectorAll('[data-action="signout"]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        clearMember();
-        window.location.reload();
-      });
-    });
-  }
-
-  if (footerMount) {
-    footerMount.className = 'site-footer';
-    footerMount.innerHTML = `
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-lg-4">
-            <a class="wordmark fs-1 d-inline-block mb-2" href="index.html">crumbery</a>
-            <p class="small mb-3" style="color: rgba(252,235,216,0.82);">
-              Homemade cakes, flaky pastries, and sourdough baked fresh every morning in F-7 Markaz, Islamabad.
-            </p>
-            <div class="d-flex gap-2">
-              <a class="social-icon-btn" href="#newsletter-form" aria-label="Instagram">IG</a>
-              <a class="social-icon-btn" href="#newsletter-form" aria-label="Facebook">FB</a>
-              <a class="social-icon-btn" href="#newsletter-form" aria-label="WhatsApp">WA</a>
-            </div>
-          </div>
-          <div class="col-6 col-lg-2">
-            <h3 class="h6 text-uppercase fw-bold mb-3" style="color: var(--butter);">Pages</h3>
-            <ul class="list-unstyled d-grid gap-2 small">
-              ${NAV_LINKS.map((l) => `<li><a class="footer-link" href="${l.href}">${l.label}</a></li>`).join('')}
-            </ul>
-          </div>
-          <div class="col-6 col-lg-3">
-            <h3 class="h6 text-uppercase fw-bold mb-3" style="color: var(--butter);">Visit Us</h3>
-            <p class="small mb-1">${BAKERY.address}</p>
-            <p class="small mb-1">${BAKERY.phone}</p>
-            <p class="small mb-0">Daily: ${BAKERY.openHour}:00 AM – ${BAKERY.closeHour - 12}:00 PM</p>
-          </div>
-          <div class="col-lg-3">
-            <h3 class="h6 text-uppercase fw-bold mb-3" style="color: var(--butter);">Fresh Bake Alerts</h3>
-            <form id="newsletter-form" novalidate>
-              <label for="newsletter-email" class="visually-hidden">Email address</label>
-              <div class="input-group input-group-sm mb-2">
-                <input id="newsletter-email" type="email" class="form-control" placeholder="you@example.com" required style="background: var(--cream); color: var(--choco); border: none;">
-                <button class="btn fw-bold" type="submit" style="background: var(--terracotta); color: var(--cream);">Join</button>
-              </div>
-              <div id="newsletter-feedback" class="small" aria-live="polite"></div>
-            </form>
-          </div>
-        </div>
-        <hr class="my-4" style="border-color: rgba(252,235,216,0.2);">
-        <p class="small mb-0 text-center" style="color: rgba(252,235,216,0.68);">© ${new Date().getFullYear()} Crumbery Bakery, Islamabad.</p>
-      </div>
-    `;
-
-    const form = footerMount.querySelector('#newsletter-form');
-    const emailInput = footerMount.querySelector('#newsletter-email');
-    const feedback = footerMount.querySelector('#newsletter-feedback');
-    form?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const val = emailInput.value.trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-        feedback.textContent = 'Please enter a valid email address.';
-        feedback.style.color = 'var(--butter)';
-        return;
-      }
-      feedback.textContent = 'You are on the list for fresh bake alerts.';
-      feedback.style.color = 'var(--butter)';
-      emailInput.value = '';
-    });
-  }
+  window.addEventListener('crumbery:auth-changed', () => {
+    if (headerSlot) renderHeader(headerSlot);
+  });
 }
+
+initLayout();
