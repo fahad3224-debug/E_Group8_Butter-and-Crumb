@@ -1,0 +1,139 @@
+/* ==========================================================================
+   Page 2: Rewards & Membership (rewards.html)
+   ========================================================================== */
+
+.auth-card {
+  max-width: 540px;
+  margin: 0 auto;
+  background-color: var(--tan);
+  border-radius: var(--radius-section);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  background-color: var(--cream);
+  padding: 0.35rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 1.25rem;
+}
+
+.auth-tabs .nav-link {
+  border-radius: var(--radius-pill);
+  color: var(--choco);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 0;
+  padding: 0.55rem 1rem;
+}
+
+.auth-tabs .nav-link.active {
+  background-color: var(--choco);
+  color: var(--cream);
+}
+
+.crumbery-input {
+  background-color: var(--cream);
+  border: 1.5px solid rgba(59, 35, 20, 0.2);
+  border-radius: 14px;
+  color: var(--choco);
+  padding: 0.65rem 0.9rem;
+}
+
+.crumbery-input:focus {
+  background-color: #FFF8EE;
+  border-color: var(--terracotta);
+  box-shadow: 0 0 0 3px rgba(201, 80, 58, 0.2);
+  color: var(--choco);
+}
+
+/* Password Strength Meter */
+.strength-meter {
+  height: 8px;
+  background-color: rgba(59, 35, 20, 0.12);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-top: 0.4rem;
+}
+
+.strength-meter__bar {
+  height: 100%;
+  width: 0%;
+  transition: width 0.25s ease, background-color 0.25s ease;
+}
+
+/* Points Balance & Progress */
+.points-hero-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  background-color: var(--tan);
+  border-radius: 24px;
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.points-hero-stat__value {
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 75;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  line-height: 1;
+  color: var(--terracotta);
+}
+
+.tier-progress-track {
+  height: 18px;
+  background-color: var(--cream);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  border: 1.5px solid rgba(59, 35, 20, 0.15);
+}
+
+.tier-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--terracotta), var(--butter-deep));
+  transition: width 0.5s var(--ease-snappy);
+}
+
+/* Scalloped Tier Cards */
+.tier-card {
+  background-color: var(--tan);
+  border-radius: 26px;
+  padding: 1.5rem 1.25rem;
+  border: 3px dashed rgba(59, 35, 20, 0.2);
+  height: 100%;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.tier-card.is-current {
+  background-color: var(--butter);
+  border-color: var(--terracotta);
+  border-style: solid;
+  box-shadow: var(--shadow-soft);
+}
+
+.tier-card.is-locked {
+  opacity: 0.72;
+}
+
+.earn-card {
+  background-color: var(--tan);
+  border-radius: var(--radius-card);
+  padding: 1.25rem;
+  text-align: center;
+  height: 100%;
+}
+
+.history-table-wrap {
+  background-color: var(--tan);
+  border-radius: var(--radius-card);
+  padding: 1.25rem;
+}

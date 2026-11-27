@@ -53,7 +53,18 @@ python -m http.server 8000
 |---|---|---|---|
 | Shared striped frame, wavy hero, offcanvas nav & newsletter footer | Responsive & Accessible | All pages | [TBD] |
 | Footer newsletter email validation & feedback | Forms & Input | All pages | [TBD] |
+| Cake Studio responsive layout, option tabs & sticky summary bar | Responsive & Accessible | index.html | [TBD] |
+| Rewards dashboard layout, tier cards & FAQ accordion | Data & Display | rewards.html | [TBD] |
+| Estimator 4-step layout & scalloped paper-receipt summary card | Responsive & Accessible | estimate.html | [TBD] |
 
 ## Image Credits
 
-*(Images will be listed with royalty-free sources as they are added in upcoming commits.)*
+All placeholder photography is royalty-free from [Unsplash](https://unsplash.com):
+- `assets/images/hero-cake.jpg` — Layered chocolate berry cake
+- `assets/images/sourdough-boule.jpg` — Artisan sourdough boule
+- `assets/images/croissant.jpg` — Butter croissant
+- `assets/images/cheesecake.jpg` — Berry cheesecake
+- `assets/images/focaccia.jpg` — Rosemary focaccia
+- `assets/images/brownie.jpg` — Chocolate fudge brownie
+- `assets/images/baker-story.jpg` — Baker in kitchen
+- `assets/images/berry-danish.jpg` — Berry pastry & baked goods

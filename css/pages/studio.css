@@ -1,0 +1,291 @@
+/* ==========================================================================
+   Page 1: Cake Studio (index.html)
+   ========================================================================== */
+
+.studio-shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .studio-shell {
+    grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.95fr);
+    gap: 2rem;
+  }
+}
+
+/* 3D Viewport Card */
+.studio-viewport-card {
+  background-color: var(--tan);
+  border-radius: var(--radius-section);
+  padding: 1rem;
+  box-shadow: var(--shadow-soft);
+  position: relative;
+}
+
+.studio-canvas-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  min-height: 320px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, #FFF8EE 0%, #F3D9BF 68%, #DFBE9D 100%);
+  border: 2px solid rgba(59, 35, 20, 0.1);
+}
+
+.studio-canvas-wrap canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.studio-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--choco);
+}
+
+.studio-placeholder__img {
+  width: min(230px, 60%);
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid var(--cream);
+  box-shadow: var(--shadow-lift);
+  margin-bottom: 1rem;
+}
+
+/* Floating 3D-projected layer labels */
+.studio-layer-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.layer-tag {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background-color: var(--choco);
+  color: var(--cream);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(59, 35, 20, 0.25);
+}
+
+/* Camera & Cut Toolbar */
+.studio-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+}
+
+.studio-toolbar__group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.studio-chip-btn {
+  background-color: var(--cream);
+  color: var(--choco);
+  border: 1.5px solid rgba(59, 35, 20, 0.2);
+  border-radius: var(--radius-pill);
+  padding: 0.32rem 0.75rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.studio-chip-btn:hover,
+.studio-chip-btn.is-active {
+  background-color: var(--choco);
+  color: var(--cream);
+  border-color: var(--choco);
+}
+
+.studio-explode-bar {
+  background-color: var(--cream);
+  border-radius: 16px;
+  padding: 0.75rem 1rem;
+  margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.studio-explode-bar input[type="range"] {
+  flex: 1;
+  min-width: 140px;
+  accent-color: var(--terracotta);
+}
+
+/* Customizer Panel & Tabs */
+.studio-panel {
+  background-color: var(--tan);
+  border-radius: var(--radius-section);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.studio-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 576px) {
+  .studio-tabs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.studio-tab {
+  background-color: var(--cream);
+  color: var(--choco);
+  border: 1.5px solid rgba(59, 35, 20, 0.16);
+  border-radius: 14px;
+  padding: 0.55rem 0.45rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.studio-tab[aria-selected="true"] {
+  background-color: var(--terracotta);
+  color: var(--cream);
+  border-color: var(--terracotta);
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 0.55rem;
+}
+
+.option-pill {
+  background-color: var(--cream);
+  color: var(--choco);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.option-pill:hover {
+  background-color: #FFF6EB;
+}
+
+.option-pill.is-selected {
+  border-color: var(--terracotta);
+  background-color: #FFF6EB;
+  box-shadow: 0 3px 10px rgba(201, 80, 58, 0.16);
+}
+
+.swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.swatch-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid var(--cream);
+  box-shadow: 0 0 0 1.5px rgba(59, 35, 20, 0.25);
+  cursor: pointer;
+}
+
+.swatch-btn.is-selected {
+  box-shadow: 0 0 0 2.5px var(--terracotta);
+  transform: scale(1.1);
+}
+
+/* Sticky Summary Bar */
+.studio-summary-bar {
+  position: sticky;
+  bottom: 0.75rem;
+  z-index: 20;
+  background-color: var(--choco);
+  color: var(--cream);
+  border-radius: 22px;
+  padding: 0.9rem 1.25rem;
+  margin-top: 1.5rem;
+  box-shadow: var(--shadow-lift);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Saved Designs Strip */
+.saved-designs-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.saved-design-card {
+  background-color: var(--tan);
+  border-radius: 18px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Marquee floating photo */
+.marquee-showcase {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.marquee-showcase__img {
+  position: relative;
+  z-index: 2;
+  width: clamp(160px, 24vw, 240px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 6px solid var(--cream);
+  box-shadow: var(--shadow-lift);
+}
+
+.marquee-showcase .marquee-band {
+  position: absolute;
+  inset: 50% 0 auto 0;
+  transform: translateY(-50%);
+  z-index: 1;
+}

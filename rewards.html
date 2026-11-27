@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Rewards — Crumbery Bakery Islamabad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,700..800&family=DM+Sans:wght@400;500;700&family=Gluten:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/rewards.css">
+</head>
+<body id="top">
+  <a class="sr-only-focusable" href="#mainContent">Skip to main content</a>
+
+  <div class="container-xl pt-3">
+    <header class="striped-frame">
+      <div id="siteHeaderSlot"></div>
+
+      <section class="wavy-panel text-center">
+        <span class="sticker mb-3">crumbery club</span>
+        <h1 class="display-headline display-headline--hero mb-3">
+          <span class="text-terracotta">Your Sweet</span> Rewards
+        </h1>
+        <p class="mx-auto mb-4" style="max-width: 540px;">
+          Earn Sweet Points on every loaf, pastry, and custom 3D cake. Unlock tier discounts and free Islamabad delivery.
+        </p>
+
+        <div class="points-hero-stat mb-3" id="rewardsHeroStat">
+          <div class="flower-badge flower-badge--sm flower-badge--terracotta text-cream fw-bold small" id="heroTierBadge">
+            Dough
+          </div>
+          <div class="text-start">
+            <div class="small text-uppercase fw-bold opacity-75" id="heroMemberGreeting">Demo Member</div>
+            <div class="points-hero-stat__value" id="heroPointsCount" aria-live="polite">680 pts</div>
+          </div>
+        </div>
+
+        <div>
+          <button type="button" class="btn btn-link btn-sm text-decoration-underline" style="color: var(--choco);" id="resetDemoDataBtn">
+            Reset demo data
+          </button>
+        </div>
+      </section>
+    </header>
+  </div>
+
+  <main id="mainContent" class="container-xl py-5">
+    <!-- ==================== SIMULATED AUTH CARD ==================== -->
+    <section id="authSection" class="mb-5" aria-labelledby="authHeading">
+      <div class="auth-card">
+        <h2 id="authHeading" class="display-headline display-headline--sub text-center mb-2">Member Sign In</h2>
+        <p class="small text-center opacity-75 mb-3">
+          Demo login only: credentials are hashed locally in <code>localStorage</code> and never sent to any server.
+        </p>
+
+        <ul class="nav auth-tabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active w-100" id="signInTabBtn" data-bs-toggle="tab" data-bs-target="#signInPane" type="button" role="tab">Sign In</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link w-100" id="signUpTabBtn" data-bs-toggle="tab" data-bs-target="#signUpPane" type="button" role="tab">Create Account</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="signInPane" role="tabpanel">
+            <form id="signInForm" novalidate>
+              <div class="mb-3">
+                <label for="signInEmail" class="form-label small fw-bold text-uppercase">Email</label>
+                <input id="signInEmail" type="email" class="form-control crumbery-input" placeholder="sana@example.pk" required>
+              </div>
+              <div class="mb-3">
+                <label for="signInPassword" class="form-label small fw-bold text-uppercase">Password</label>
+                <input id="signInPassword" type="password" class="form-control crumbery-input" placeholder="Enter password" required>
+              </div>
+              <p class="small text-danger mb-3" id="signInError" aria-live="polite"></p>
+              <button type="submit" class="pill-btn w-100">
+                Sign In <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+              </button>
+            </form>
+          </div>
+
+          <div class="tab-pane fade" id="signUpPane" role="tabpanel">
+            <form id="signUpForm" novalidate>
+              <div class="mb-2">
+                <label for="signUpName" class="form-label small fw-bold text-uppercase">Full Name</label>
+                <input id="signUpName" type="text" class="form-control crumbery-input" placeholder="Sana Tariq" required>
+              </div>
+              <div class="mb-2">
+                <label for="signUpEmail" class="form-label small fw-bold text-uppercase">Email</label>
+                <input id="signUpEmail" type="email" class="form-control crumbery-input" placeholder="sana@example.pk" required>
+              </div>
+              <div class="mb-2">
+                <label for="signUpPhone" class="form-label small fw-bold text-uppercase">Phone (03XX-XXXXXXX)</label>
+                <input id="signUpPhone" type="tel" class="form-control crumbery-input" placeholder="0300-1234567" required>
+              </div>
+              <div class="mb-2">
+                <label for="signUpPassword" class="form-label small fw-bold text-uppercase">Password</label>
+                <input id="signUpPassword" type="password" class="form-control crumbery-input" required>
+                <div class="strength-meter"><div class="strength-meter__bar" id="strengthBar"></div></div>
+                <div class="small mt-1" id="strengthLabel">Password strength: —</div>
+              </div>
+              <div class="mb-3">
+                <label for="signUpConfirm" class="form-label small fw-bold text-uppercase">Confirm Password</label>
+                <input id="signUpConfirm" type="password" class="form-control crumbery-input" required>
+              </div>
+              <p class="small text-danger mb-3" id="signUpError" aria-live="polite"></p>
+              <button type="submit" class="pill-btn w-100">
+                Create Account <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== DASHBOARD SECTIONS ==================== -->
+    <div id="rewardsDashboard">
+      <!-- Tier Progress -->
+      <section class="p-4 rounded-4 mb-5" style="background: var(--tan);" aria-labelledby="progressHeading">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <h2 id="progressHeading" class="h5 fw-bold mb-0">Progress to Golden Crust</h2>
+          <span class="small fw-bold text-terracotta" id="pointsToNextText">820 points to Golden Crust</span>
+        </div>
+        <div class="tier-progress-track mb-2">
+          <div class="tier-progress-fill" id="tierProgressFill" style="width: 45%;"></div>
+        </div>
+        <p class="small opacity-75 mb-0" id="expiringPointsNote">120 points expiring on 31 Dec 2026.</p>
+      </section>
+
+      <!-- Membership Tiers -->
+      <section class="mb-5" aria-labelledby="tiersHeading">
+        <div class="text-center mb-4">
+          <span class="sticker sticker--sm mb-2">4 sweet levels</span>
+          <h2 id="tiersHeading" class="display-headline display-headline--section">Membership Tiers</h2>
+        </div>
+        <div class="row g-3" id="tiersGrid">
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="tier-card">
+              <div class="fw-bold text-uppercase small opacity-75">0 pts</div>
+              <h3 class="h4 fw-bold mt-1">Crumb</h3>
+              <p class="small fw-bold text-terracotta">1 pt / Rs 100</p>
+              <p class="small mb-0">Birthday treat every year.</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="tier-card is-current">
+              <span class="sticker sticker--terracotta sticker--sm mb-2">Current</span>
+              <div class="fw-bold text-uppercase small opacity-75">500 pts</div>
+              <h3 class="h4 fw-bold mt-1">Dough</h3>
+              <p class="small fw-bold text-terracotta">1.25 pt / Rs 100</p>
+              <p class="small mb-0">5% off &amp; free delivery over Rs 4,000.</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="tier-card is-locked">
+              <div class="fw-bold text-uppercase small opacity-75">1,500 pts &bull; Locked</div>
+              <h3 class="h4 fw-bold mt-1">Golden Crust</h3>
+              <p class="small fw-bold text-terracotta">1.5 pt / Rs 100</p>
+              <p class="small mb-0">10% off, priority slot &amp; free delivery over Rs 2,500.</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="tier-card is-locked">
+              <div class="fw-bold text-uppercase small opacity-75">4,000 pts &bull; Locked</div>
+              <h3 class="h4 fw-bold mt-1">Master Baker</h3>
+              <p class="small fw-bold text-terracotta">2 pt / Rs 100</p>
+              <p class="small mb-0">15% off, always free delivery &amp; 1 free cake topping.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ways to Earn -->
+      <section class="mb-5" aria-labelledby="earnHeading">
+        <h2 id="earnHeading" class="display-headline display-headline--sub mb-3">Ways to Earn</h2>
+        <div class="row g-3">
+          <div class="col-6 col-md-4 col-lg"><div class="earn-card"><div class="fw-bold">Place Orders</div><div class="small opacity-75">1–2 pts / Rs 100</div></div></div>
+          <div class="col-6 col-md-4 col-lg"><div class="earn-card"><div class="fw-bold">Cake Studio</div><div class="small opacity-75">+50 pts on design</div></div></div>
+          <div class="col-6 col-md-4 col-lg"><div class="earn-card"><div class="fw-bold">Leave a Review</div><div class="small opacity-75">+40 pts</div></div></div>
+          <div class="col-6 col-md-6 col-lg"><div class="earn-card"><div class="fw-bold">Refer a Friend</div><div class="small opacity-75">+150 pts</div></div></div>
+          <div class="col-12 col-md-6 col-lg"><div class="earn-card"><div class="fw-bold">Birthday Bonus</div><div class="small opacity-75">+200 pts</div></div></div>
+        </div>
+      </section>
+
+      <!-- Redeem Rewards Catalog -->
+      <section class="mb-5" aria-labelledby="redeemHeading">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h2 id="redeemHeading" class="display-headline display-headline--sub mb-0">Redeem Rewards</h2>
+        </div>
+        <div class="row g-4" id="redeemCatalog">
+          <div class="col-12 col-md-4">
+            <article class="product-card">
+              <div class="product-card__media"><img src="assets/images/croissant.jpg" alt="Butter Croissant" loading="lazy"></div>
+              <div class="product-card__cat">Pastry Reward</div>
+              <h3 class="product-card__title">Free Butter Croissant</h3>
+              <div class="product-card__footer">
+                <span class="product-card__price">150 pts</span>
+                <button type="button" class="pill-btn pill-btn--sm">Redeem +</button>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-4">
+            <article class="product-card">
+              <div class="product-card__media"><img src="assets/images/brownie.jpg" alt="Fudge Brownie" loading="lazy"></div>
+              <div class="product-card__cat">Delivery Perk</div>
+              <h3 class="product-card__title">Free Islamabad Delivery</h3>
+              <div class="product-card__footer">
+                <span class="product-card__price">200 pts</span>
+                <button type="button" class="pill-btn pill-btn--sm">Redeem +</button>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-4">
+            <article class="product-card">
+              <div class="product-card__media"><img src="assets/images/hero-cake.jpg" alt="1 kg Celebration Cake" loading="lazy"></div>
+              <div class="product-card__cat">Cake Reward</div>
+              <h3 class="product-card__title">Free 1 kg Custom Cake</h3>
+              <div class="product-card__footer">
+                <span class="product-card__price">2,500 pts</span>
+                <button type="button" class="pill-btn pill-btn--sm" disabled>Need 1,820 pts</button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Points History -->
+      <section class="mb-5" aria-labelledby="historyHeading">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+          <h2 id="historyHeading" class="display-headline display-headline--sub mb-0">Points History</h2>
+          <div class="d-flex gap-2" role="group" aria-label="Filter points history">
+            <button type="button" class="pill-btn pill-btn--sm" data-history-filter="all">All</button>
+            <button type="button" class="pill-btn pill-btn--sm pill-btn--outline" data-history-filter="earned">Earned</button>
+            <button type="button" class="pill-btn pill-btn--sm pill-btn--outline" data-history-filter="redeemed">Redeemed</button>
+          </div>
+        </div>
+        <div class="history-table-wrap">
+          <div class="table-responsive">
+            <table class="table table-borderless align-middle mb-0" id="pointsHistoryTable">
+              <thead>
+                <tr class="small text-uppercase opacity-75">
+                  <th>Date</th>
+                  <th>Activity</th>
+                  <th class="text-end">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>24 Nov 2026</td>
+                  <td>Sourdough &amp; Pastries Order</td>
+                  <td class="text-end fw-bold text-success">+120 pts</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rewards FAQ -->
+      <section aria-labelledby="rewardsFaqHeading">
+        <h2 id="rewardsFaqHeading" class="display-headline display-headline--sub mb-3">Rewards FAQ</h2>
+        <div class="accordion faq-accordion" id="rewardsFaq">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#rFaq1">
+                Do my tier discounts apply in the Estimator?
+              </button>
+            </h3>
+            <div id="rFaq1" class="accordion-collapse collapse show" data-bs-parent="#rewardsFaq">
+              <div class="accordion-body">
+                Yes! Your active tier discount and free-delivery threshold are automatically read by the Delivery &amp; Bill Estimator.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="siteFooterSlot"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="js/layout.js"></script>
+</body>
+</html>

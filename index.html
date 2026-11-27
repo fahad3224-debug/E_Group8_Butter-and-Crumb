@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crumbery — Homemade Bakery &amp; Cake Studio in Islamabad</title>
+  <title>Crumbery — Cake Studio &amp; Homemade Bakery in Islamabad</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,700..800&family=DM+Sans:wght@400;500;700&family=Gluten:wght@700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/studio.css">
 </head>
 <body id="top">
   <a class="sr-only-focusable" href="#mainContent">Skip to main content</a>
@@ -18,28 +19,352 @@
     <header class="striped-frame">
       <div id="siteHeaderSlot"></div>
 
-      <section class="wavy-panel text-center">
-        <span class="sticker mb-3">homemade bakery</span>
-        <h1 class="display-headline display-headline--hero mb-3">
-          <span class="text-terracotta">Design Your</span> Dream Cake
-        </h1>
+      <section class="wavy-panel text-center position-relative">
+        <!-- Faint line-art rolling pin doodle -->
+        <svg class="doodle-line mx-auto mb-2" width="54" height="24" viewBox="0 0 64 24" fill="none" aria-hidden="true">
+          <rect x="14" y="6" width="36" height="12" rx="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 12h10M50 12h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="4" cy="12" r="2.2" stroke="currentColor" stroke-width="1.8"/>
+          <circle cx="60" cy="12" r="2.2" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+
+        <div class="d-inline-block position-relative">
+          <h1 class="display-headline display-headline--hero mb-3">
+            <span class="text-terracotta">Design Your</span><br>Dream Cake
+          </h1>
+          <span class="sticker position-absolute top-0 end-0 translate-middle-y d-none d-sm-inline-block">
+            homemade bakery
+          </span>
+        </div>
+
         <p class="mx-auto mb-4" style="max-width: 560px;">
-          Crafted fresh in F-7 Markaz, Islamabad. Design your custom celebration cake in 3D, earn sweet rewards, or estimate your delivery bill.
+          Crafted fresh in F-7 Markaz, Islamabad. Spin your cake in 3D, peek between sponge layers, slice it open, and get an instant PKR estimate.
         </p>
+
         <div class="d-flex flex-wrap justify-content-center gap-3">
-          <a href="estimate.html" class="pill-btn">
-            Estimate Delivery <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+          <a href="#cakeStudioSection" class="pill-btn">
+            Start Designing <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
           </a>
-          <a href="rewards.html" class="pill-btn pill-btn--outline">
-            Sweet Rewards <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+          <a href="estimate.html" class="pill-btn pill-btn--outline">
+            Delivery Estimator <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
           </a>
         </div>
       </section>
     </header>
   </div>
 
-  <main id="mainContent" class="container-xl py-5 text-center">
-    <p class="small text-uppercase fw-bold opacity-75">Commit 1 Scaffold &amp; Design System Ready</p>
+  <main id="mainContent" class="container-xl py-5">
+    <!-- ==================== CAKE STUDIO WORKSPACE ==================== -->
+    <section id="cakeStudioSection" aria-labelledby="studioHeading">
+      <div class="text-center mb-4">
+        <span class="sticker sticker--terracotta sticker--sm mb-2">3d cake studio</span>
+        <h2 id="studioHeading" class="display-headline display-headline--section">
+          Build Every <span class="text-terracotta">Layer &amp; Crumb</span>
+        </h2>
+      </div>
+
+      <div class="studio-shell">
+        <!-- Left/Top: 3D Viewport -->
+        <div class="studio-viewport-card">
+          <div class="studio-canvas-wrap" id="cakeCanvasWrap">
+            <canvas id="cakeCanvas" tabindex="0" aria-label="Interactive 3D cake preview: Round, 1 tier, Vanilla sponge with Vanilla cream filling"></canvas>
+            <div class="studio-placeholder" id="studioPlaceholder">
+              <img src="assets/images/hero-cake.jpg" alt="Crumbery signature layered chocolate berry cake" class="studio-placeholder__img" loading="lazy">
+              <p class="fw-bold mb-1">Interactive WebGL2 Cake Viewport</p>
+              <p class="small opacity-75 mb-0">3D renderer activates in Commits 5–7 (orbit, explode layers &amp; cut slice).</p>
+            </div>
+            <div class="studio-layer-labels" id="layerLabelsOverlay" aria-hidden="true"></div>
+          </div>
+
+          <div class="studio-toolbar">
+            <div class="studio-toolbar__group" role="group" aria-label="Camera presets">
+              <button type="button" class="studio-chip-btn is-active" data-cam-preset="threeQuarter">3/4 View</button>
+              <button type="button" class="studio-chip-btn" data-cam-preset="front">Front</button>
+              <button type="button" class="studio-chip-btn" data-cam-preset="top">Top</button>
+              <button type="button" class="studio-chip-btn" id="autoRotateBtn" aria-pressed="false">Auto-rotate</button>
+              <button type="button" class="studio-chip-btn" id="resetViewBtn">Reset</button>
+            </div>
+            <div class="studio-toolbar__group">
+              <button type="button" class="pill-btn pill-btn--sm pill-btn--terracotta" id="toggleSliceBtn" aria-pressed="false">
+                Open cake
+              </button>
+            </div>
+          </div>
+
+          <div class="studio-explode-bar">
+            <label for="explodeSlider" class="fw-bold small text-uppercase mb-0">See between layers</label>
+            <input id="explodeSlider" type="range" min="0" max="100" value="0">
+            <span class="small fw-bold" id="explodeValue">0%</span>
+          </div>
+        </div>
+
+        <!-- Right/Bottom: Customizer Panel -->
+        <div class="studio-panel">
+          <div class="studio-tabs" role="tablist" aria-label="Cake customization sections" id="studioTabList">
+            <button type="button" class="studio-tab" role="tab" id="tabShape" aria-selected="true" aria-controls="panelShape">Shape &amp; Size</button>
+            <button type="button" class="studio-tab" role="tab" id="tabFlavour" aria-selected="false" aria-controls="panelFlavour">Flavour &amp; Filling</button>
+            <button type="button" class="studio-tab" role="tab" id="tabFinish" aria-selected="false" aria-controls="panelFinish">Finish &amp; Colour</button>
+            <button type="button" class="studio-tab" role="tab" id="tabToppings" aria-selected="false" aria-controls="panelToppings">Toppings &amp; Text</button>
+          </div>
+
+          <!-- Tab 1: Shape & Size -->
+          <div id="panelShape" role="tabpanel" aria-labelledby="tabShape">
+            <h3 class="h6 text-uppercase fw-bold mb-2">Cake Shape</h3>
+            <div class="option-grid mb-3">
+              <button type="button" class="option-pill is-selected">Round</button>
+              <button type="button" class="option-pill">Square</button>
+              <button type="button" class="option-pill">Heart</button>
+            </div>
+
+            <h3 class="h6 text-uppercase fw-bold mb-2">Tiers</h3>
+            <div class="option-grid mb-3">
+              <button type="button" class="option-pill is-selected">1 Tier</button>
+              <button type="button" class="option-pill">2 Tiers</button>
+              <button type="button" class="option-pill">3 Tiers</button>
+            </div>
+
+            <h3 class="h6 text-uppercase fw-bold mb-2">Weight / Size</h3>
+            <div class="option-grid mb-3">
+              <button type="button" class="option-pill is-selected">1 kg (6")</button>
+              <button type="button" class="option-pill">2 kg (8")</button>
+              <button type="button" class="option-pill">3 kg (10")</button>
+            </div>
+
+            <h3 class="h6 text-uppercase fw-bold mb-2">Sponge Layers per Tier</h3>
+            <div class="option-grid">
+              <button type="button" class="option-pill is-selected">2 Layers</button>
+              <button type="button" class="option-pill">3 Layers</button>
+              <button type="button" class="option-pill">4 Layers</button>
+            </div>
+          </div>
+
+          <!-- Tab 2: Flavour & Filling -->
+          <div id="panelFlavour" role="tabpanel" aria-labelledby="tabFlavour" hidden>
+            <h3 class="h6 text-uppercase fw-bold mb-2">Sponge Flavour</h3>
+            <div class="option-grid mb-3">
+              <button type="button" class="option-pill is-selected">Vanilla</button>
+              <button type="button" class="option-pill">Chocolate</button>
+              <button type="button" class="option-pill">Red Velvet</button>
+              <button type="button" class="option-pill">Coffee</button>
+              <button type="button" class="option-pill">Pistachio</button>
+              <button type="button" class="option-pill">Lotus Biscoff</button>
+            </div>
+
+            <h3 class="h6 text-uppercase fw-bold mb-2">Filling</h3>
+            <div class="option-grid">
+              <button type="button" class="option-pill is-selected">Vanilla Cream</button>
+              <button type="button" class="option-pill">Raspberry Jam</button>
+              <button type="button" class="option-pill">Choco Ganache</button>
+              <button type="button" class="option-pill">Salted Caramel</button>
+              <button type="button" class="option-pill">Nutella</button>
+              <button type="button" class="option-pill">Biscoff Spread</button>
+            </div>
+          </div>
+
+          <!-- Tab 3: Finish & Colour -->
+          <div id="panelFinish" role="tabpanel" aria-labelledby="tabFinish" hidden>
+            <h3 class="h6 text-uppercase fw-bold mb-2">Outer Finish</h3>
+            <div class="option-grid mb-3">
+              <button type="button" class="option-pill is-selected">Buttercream</button>
+              <button type="button" class="option-pill">Fondant</button>
+              <button type="button" class="option-pill">Naked</button>
+              <button type="button" class="option-pill">Semi-Naked</button>
+              <button type="button" class="option-pill">Chocolate Drip</button>
+            </div>
+
+            <h3 class="h6 text-uppercase fw-bold mb-2">Frosting Colour</h3>
+            <div class="swatch-row">
+              <button type="button" class="swatch-btn is-selected" style="background-color: #FCEBD8;" aria-label="Warm Cream"></button>
+              <button type="button" class="swatch-btn" style="background-color: #F8E08E;" aria-label="Butter Yellow"></button>
+              <button type="button" class="swatch-btn" style="background-color: #E8A598;" aria-label="Blush Rose"></button>
+              <button type="button" class="swatch-btn" style="background-color: #C9503A;" aria-label="Terracotta"></button>
+              <button type="button" class="swatch-btn" style="background-color: #5B2A4A;" aria-label="Plum"></button>
+              <button type="button" class="swatch-btn" style="background-color: #3B2314;" aria-label="Dark Chocolate"></button>
+              <label class="small fw-bold ms-2">
+                Custom
+                <input type="color" id="customFrostingColor" value="#FCEBD8" class="ms-1 align-middle border-0 bg-transparent">
+              </label>
+            </div>
+          </div>
+
+          <!-- Tab 4: Toppings & Message -->
+          <div id="panelToppings" role="tabpanel" aria-labelledby="tabToppings" hidden>
+            <h3 class="h6 text-uppercase fw-bold mb-2">Toppings</h3>
+            <div class="option-grid mb-3">
+              <button type="button" class="option-pill">Fresh Berries</button>
+              <button type="button" class="option-pill">Macarons</button>
+              <button type="button" class="option-pill">Choco Shards</button>
+              <button type="button" class="option-pill">Sprinkles</button>
+              <button type="button" class="option-pill">Candles</button>
+              <button type="button" class="option-pill">Fresh Flowers</button>
+              <button type="button" class="option-pill">Piped Border</button>
+            </div>
+
+            <div class="mb-3">
+              <label for="plaqueTextInput" class="form-label small text-uppercase fw-bold">Message Plaque (max 24 chars)</label>
+              <input id="plaqueTextInput" type="text" maxlength="24" class="form-control" placeholder="Happy Birthday!">
+            </div>
+
+            <h3 class="h6 text-uppercase fw-bold mb-2">Dietary Notes</h3>
+            <div class="option-grid">
+              <button type="button" class="option-pill">Eggless</button>
+              <button type="button" class="option-pill">Sugar-Free</button>
+              <button type="button" class="option-pill">Nut-Free</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Summary Bar -->
+      <div class="studio-summary-bar" aria-live="polite">
+        <div>
+          <div class="small text-uppercase opacity-75">Estimated Custom Cake</div>
+          <div class="fs-4 fw-bold" id="studioLivePrice">Rs 3,200</div>
+          <div class="small text-warning" id="studioPointsPreview">Earn +32 Sweet Points</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="pill-btn pill-btn--sm" style="background: var(--cream); color: var(--choco);" id="saveDesignBtn">
+            Save design
+          </button>
+          <button type="button" class="pill-btn pill-btn--sm" style="background: transparent; border-color: var(--cream);" id="downloadPngBtn">
+            Download PNG
+          </button>
+          <a href="estimate.html" class="pill-btn pill-btn--sm pill-btn--terracotta" id="addToEstimateBtn">
+            Add to estimate <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Saved Designs Strip -->
+    <section class="mt-5" aria-labelledby="savedDesignsHeading">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 id="savedDesignsHeading" class="display-headline display-headline--sub">My Saved Designs</h2>
+        <span class="small fw-bold opacity-75">Stored locally in your browser</span>
+      </div>
+      <div class="saved-designs-strip" id="savedDesignsStrip">
+        <div class="saved-design-card">
+          <div class="small fw-bold">No saved cakes yet</div>
+          <p class="small opacity-75 mb-0">Click "Save design" above to keep a thumbnail of your creation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== STORY SECTION (Reference Match) ==================== -->
+    <section class="story-section mt-5" aria-labelledby="storyHeading">
+      <div class="row align-items-center g-4">
+        <div class="col-12 col-lg-5">
+          <img src="assets/images/baker-story.jpg" alt="Crumbery head baker in the Islamabad kitchen" class="rounded-4 w-100 object-fit-cover" style="max-height: 360px;" loading="lazy">
+        </div>
+        <div class="col-12 col-lg-7">
+          <span class="sticker sticker--sm mb-3">our islamabad kitchen</span>
+          <h2 id="storyHeading" class="display-headline display-headline--section text-cream mb-3">
+            We believe baking is about bringing people together with every slice we make.
+          </h2>
+          <p class="opacity-90 mb-4" style="max-width: 540px;">
+            From single-origin cocoa ganache to slow-fermented sourdough, everything at Crumbery is mixed, whipped, and baked in small batches right in F-7 Markaz.
+          </p>
+          <a href="rewards.html" class="pill-btn" style="background: var(--cream); color: var(--choco); border-color: var(--cream);">
+            Join Sweet Rewards <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PROMO CARDS ==================== -->
+    <section class="row g-4 mt-4" aria-label="Featured promotions">
+      <div class="col-12 col-md-6">
+        <div class="promo-card promo-card--butter h-100 d-flex flex-column justify-content-between">
+          <div>
+            <span class="sticker sticker--terracotta sticker--sm mb-2">member perk</span>
+            <h3 class="display-headline display-headline--sub mb-2">Up to 15% Off Every Bake</h3>
+            <p class="mb-3">Climb from Crumb to Master Baker to unlock priority slots and free Islamabad delivery.</p>
+          </div>
+          <div>
+            <a href="rewards.html" class="pill-btn pill-btn--sm">
+              Explore Tiers <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="promo-card promo-card--plum h-100 d-flex flex-column justify-content-between">
+          <div>
+            <span class="sticker sticker--sm mb-2">instant quote</span>
+            <h3 class="display-headline display-headline--sub text-cream mb-2">Know Your Bill &amp; ETA</h3>
+            <p class="opacity-90 mb-3">Pick your Islamabad sector, see peak-hour travel times, and calculate your exact PKR total.</p>
+          </div>
+          <div>
+            <a href="estimate.html" class="pill-btn pill-btn--sm" style="background: var(--butter); color: var(--choco); border-color: var(--butter);">
+              Open Estimator <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MARQUEE SHOWCASE ==================== -->
+    <section class="marquee-showcase my-5" aria-hidden="true">
+      <div class="marquee-band">
+        <div class="marquee-band__track">
+          <span class="marquee-band__text">FRESHLY BAKED IN ISLAMABAD &bull;</span>
+          <span class="marquee-band__text">FRESHLY BAKED IN ISLAMABAD &bull;</span>
+        </div>
+      </div>
+      <img src="assets/images/sourdough-boule.jpg" alt="" class="marquee-showcase__img" loading="lazy">
+    </section>
+
+    <!-- ==================== TESTIMONIAL & FAQ ==================== -->
+    <section class="row g-4 align-items-start mt-2">
+      <div class="col-12 col-lg-5">
+        <div class="testimonial-card">
+          <span class="sticker sticker--terracotta sticker--sm mb-2">customer love</span>
+          <div class="testimonial-card__stars mb-2" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote class="mb-3 fw-medium">
+            “The Lotus Biscoff drip cake looked identical to our 3D preview and arrived right on time in F-8. Easily the softest sponge in Islamabad.”
+          </blockquote>
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="fw-bold small">Ayesha K. &mdash; F-8/3, Islamabad</span>
+            <div class="testimonial-dots" aria-hidden="true">
+              <span class="testimonial-dot is-active"></span>
+              <span class="testimonial-dot"></span>
+              <span class="testimonial-dot"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-7">
+        <span class="sticker sticker--sm mb-2">faq</span>
+        <h2 class="display-headline display-headline--sub mb-3">Frequently Asked Questions</h2>
+        <div class="accordion faq-accordion" id="studioFaq">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#studioFaq1">
+                How far in advance should I book a custom cake?
+              </button>
+            </h3>
+            <div id="studioFaq1" class="accordion-collapse collapse show" data-bs-parent="#studioFaq">
+              <div class="accordion-body">
+                Single-tier custom cakes need 24 hours notice; 3-tier or dietary (eggless/sugar-free) cakes require 48 hours.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#studioFaq2">
+                Do you deliver across Islamabad and Rawalpindi?
+              </button>
+            </h3>
+            <div id="studioFaq2" class="accordion-collapse collapse" data-bs-parent="#studioFaq">
+              <div class="accordion-body">
+                Yes! We deliver up to 30 km from F-7 Markaz, including Bahria Town, DHA Phase 2, and Saddar.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <div id="siteFooterSlot"></div>
