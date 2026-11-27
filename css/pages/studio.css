@@ -32,8 +32,8 @@
   min-height: 320px;
   border-radius: 22px;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 35%, #FFF8EE 0%, #F3D9BF 68%, #DFBE9D 100%);
-  border: 2px solid rgba(59, 35, 20, 0.1);
+  background-color: var(--cream);
+  border: 2px solid rgba(59, 35, 20, 0.12);
 }
 
 .studio-canvas-wrap canvas {
@@ -165,12 +165,16 @@
   color: var(--choco);
   border: 1.5px solid rgba(59, 35, 20, 0.16);
   border-radius: 14px;
-  padding: 0.55rem 0.45rem;
-  font-size: 0.76rem;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.78rem;
   font-weight: 700;
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.18s ease;
+}
+
+.studio-tab:hover {
+  background-color: #FFF6EB;
 }
 
 .studio-tab[aria-selected="true"] {
@@ -181,31 +185,34 @@
 
 .option-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
+  gap: 0.6rem;
 }
 
 .option-pill {
   background-color: var(--cream);
   color: var(--choco);
-  border: 2px solid transparent;
+  border: 1.5px solid rgba(59, 35, 20, 0.14);
   border-radius: 14px;
-  padding: 0.6rem 0.7rem;
+  padding: 0.65rem 0.75rem;
   font-size: 0.84rem;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.18s ease, background-color 0.18s ease;
+  transition: border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
 }
 
 .option-pill:hover {
   background-color: #FFF6EB;
+  border-color: rgba(59, 35, 20, 0.3);
+  transform: translateY(-1px);
 }
 
 .option-pill.is-selected {
-  border-color: var(--terracotta);
-  background-color: #FFF6EB;
-  box-shadow: 0 3px 10px rgba(201, 80, 58, 0.16);
+  border: 2px solid var(--terracotta);
+  background-color: var(--butter);
+  color: var(--choco);
+  box-shadow: 0 3px 10px rgba(201, 80, 58, 0.14);
 }
 
 .swatch-row {

@@ -98,7 +98,7 @@
 .tier-progress-fill {
   height: 100%;
   border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--terracotta), var(--butter-deep));
+  background-color: var(--terracotta);
   transition: width 0.5s var(--ease-snappy);
 }
 
