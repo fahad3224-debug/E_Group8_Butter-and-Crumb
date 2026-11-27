@@ -71,6 +71,148 @@
   transform-style: preserve-3d;
 }
 
+.c3d-world .g {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-style: preserve-3d;
+}
+
+.c3d-world .f {
+  position: absolute;
+  backface-visibility: hidden;
+  transition: opacity 0.35s;
+}
+
+.c3d-world .f::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #1E0F06;
+  opacity: var(--d, 0);
+  pointer-events: none;
+}
+
+.c3d-world .cut {
+  left: 0;
+  transform-origin: 0 50%;
+  backface-visibility: visible;
+}
+
+.c3d-world .disc {
+  position: absolute;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  overflow: hidden;
+  transition: opacity 0.35s;
+}
+
+.c3d-world .disc.sq {
+  border-radius: 6px;
+}
+
+.c3d-world .plate {
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #FFFFFF, #FBF3E2 55%, #EAD9C2);
+  box-shadow: inset 0 0 0 2px rgba(59, 35, 20, 0.35), inset 0 0 0 12px #FBF3E2, inset 0 0 0 13px rgba(59, 35, 20, 0.12);
+}
+
+.c3d-world .shadow3d {
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(59, 35, 20, 0.28), transparent);
+  backface-visibility: visible;
+}
+
+.c3d-world .bb {
+  position: absolute;
+  transition: opacity 0.35s;
+}
+
+.c3d-world .layer {
+  cursor: pointer;
+}
+
+.c3d-world .sel .f:not(.cut) {
+  box-shadow: inset 0 2px 0 var(--terracotta), inset 0 -2px 0 var(--terracotta);
+}
+
+.c3d-world .dim .f,
+.c3d-world .dim .disc,
+.c3d-world .dim .bb {
+  opacity: 0.14;
+}
+
+.c3d-world .spr {
+  position: absolute;
+  width: 9px;
+  height: 3px;
+  border-radius: 2px;
+  margin: -1.5px 0 0 -4.5px;
+}
+
+.c3d-world .leaf {
+  position: absolute;
+  width: 15px;
+  height: 11px;
+  margin: -5px 0 0 -7px;
+  background: linear-gradient(135deg, #F3DA7A, #B8902C);
+  clip-path: polygon(10% 30%, 55% 0, 100% 40%, 80% 100%, 20% 85%);
+}
+
+.c3d-world .candle {
+  border-radius: 3px 3px 1px 1px;
+  background: repeating-linear-gradient(135deg, var(--butter) 0 4px, var(--terracotta) 4px 8px) 0 14px / 100% calc(100% - 14px) no-repeat;
+}
+
+.c3d-world .candle .flame {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 9px;
+  height: 14px;
+  margin-left: -4.5px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(circle at 50% 70%, #FFFFFF 0 15%, #FFD36B 35%, #F08A2C 70%, transparent 72%);
+  animation: flicker 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes flicker {
+  from { transform: scaleY(1) rotate(-3deg); }
+  to { transform: scaleY(1.15) rotate(3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c3d-world .candle .flame {
+    animation: none;
+  }
+}
+
+.c3d-msg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 22%;
+  font-family: var(--font-sticker);
+  font-weight: 800;
+  line-height: 1.05;
+  word-break: break-word;
+}
+
+#explode-slider {
+  accent-color: var(--terracotta);
+}
+
+.chip-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(252, 235, 216, 0.85);
+  flex-shrink: 0;
+}
+
 .layer-inspector {
   background: var(--cream);
   border-radius: 16px;
