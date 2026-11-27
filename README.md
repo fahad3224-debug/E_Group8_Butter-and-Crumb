@@ -56,6 +56,10 @@ python -m http.server 8000
 | Cake Studio responsive layout, option tabs & sticky summary bar | Responsive & Accessible | index.html | [TBD] |
 | Rewards dashboard layout, tier cards & FAQ accordion | Data & Display | rewards.html | [TBD] |
 | Estimator 4-step layout & scalloped paper-receipt summary card | Responsive & Accessible | estimate.html | [TBD] |
+| Menu catalog filtering, sorting, product modal & recently viewed items | Data & Display | estimate.html | [TBD] |
+| 4-step estimator validation, GPS/sector distance & pickup/delivery toggle | Forms & Input | estimate.html | [TBD] |
+| PKR bill calculation, peak-hour ETA range & same-day countdown timer | Logic & Calculation | estimate.html | [TBD] |
+| Persistent estimator cart, step progress & recently viewed in localStorage | State & Memory | estimate.html | [TBD] |
 
 ## Image Credits
 

@@ -252,7 +252,38 @@
 
   <div id="siteFooterSlot"></div>
 
+  <!-- Product Details Modal -->
+  <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="modalProductTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background: var(--cream); border: 2px solid var(--choco); border-radius: var(--radius-card);">
+        <div class="modal-header border-bottom border-dark border-opacity-10">
+          <div>
+            <span class="badge rounded-pill text-uppercase" id="modalProductCat" style="background: var(--butter); color: var(--choco);">Category</span>
+            <h2 class="modal-title h4 fw-bold mt-1" id="modalProductTitle">Product Name</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="rounded-4 overflow-hidden mb-3" style="aspect-ratio: 16/10; background: var(--tan);">
+            <img id="modalProductImg" src="" alt="" class="w-100 h-100" style="object-fit: cover;">
+          </div>
+          <p id="modalProductDesc" class="mb-3"></p>
+          <div class="p-3 rounded-3 small" style="background: var(--tan);">
+            <div class="mb-1"><strong>Ingredients:</strong> <span id="modalProductIngredients"></span></div>
+            <div class="mb-1"><strong>Allergens:</strong> <span id="modalProductAllergens"></span></div>
+            <div><strong>Prep time:</strong> <span id="modalProductPrep"></span></div>
+          </div>
+        </div>
+        <div class="modal-footer border-top border-dark border-opacity-10 d-flex justify-content-between align-items-center">
+          <span class="fs-5 fw-bold" id="modalProductPrice">Rs 0</span>
+          <button type="button" class="pill-btn" id="modalAddBtn">Add to Estimate <span class="pill-btn__arrow" aria-hidden="true">&rarr;</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" src="js/layout.js"></script>
+  <script type="module" src="js/estimate.js"></script>
 </body>
 </html>
