@@ -75,6 +75,7 @@ All product and marquee photography is served from local files in `assets/images
 | Menu filtering, search, sorting, product details modal, and recently viewed items | Data & Display | estimate.html | Member 3 |
 | Delivery/pickup toggle, GPS or sector distance, address and schedule inputs | Forms & Input | estimate.html | Member 3 |
 | PKR bill with tier discount, distance-based delivery fee (free above the tier threshold), tax, peak-hour ETA range, and points earned | Logic & Calculation | estimate.html | Member 3 |
+| Earliest delivery respects custom-cake notice (24/48 h), the 8 PM same-day cut-off and opening hours, with a "Use earliest time" fix for schedules that are too early | Logic & Calculation | estimate.html | Member 3 |
 | Same-day cut-off countdown timer | Interaction | estimate.html | Member 3 |
 | Estimate items and recently viewed items restored after reload | State & Memory | estimate.html | Member 3 |
 | Mobile-first layouts, keyboard controls, `aria-live` regions, reduced motion | Responsive & Accessible | All pages | Member 3 |
