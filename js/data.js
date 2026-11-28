@@ -1,5 +1,5 @@
-/**
- * Butter and Crumb — Product & Review Data
+﻿/**
+ * Crumbery — Product & Review Data
  * All product cards and initial customer reviews are rendered from these arrays
  * so the website is data-driven rather than hardcoded in HTML.
  */
