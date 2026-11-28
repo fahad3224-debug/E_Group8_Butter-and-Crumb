@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traditional Sweets Collection | Crumbery</title>
+  <meta
+    name="description"
+    content="Discover Crumbery's Traditional Sweets Collection — freshly prepared South Asian desserts crafted with authentic flavours, saffron, cardamom, and pure ghee."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="traditional">
+  <a class="skip-link" href="#collection">Skip to Traditional Sweets</a>
+
+  <!-- Top Announcement Ribbon -->
+  <div class="announcement-bar" role="region" aria-label="Store highlights">
+    <p>Freshly handcrafted daily in small batches &middot; Authentic saffron, pure ghee &amp; cardamom</p>
+  </div>
+
+  <!-- Primary Navigation Bar -->
+  <header class="site-header" id="top">
+    <nav class="navbar container" aria-label="Primary navigation">
+      <!-- Brand Logo -->
+      <a href="#top" class="brand-logo" data-nav="home" aria-label="Crumbery Home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="22" cy="22" r="20" fill="#4A2C1D" stroke="#F2C14E" stroke-width="2" />
+            <path
+              d="M12 24C12 18.477 16.477 14 22 14C27.523 14 32 18.477 32 24H12Z"
+              fill="#C8553D"
+            />
+            <path
+              d="M10 25.5H34C33.4 30.2 28.3 33.5 22 33.5C15.7 33.5 10.6 30.2 10 25.5Z"
+              fill="#FDF1DF"
+            />
+            <circle cx="22" cy="11.5" r="2.3" fill="#F2C14E" />
+            <path
+              d="M16.5 20.5C17.6 19.2 19.6 19.2 20.7 20.5C21.8 21.8 23.8 21.8 24.9 20.5C26 19.2 27.3 19.2 28 20"
+              stroke="#F2C14E"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">Crumbery</span>
+          <span class="brand-tagline">Artisanal Mithai &amp; Desserts</span>
+        </span>
+      </a>
+
+      <!-- Mobile Menu Toggle -->
+      <button
+        type="button"
+        class="nav-toggle"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="nav-panel"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <!-- Navigation Links + Search + Cart -->
+      <div class="nav-panel" id="nav-panel">
+        <ul class="nav-links">
+          <li>
+            <a href="index.html" class="nav-link is-active" data-nav="home">Home</a>
+          </li>
+          <li>
+            <a href="world-of-desserts.html" class="nav-link" data-nav="world">World of Desserts</a>
+          </li>
+          <li>
+            <a href="gluten-free-desserts.html" class="nav-link" data-nav="gluten-free">Gluten-Free Desserts</a>
+          </li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- Search Form -->
+          <form class="search-box" id="nav-search-form" role="search" aria-label="Search desserts">
+            <label for="dessert-search" class="sr-only">Search traditional sweets</label>
+            <span class="search-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20L16.2 16.2" stroke-linecap="round" />
+              </svg>
+            </span>
+            <input
+              type="search"
+              id="dessert-search"
+              name="search"
+              placeholder="Search sweets..."
+              autocomplete="off"
+            />
+            <button
+              type="button"
+              class="search-clear"
+              id="search-clear"
+              aria-label="Clear search"
+              hidden
+            >
+              &times;
+            </button>
+          </form>
+
+          <!-- Cart Trigger -->
+          <button
+            type="button"
+            class="cart-button"
+            id="cart-toggle"
+            aria-label="Open shopping cart"
+            aria-controls="cart-drawer"
+            aria-expanded="false"
+          >
+            <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <path d="M6 7h15l-1.6 8.2a2 2 0 0 1-2 1.6H9.2a2 2 0 0 1-2-1.6L5 4H2.5" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="9.5" cy="20" r="1.4" fill="currentColor" stroke="none" />
+              <circle cx="17.5" cy="20" r="1.4" fill="currentColor" stroke="none" />
+            </svg>
+            <span class="cart-label">Cart</span>
+            <span class="cart-badge" id="cart-count" aria-live="polite">0</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-backdrop" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <span class="hero-eyebrow">Crumbery &middot; Traditional Sweets Collection</span>
+          <h1 id="hero-title" class="hero-title">Discover the Taste of Tradition</h1>
+          <p class="hero-subtitle">
+            Explore our delicious collection of traditional sweets, freshly prepared with authentic flavours.
+          </p>
+          <div class="hero-cta-row">
+            <a href="#collection" class="btn btn-primary">Explore All 10 Sweets</a>
+            <button type="button" class="btn btn-outline" id="hero-gf-btn">
+              View Gluten-Free Selection
+            </button>
+          </div>
+        </div>
+
+        <aside class="hero-highlights" aria-label="Collection highlights">
+          <div class="highlight-card">
+            <span class="highlight-number">10</span>
+            <span class="highlight-text">Signature Traditional Sweets</span>
+          </div>
+          <div class="highlight-card">
+            <span class="highlight-number">100%</span>
+            <span class="highlight-text">Pure Milk, Ghee &amp; Saffron</span>
+          </div>
+          <div class="highlight-card">
+            <span class="highlight-number">PKR</span>
+            <span class="highlight-text">Editable Box Pricing</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Collection Section -->
+    <section class="collection-section" id="collection" aria-labelledby="collection-heading">
+      <div class="container">
+        <div class="collection-header">
+          <div>
+            <p class="section-kicker">Handcrafted Heritage</p>
+            <h2 id="collection-heading" class="section-title">Traditional Sweets Collection</h2>
+          </div>
+
+          <div class="collection-controls">
+            <div class="filter-pills" role="group" aria-label="Filter desserts">
+              <button type="button" class="filter-pill is-active" data-filter="all">
+                All Sweets (<span id="count-all">10</span>)
+              </button>
+              <button type="button" class="filter-pill" data-filter="vegetarian">
+                Vegetarian
+              </button>
+              <button type="button" class="filter-pill" data-filter="gluten-free">
+                Gluten-Free
+              </button>
+              <button type="button" class="filter-pill" data-filter="chilled">
+                Chilled &amp; Creamy
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="btn-link-subtle"
+              id="reset-prices-btn"
+              hidden
+              title="Restore default PKR prices for all sweets"
+            >
+              Reset Edited Prices
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Search & Filter Status -->
+        <div class="results-bar" aria-live="polite">
+          <p id="results-summary" class="results-summary">Showing all 10 traditional sweets</p>
+          <p class="price-tip">
+            <span class="price-tip-dot" aria-hidden="true"></span>
+            Tip: Click any <strong>PKR</strong> price to customize it — changes save automatically.
+          </p>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="desserts-grid" id="desserts-grid">
+          <!-- Cards rendered dynamically by js/app.js -->
+        </div>
+
+        <!-- Empty Search State -->
+        <div class="empty-state" id="empty-state" hidden>
+          <div class="empty-state-icon" aria-hidden="true">&#127854;</div>
+          <h3>No desserts matched your search</h3>
+          <p>Try searching for Gulab Jamun, Rasmalai, Kheer, or clear your active filter.</p>
+          <button type="button" class="btn btn-primary" id="clear-filters-btn">
+            Show All Desserts
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slide-Over Cart Drawer -->
+  <div class="drawer-backdrop" id="cart-backdrop" hidden></div>
+  <aside
+    class="cart-drawer"
+    id="cart-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cart-drawer-title"
+    hidden
+  >
+    <div class="cart-drawer-header">
+      <div>
+        <h2 id="cart-drawer-title">Your Crumbery Box</h2>
+        <p class="cart-drawer-subtitle" id="cart-drawer-subtitle">0 items selected</p>
+      </div>
+      <button type="button" class="icon-close-btn" id="cart-close" aria-label="Close cart">
+        &times;
+      </button>
+    </div>
+
+    <div class="cart-drawer-body" id="cart-items-container">
+      <!-- Cart items rendered dynamically -->
+    </div>
+
+    <div class="cart-drawer-footer" id="cart-footer">
+      <div class="cart-summary-row">
+        <span>Subtotal</span>
+        <strong id="cart-subtotal">PKR 0</strong>
+      </div>
+      <p class="cart-note">Prices reflect your current custom PKR pricing and are saved locally.</p>
+      <div class="cart-footer-actions">
+        <button type="button" class="btn btn-primary btn-block" id="checkout-btn">
+          Place Sweet Order
+        </button>
+        <button type="button" class="btn btn-ghost btn-block" id="clear-cart-btn">
+          Clear Cart
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Footer -->
+  <footer class="site-footer" id="contact">
+    <div class="container footer-grid">
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <a href="#top" class="footer-logo" data-nav="home">
+          <span class="brand-name">Crumbery</span>
+        </a>
+        <p class="footer-about">
+          Crafted with heirloom recipes, pure desi ghee, saffron strands, and hand-crushed pistachios.
+          Bringing warm nostalgia and modern patisserie care to every box of traditional sweets.
+        </p>
+        <div class="social-links" aria-label="Crumbery social media">
+          <a href="#instagram" class="social-link" aria-label="Crumbery on Instagram" title="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
+          <a href="#facebook" class="social-link" aria-label="Crumbery on Facebook" title="Facebook">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M15 3h-3a4 4 0 0 0-4 4v3H5v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h3V3z" stroke-linejoin="round" />
+            </svg>
+          </a>
+          <a href="#x-twitter" class="social-link" aria-label="Crumbery on X" title="X">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M4 4l16 16M20 4L4 20" stroke-linecap="round" />
+            </svg>
+          </a>
+          <a href="#whatsapp" class="social-link" aria-label="Crumbery on WhatsApp" title="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M20 11.5a8.5 8.5 0 0 1-12.6 7.4L4 20l1.1-3.3A8.5 8.5 0 1 1 20 11.5Z" stroke-linejoin="round" />
+              <path d="M9.5 9.2c.2-.4.5-.4.8-.4h.4c.2 0 .4.1.5.4l.6 1.4c.1.2 0 .5-.1.6l-.5.6c.5.9 1.3 1.7 2.2 2.2l.6-.5c.2-.2.4-.2.6-.1l1.4.6c.3.1.4.3.4.5v.4c0 .3-.1.6-.4.8-.6.4-1.5.5-2.5.1a7.4 7.4 0 0 1-4.2-4.2c-.4-1-.3-1.9.2-2.4Z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Useful Links -->
+      <div class="footer-col">
+        <h3 class="footer-heading">Useful Links</h3>
+        <ul class="footer-list">
+          <li><a href="index.html" data-nav="home">Home</a></li>
+          <li><a href="world-of-desserts.html">World of Desserts</a></li>
+          <li><a href="gluten-free-desserts.html">Gluten-Free Desserts</a></li>
+          <li><a href="#collection" data-nav="home">Traditional Sweets Menu</a></li>
+          <li><button type="button" class="footer-cart-trigger" id="footer-open-cart">View Shopping Cart</button></li>
+        </ul>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="footer-col">
+        <h3 class="footer-heading">Contact Us</h3>
+        <ul class="footer-contact">
+          <li>
+            <span class="contact-label">Bakery Kitchen:</span>
+            <span>42-B Main Boulevard, Gulberg III, Lahore</span>
+          </li>
+          <li>
+            <span class="contact-label">Phone:</span>
+            <a href="tel:+923004829104">+92 300 4829104</a>
+          </li>
+          <li>
+            <span class="contact-label">Email:</span>
+            <a href="mailto:hello@crumbery.pk">hello@crumbery.pk</a>
+          </li>
+          <li>
+            <span class="contact-label">Hours:</span>
+            <span>Daily, 10:00 AM &ndash; 11:00 PM</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>&copy; <span id="current-year">2026</span> Crumbery. All rights reserved.</p>
+        <p>Traditional Sweets Collection &middot; Crafted with warm chocolate &amp; cream care.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
