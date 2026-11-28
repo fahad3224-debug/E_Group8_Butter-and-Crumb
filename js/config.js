@@ -98,7 +98,7 @@ export const REWARDS = {
   ],
   redemptions: [
     { id: 'free-croissant', title: 'Free Butter Croissant', category: 'Pastry Reward', cost: 150, image: 'assets/images/croissant.jpg' },
-    { id: 'free-delivery', title: 'Free Islamabad Delivery', category: 'Delivery Perk', cost: 200, image: 'assets/images/brownie.jpg' },
+    { id: 'free-delivery', title: 'Free Islamabad Delivery', category: 'Delivery Perk', cost: 200, image: 'assets/images/free-delivery.svg' },
     { id: 'free-cake', title: 'Free 1 kg Custom Cake', category: 'Cake Reward', cost: 2500, image: 'assets/images/hero-cake.jpg' },
   ],
   pointsExpireMonths: 12,
