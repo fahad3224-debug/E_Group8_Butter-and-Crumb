@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopping Cart | Crumbery Home Bakery</title>
+  <link rel="stylesheet" href="../css/shared.css" />
+</head>
+<body>
+  <a class="skip-link" href="#cart-page-root">Skip to main content</a>
+
+  <div class="top-strip">
+    Use code <strong>MITHAI10</strong> for 10% off or <strong>WELCOME200</strong> for Rs. 200 off your bakery order.
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="cart.html" class="brand">
+        <span class="brand-badge" aria-hidden="true">C</span>
+        <span>
+          <span class="brand-name">Crumbery</span>
+          <span class="brand-tagline">Home Bakery</span>
+        </span>
+      </a>
+
+      <button
+        type="button"
+        class="mobile-nav-toggle"
+        id="mobile-nav-toggle"
+        aria-expanded="false"
+        aria-controls="main-nav"
+      >
+        Menu
+      </button>
+
+      <nav aria-label="Main navigation">
+        <ul class="main-nav" id="main-nav">
+          <li><a href="cart.html" class="is-active" aria-current="page">Cart</a></li>
+          <li><a href="checkout.html">Checkout</a></li>
+          <li><a href="account.html">Account</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="header-user-area" id="header-user-area"></div>
+        <a href="cart.html" class="nav-cart-pill" aria-label="View shopping cart">
+          Cart <span class="cart-count-badge" id="header-cart-count">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="cart-page-root" class="container">
+    <section class="page-hero-banner" aria-labelledby="cart-page-title">
+      <div>
+        <h1 id="cart-page-title">Your Bakery Cart</h1>
+        <p>Review your freshly baked items, adjust quantities, apply a promotional code, and continue to checkout.</p>
+      </div>
+      <img class="page-hero-thumb" src="../assets/hero-bakery.jpg" alt="Freshly baked Crumbery sourdough and pastries" />
+    </section>
+
+    <div id="cart-action-feedback" class="status-message" role="status" aria-live="polite" hidden></div>
+
+    <div class="two-col-layout" style="margin-top: 1.25rem;">
+      <!-- Left Column: Selected Cart Products -->
+      <section aria-labelledby="selected-items-heading">
+        <h2 id="selected-items-heading">Selected Items</h2>
+        <div id="cart-items-list" class="cart-items-list"></div>
+      </section>
+
+      <!-- Right Column: Order Totals & Promo Code -->
+      <aside class="card" aria-labelledby="cart-summary-heading">
+        <h2 id="cart-summary-heading">Order Summary</h2>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong id="cart-subtotal">Rs. 0</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Discount</span>
+          <strong id="cart-discount">Rs. 0</strong>
+        </div>
+
+        <div class="summary-row summary-row--total">
+          <span>Final Total</span>
+          <span id="cart-total">Rs. 0</span>
+        </div>
+
+        <div id="active-promo-container"></div>
+
+        <form id="promo-form" class="promo-box" novalidate>
+          <label for="promo-code-input"><strong>Have a Promotional Code?</strong></label>
+          <div class="promo-input-group">
+            <input
+              type="text"
+              id="promo-code-input"
+              name="promoCode"
+              placeholder="e.g. MITHAI10 or WELCOME200"
+              autocomplete="off"
+            />
+            <button type="submit" class="btn btn--secondary btn--sm">Apply</button>
+          </div>
+          <p class="promo-hint">
+            Try <strong>MITHAI10</strong> (10% off) or <strong>WELCOME200</strong> (Rs. 200 flat off).
+          </p>
+          <div id="promo-feedback" class="status-message" role="status" aria-live="polite" hidden></div>
+        </form>
+
+        <a href="checkout.html" id="proceed-checkout-btn" class="btn btn--primary btn--full">
+          Proceed to Checkout
+        </a>
+      </aside>
+    </div>
+
+    <!-- Shared Product Catalog Helper so users can test Cart & Checkout immediately -->
+    <section class="catalog-helper-section" aria-labelledby="quick-add-heading">
+      <h2 id="quick-add-heading">Add Fresh Bakes from Crumbery Catalog</h2>
+      <p>Items below load directly from the shared product catalog (<code>products-data.js</code>) and save to <code>localStorage</code>.</p>
+      <div id="quick-add-grid" class="catalog-mini-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h2>Crumbery Home Bakery</h2>
+          <p>Small-batch sourdough, warm morning pastries, cookies, and celebration cakes baked fresh from our home kitchen.</p>
+        </div>
+        <div>
+          <h3>Customer Pages</h3>
+          <ul class="footer-links">
+            <li><a href="cart.html">Shopping Cart</a></li>
+            <li><a href="checkout.html">Checkout &amp; Payment</a></li>
+            <li><a href="account.html">Customer Account</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>University Demo Info</h3>
+          <p>Member 5 Module: Cart, Checkout/Payment &amp; Account. Built with HTML5, CSS3 &amp; Vanilla JavaScript.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Crumbery Home Bakery. University Web Development Project.</span>
+        <span>Browser localStorage demo — simulated payments only.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/products-data.js"></script>
+  <script src="../js/shared-auth-nav.js"></script>
+  <script src="../js/crumbery-cart.js"></script>
+</body>
+</html>
+

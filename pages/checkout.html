@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout &amp; Payment | Crumbery Home Bakery</title>
+  <link rel="stylesheet" href="../css/shared.css" />
+</head>
+<body>
+  <a class="skip-link" href="#checkout-page-root">Skip to main content</a>
+
+  <div class="top-strip">
+    Simulated Checkout Demonstration — No real payments or credentials are processed.
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="cart.html" class="brand">
+        <span class="brand-badge" aria-hidden="true">C</span>
+        <span>
+          <span class="brand-name">Crumbery</span>
+          <span class="brand-tagline">Home Bakery</span>
+        </span>
+      </a>
+
+      <button
+        type="button"
+        class="mobile-nav-toggle"
+        id="mobile-nav-toggle"
+        aria-expanded="false"
+        aria-controls="main-nav"
+      >
+        Menu
+      </button>
+
+      <nav aria-label="Main navigation">
+        <ul class="main-nav" id="main-nav">
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="checkout.html" class="is-active" aria-current="page">Checkout</a></li>
+          <li><a href="account.html">Account</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="header-user-area" id="header-user-area"></div>
+        <a href="cart.html" class="nav-cart-pill" aria-label="View shopping cart">
+          Cart <span class="cart-count-badge" id="header-cart-count">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="checkout-page-root" class="container">
+    <section class="page-hero-banner" aria-labelledby="checkout-page-title">
+      <div>
+        <h1 id="checkout-page-title">Checkout &amp; Payment</h1>
+        <p>Enter your delivery details, select one simulated payment method, and place your bakery order.</p>
+      </div>
+      <img class="page-hero-thumb" src="../assets/artisan-cakes.jpg" alt="Crumbery Basque cheesecake and lemon olive oil cake" />
+    </section>
+
+    <!-- Empty Cart Guard -->
+    <section id="checkout-empty-notice" class="empty-state-box" hidden>
+      <h2>Your cart is currently empty</h2>
+      <p>Please add bakery items to your cart before checking out.</p>
+      <a href="cart.html" class="btn btn--primary">Return to Cart</a>
+    </section>
+
+    <!-- Active Checkout Grid -->
+    <div id="checkout-main-grid" class="two-col-layout">
+      <!-- Left Column: Customer Info & Payment Selection -->
+      <section class="card" aria-labelledby="delivery-heading">
+        <h2 id="delivery-heading">Delivery &amp; Payment Details</h2>
+
+        <div id="checkout-form-error" class="status-message status-message--error" role="alert" hidden></div>
+
+        <form id="checkout-form" novalidate style="margin-top: 1rem;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="full-name">Full Name *</label>
+              <input type="text" id="full-name" name="fullName" placeholder="e.g. Ayesha Khan" required />
+              <span class="field-error" id="error-full-name"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="phone-number">Phone Number *</label>
+              <input type="tel" id="phone-number" name="phoneNumber" placeholder="e.g. 03001234567" required />
+              <span class="field-error" id="error-phone-number"></span>
+            </div>
+
+            <div class="form-group form-group--full">
+              <label for="email-address">Email Address *</label>
+              <input type="email" id="email-address" name="emailAddress" placeholder="e.g. ayesha@example.com" required />
+              <span class="field-error" id="error-email-address"></span>
+            </div>
+
+            <div class="form-group form-group--full">
+              <label for="delivery-address">Complete Delivery Address *</label>
+              <textarea
+                id="delivery-address"
+                name="deliveryAddress"
+                rows="2"
+                placeholder="House / Street / Sector / Neighborhood"
+                required
+              ></textarea>
+              <span class="field-error" id="error-delivery-address"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="city">City *</label>
+              <input type="text" id="city" name="city" placeholder="e.g. Islamabad" required />
+              <span class="field-error" id="error-city"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="delivery-instructions">Additional Delivery Instructions (Optional)</label>
+              <input
+                type="text"
+                id="delivery-instructions"
+                name="deliveryInstructions"
+                placeholder="e.g. Ring doorbell once"
+              />
+            </div>
+
+            <fieldset class="form-group form-group--full" style="border: 0; padding: 0; margin: 0.5rem 0 0;">
+              <legend style="font-weight: 700; color: var(--ink-brown); margin-bottom: 0.25rem;">
+                Select One Payment Method (Simulated Demo) *
+              </legend>
+
+              <div class="payment-methods-list">
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="Cash on Delivery" checked />
+                  <span><strong>Cash on Delivery</strong> — Pay upon doorstep arrival</span>
+                </label>
+
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="Easypaisa" />
+                  <span><strong>Easypaisa</strong> — Simulated mobile wallet transfer</span>
+                </label>
+
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="JazzCash" />
+                  <span><strong>JazzCash</strong> — Simulated mobile wallet transfer</span>
+                </label>
+
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="Bank Transfer" />
+                  <span><strong>Bank Transfer</strong> — Simulated bank IBFT instructions</span>
+                </label>
+              </div>
+              <span class="field-error" id="error-payment-method"></span>
+
+              <div id="payment-instructions-box" class="payment-instructions-box" aria-live="polite"></div>
+            </fieldset>
+
+            <div class="form-group form-group--full" style="margin-top: 0.5rem;">
+              <button type="submit" id="place-order-btn" class="btn btn--primary btn--full">
+                Place Order
+              </button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Column: Order Summary -->
+      <aside class="card" aria-labelledby="checkout-summary-heading">
+        <h2 id="checkout-summary-heading">Order Summary</h2>
+        <ul id="checkout-summary-items" class="checkout-summary-items"></ul>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong id="checkout-subtotal">Rs. 0</strong>
+        </div>
+
+        <div class="summary-row">
+          <span id="checkout-promo-label">Discount</span>
+          <strong id="checkout-discount">Rs. 0</strong>
+        </div>
+
+        <div class="summary-row summary-row--total">
+          <span>Final Payable</span>
+          <span id="checkout-total">Rs. 0</span>
+        </div>
+
+        <p style="font-size: 0.85rem; margin-top: 1rem;">
+          Need to change quantities or add a promo code? <a href="cart.html" style="text-decoration: underline; color: var(--accent-crust); font-weight: 600;">Edit Cart</a>
+        </p>
+      </aside>
+    </div>
+
+    <!-- Order Confirmation Receipt (shown after successful Place Order) -->
+    <section id="order-confirmation-section" aria-live="polite" hidden></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h2>Crumbery Home Bakery</h2>
+          <p>Small-batch sourdough, warm morning pastries, cookies, and celebration cakes baked fresh from our home kitchen.</p>
+        </div>
+        <div>
+          <h3>Customer Pages</h3>
+          <ul class="footer-links">
+            <li><a href="cart.html">Shopping Cart</a></li>
+            <li><a href="checkout.html">Checkout &amp; Payment</a></li>
+            <li><a href="account.html">Customer Account</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>University Demo Info</h3>
+          <p>Member 5 Module: Cart, Checkout/Payment &amp; Account. Built with HTML5, CSS3 &amp; Vanilla JavaScript.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Crumbery Home Bakery. University Web Development Project.</span>
+        <span>Browser localStorage demo — simulated payments only.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/products-data.js"></script>
+  <script src="../js/shared-auth-nav.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/checkout.js"></script>
+</body>
+</html>

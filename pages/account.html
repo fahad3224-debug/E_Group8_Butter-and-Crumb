@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Account | Crumbery Home Bakery</title>
+  <link rel="stylesheet" href="../css/shared.css" />
+</head>
+<body>
+  <a class="skip-link" href="#account-page-root">Skip to main content</a>
+
+  <div class="top-strip">
+    Sign in to personalize your checkout details — <strong>University Demo</strong> browser storage only.
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="cart.html" class="brand">
+        <span class="brand-badge" aria-hidden="true">C</span>
+        <span>
+          <span class="brand-name">Crumbery</span>
+          <span class="brand-tagline">Home Bakery</span>
+        </span>
+      </a>
+
+      <button
+        type="button"
+        class="mobile-nav-toggle"
+        id="mobile-nav-toggle"
+        aria-expanded="false"
+        aria-controls="main-nav"
+      >
+        Menu
+      </button>
+
+      <nav aria-label="Main navigation">
+        <ul class="main-nav" id="main-nav">
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="checkout.html">Checkout</a></li>
+          <li><a href="account.html" class="is-active" aria-current="page">Account</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="header-user-area" id="header-user-area"></div>
+        <a href="cart.html" class="nav-cart-pill" aria-label="View shopping cart">
+          Cart <span class="cart-count-badge" id="header-cart-count">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="account-page-root" class="container">
+    <section class="page-hero-banner" aria-labelledby="account-page-title">
+      <div>
+        <h1 id="account-page-title">Customer Account</h1>
+        <p>Log in to your Crumbery account or sign up as a new customer so your name shows in the header and pre-fills at checkout.</p>
+      </div>
+      <img class="page-hero-thumb" src="../assets/morning-pastries.jpg" alt="Warm Crumbery cinnamon rolls and cardamom knots" />
+    </section>
+
+    <div class="account-layout">
+      <!-- Left Card: Bakery Showcase -->
+      <aside class="account-showcase">
+        <img src="../assets/hero-bakery.jpg" alt="Crumbery Home Bakery table with fresh sourdough and cinnamon rolls" />
+        <div class="account-showcase-body">
+          <h2>Welcome to Our Home Kitchen</h2>
+          <p>Creating a Crumbery account saves your demo profile in this browser so your name appears in the navigation bar across Cart, Checkout, and Account pages.</p>
+          <div class="demo-note">
+            <strong>Demo Account Credentials:</strong><br />
+            Email: <code>sana@crumbery.pk</code><br />
+            Password: <code>bakery123</code><br /><br />
+            <em>Notice: Accounts are stored in browser localStorage for university demonstration only — never enter real passwords or sensitive personal data.</em>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Card: Auth Forms or Logged-In Profile -->
+      <section class="card" aria-labelledby="auth-section-heading">
+        <h2 id="auth-section-heading" class="sr-only">Account Authentication</h2>
+
+        <div id="account-feedback" class="status-message" role="status" aria-live="polite" hidden></div>
+
+        <!-- Logged Out View: Login & Signup Tabs -->
+        <div id="auth-forms-panel">
+          <div class="auth-tabs" role="tablist" aria-label="Account options">
+            <button
+              type="button"
+              id="tab-login-btn"
+              class="auth-tab-btn is-active"
+              role="tab"
+              aria-selected="true"
+              aria-controls="login-form"
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              id="tab-signup-btn"
+              class="auth-tab-btn"
+              role="tab"
+              aria-selected="false"
+              aria-controls="signup-form"
+            >
+              Sign Up
+            </button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="login-form" novalidate>
+            <div class="form-grid">
+              <div class="form-group form-group--full">
+                <label for="login-email">Email Address</label>
+                <input
+                  type="email"
+                  id="login-email"
+                  name="loginEmail"
+                  placeholder="sana@crumbery.pk"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+
+              <div class="form-group form-group--full">
+                <label for="login-password">Password</label>
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    id="login-password"
+                    name="loginPassword"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password-btn"
+                    data-target="login-password"
+                    aria-pressed="false"
+                    aria-label="Toggle login password visibility"
+                  >
+                    Show
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group form-group--full">
+                <button type="submit" class="btn btn--primary btn--full">Log In</button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Signup Form -->
+          <form id="signup-form" hidden novalidate>
+            <div class="form-grid">
+              <div class="form-group form-group--full">
+                <label for="signup-name">Full Name</label>
+                <input
+                  type="text"
+                  id="signup-name"
+                  name="signupName"
+                  placeholder="e.g. Ayesha Khan"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+
+              <div class="form-group form-group--full">
+                <label for="signup-email">Email Address</label>
+                <input
+                  type="email"
+                  id="signup-email"
+                  name="signupEmail"
+                  placeholder="ayesha@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+
+              <div class="form-group form-group--full">
+                <label for="signup-password">Demo Password (minimum 6 characters)</label>
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    id="signup-password"
+                    name="signupPassword"
+                    placeholder="Create a demo password"
+                    autocomplete="new-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password-btn"
+                    data-target="signup-password"
+                    aria-pressed="false"
+                    aria-label="Toggle signup password visibility"
+                  >
+                    Show
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group form-group--full">
+                <button type="submit" class="btn btn--primary btn--full">Create Demo Account</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Logged In View -->
+        <div id="logged-in-panel" hidden>
+          <h2>Signed In</h2>
+          <p>Welcome back to Crumbery Home Bakery!</p>
+          <div class="demo-note" style="margin-bottom: 1.25rem;">
+            <p style="margin-bottom: 0.35rem;"><strong>Customer Name:</strong> <span id="profile-name"></span></p>
+            <p style="margin: 0;"><strong>Email:</strong> <span id="profile-email"></span></p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+            <a href="cart.html" class="btn btn--primary">Go to Cart</a>
+            <a href="checkout.html" class="btn btn--secondary">Go to Checkout</a>
+            <button type="button" id="account-logout-btn" class="btn btn--secondary">Logout</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h2>Crumbery Home Bakery</h2>
+          <p>Small-batch sourdough, warm morning pastries, cookies, and celebration cakes baked fresh from our home kitchen.</p>
+        </div>
+        <div>
+          <h3>Customer Pages</h3>
+          <ul class="footer-links">
+            <li><a href="cart.html">Shopping Cart</a></li>
+            <li><a href="checkout.html">Checkout &amp; Payment</a></li>
+            <li><a href="account.html">Customer Account</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>University Demo Info</h3>
+          <p>Member 5 Module: Cart, Checkout/Payment &amp; Account. Built with HTML5, CSS3 &amp; Vanilla JavaScript.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Crumbery Home Bakery. University Web Development Project.</span>
+        <span>Browser localStorage demo — simulated payments only.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/products-data.js"></script>
+  <script src="../js/shared-auth-nav.js"></script>
+  <script src="../js/account.js"></script>
+</body>
+</html>
